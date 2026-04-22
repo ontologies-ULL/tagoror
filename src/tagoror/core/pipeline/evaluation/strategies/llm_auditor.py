@@ -37,8 +37,10 @@ class LLMEntityAuditor(EntityAuditor):
         self.user_input = user_input
         self.consensus_resolver = consensus_resolver
         self.rate_limiter = rate_limiter
+       
         self.temperatures = [0.0]
         self.allow_web_search = False
+        self.enable_self_criticism = False
 
     async def run(self, individual: Thing, base_ontology: Ontology) -> ExecutionSummary:
         """
@@ -57,7 +59,8 @@ class LLMEntityAuditor(EntityAuditor):
         suite_config = evaluation_suite.pop("configurations", {})
         self.temperatures = suite_config.get("temperatures", self.temperatures)
         self.allow_web_search = suite_config.get("allow_web_search", self.allow_web_search)
-        
+        self.enable_self_criticism = suite_config.get("enable_self_criticism", self.enable_self_criticism)
+    
         output = []
         total_metrics = ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0)
         
@@ -72,7 +75,7 @@ class LLMEntityAuditor(EntityAuditor):
         }
         task_coroutines = [
             self._run_task_with_consensus(task_id, task_config, context_data, developer_prompt)
-            for task_id, task_config in evaluation_suite.items()
+            for task_id, task_config in self.prompt_manager.get_suite_tasks(self.suite_name).items()
         ]
 
         parallel_results = await asyncio.gather(*task_coroutines)
@@ -96,7 +99,11 @@ class LLMEntityAuditor(EntityAuditor):
         if not raw_prompt:
             raise ValueError(f"Task {task_id} is missing a 'prompt'.")
             
-        user_prompt = self.prompt_manager.build_task_prompt(task_config, context_data)
+        user_prompt = self.prompt_manager.build_task_prompt(
+            task_config, 
+            context_data, 
+            default_self_criticism=self.enable_self_criticism
+        )
         temperatures = task_config.get("temperatures", self.temperatures) 
         allow_web = task_config.get("allow_web_search", self.allow_web_search)
 
