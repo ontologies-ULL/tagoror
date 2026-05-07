@@ -47,3 +47,13 @@ class ExecutionSummary:
 
     def is_successful(self) -> bool:
         return all(result.status == TaskStatus.SUCCESS for result in self.results)
+
+@dataclass(frozen=True)
+class PromptRegistry:
+    """
+    Represents a registry of prompts used in the validation process, mapping task IDs to their corresponding prompts.
+    """
+    loaded_prompts: dict[str, str]
+
+    def get_prompt(self, task_id: str) -> str:
+        return self.loaded_prompts.get(task_id, "")
