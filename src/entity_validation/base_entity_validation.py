@@ -2,7 +2,6 @@
 Define the base class for all validation strategies
 """
 
-import asyncio
 from abc import ABC, abstractmethod
 
 class ValidationStrategy(ABC):
