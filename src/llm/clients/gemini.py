@@ -3,8 +3,8 @@
 """
 
 import time
-import google.generativeai as genai
-from google.generativeai.types import generation_types
+import google.genai as genai
+from google.genai import types
 
 from llm.base_llm_client import BaseLLMClient
 from llm.models import LLMPayload, LLMResponse
@@ -19,11 +19,11 @@ class GeminiClient(BaseLLMClient):
     # TODO: This is a placeholder. You should replace it with the actual cost from Google's pricing page.
     _COST_PER_MILLION_TOKENS = 0.075 
 
-    def __init__(self, api_key: str, logger: TelemetryLogger):
+    def __init__(self, api_key: str, logger: ITelemetryLogger):
         self._logger = logger
-        genai.configure(api_key=api_key)
+        self._client = genai.Client(api_key=api_key)
 
-    async def query(self, payload: LLMPayload) -> LLMResponse:
+    async def _query(self, payload: LLMPayload) -> LLMResponse:
         """
         Main orchestrator for the adapter.
         """
@@ -38,38 +38,38 @@ class GeminiClient(BaseLLMClient):
             
             return self._map_to_domain_response(raw_response, start_time)
 
-        except generation_types.StopCandidateException as e:
+        except types.StopCandidateException as e:
             self._handle_security_block(e)
         except Exception as e:
             self._handle_network_failure(e)
 
     # --- Setup Methods ---
 
-    def _build_model(self, payload: LLMPayload) -> genai.GenerativeModel:
+    def _build_model(self, payload: LLMPayload) -> str:
         """
-        Isolates the SDK model instantiation logic.
+        Isolates the model selection logic.
         """
-        model_kwargs = {"model": payload.model_name}
-        return genai.GenerativeModel(**model_kwargs)
+        return payload.model_name
 
-    def _build_generation_config(self, payload: LLMPayload) -> genai.GenerationConfig:
+    def _build_generation_config(self, payload: LLMPayload) -> types.GenerateContentConfig:
         """
         Isolates hyperparameter and serialization configuration.
         """
-        return genai.GenerationConfig(
-            temperature = payload.temperature,
-            response_mime_type = "application/json" if payload.json_mode else "text/plain"
+        return types.GenerateContentConfig(
+            temperature=payload.temperature,
+            response_mime_type="application/json" if payload.json_mode else "text/plain"
         )
 
     # --- Execution & Mapping Methods ---
 
-    async def _execute_network_call(self, model: genai.GenerativeModel, prompt: str, config: genai.GenerationConfig):
+    async def _execute_network_call(self, model: str, prompt: str, config: types.GenerateContentConfig):
         """
         Strictly encapsulates the asynchronous I/O call.
         """
-        return await model.generate_content_async(
-            contents = prompt,
-            generation_config = config
+        return await self._client.aio.models.generate_content(
+            model=model,
+            contents=prompt,
+            config=config
         )
 
     def _map_to_domain_response(self, raw_response, start_time: float) -> LLMResponse:
