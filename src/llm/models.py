@@ -1,17 +1,17 @@
 from dataclasses import dataclass
+from typing import Optional
 
-@dataclass(frozen=True)
+@dataclass
 class LLMPayload:
-    """
-    Represents the payload for an LLM request, including the prompt and any additional parameters.
-    """
-    prompt: str
-    parameters: dict
+    user_prompt: str
+    system_prompt: Optional[str] = None
+    model_name: str = "gemini-2.5-flash"
+    temperature: float = 0.0
+    json_mode: bool = True
 
-@dataclass(frozen=True)
+@dataclass
 class LLMResponse:
-    """
-    Represents the response from an LLM, including the generated text and any additional metadata.
-    """
-    generated_text: str
-    metadata: dict
+    raw_content: str
+    tokens_consumed: int
+    duration_ms: int
+    cost: float
