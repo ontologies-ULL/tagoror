@@ -24,6 +24,7 @@ class BaseLLMClient(ABC):
             response = await self._query(payload)
             return response
         except Exception as error:
+            pass
 
     @abstractmethod
     async def _query(self, payload: LLMPayload) -> LLMResponse:
