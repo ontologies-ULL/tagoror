@@ -4,7 +4,7 @@
 
 import time
 import google.genai as genai
-from google.genai import types
+from google.genai import types, errors
 
 from opentelemetry import trace, metrics
 from opentelemetry.trace import Status, StatusCode
@@ -52,7 +52,7 @@ class GeminiClient(BaseLLMClient):
         )
 
 
-    async def _query(self, payload: llmpayload) -> llmresponse:
+    async def _query(self, payload: LLMPayload) -> LLMResponse:
         """main orchestrator — one otel span wraps the full request lifecycle."""
         with self._tracer.start_as_current_span("gemini.query") as span:
             span.set_attribute("llm.model", payload.model_name)
@@ -67,23 +67,23 @@ class GeminiClient(BaseLLMClient):
                 raw    = await self._execute_network_call(payload.model_name, payload.user_prompt, config)
                 return self._map_to_domain_response(raw, start_time, span, payload.model_name)
  
-            except errors.apierror as e:
+            except errors.APIError as e:
                 self._handle_api_error(e, span)
-            except exception as e:
+            except Exception as e:
                 self._handle_network_failure(e, span)
 
     # --- setup methods ---
     
-    def _build_generation_config(self, payload: llmpayload) -> types.generatecontentconfig:
+    def _build_generation_config(self, payload: LLMPayload) -> types.GenerateContentConfig:
         """builds the sdk config object from our domain payload."""
-        return types.generatecontentconfig(
+        return types.GenerateContentConfig(
             temperature=payload.temperature,
             response_mime_type="application/json" if payload.json_mode else "text/plain",
         )
 
     # --- execution & mapping methods ---
 
-    async def _execute_network_call(self, model: str, prompt: str, config: types.generatecontentconfig):
+    async def _execute_network_call(self, model_name: str, prompt: str, config: types.GenerateContentConfig):
         """
         strictly encapsulates the asynchronous i/o call.
         """
@@ -93,7 +93,7 @@ class GeminiClient(BaseLLMClient):
             config=config,
         )
 
-    def _map_to_domain_response(self, raw_response, span, metric_labels: dict) -> LLMResponse:
+    def _map_to_domain_response(self, raw_response, start_time, span, model_name: str) -> LLMResponse:
         """
         Acts as an Anti-Corruption Layer (ACL).
         Translates the proprietary Google object into our pure domain entity.

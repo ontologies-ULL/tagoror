@@ -7,7 +7,7 @@ Covers:
   - RetryPolicy: successful call on first attempt
   - RetryPolicy: successful call after one or more transient failures
   - RetryPolicy: exhausting all retries raises the original exception
-  - RetryPolicy: TransientNetworkError triggers a retry
+    - RetryPolicy: TransientNetworkException triggers a retry
   - RetryPolicy: LLMParseException triggers a retry
   - RetryPolicy: sleep called with correct delay (fixed strategy)
   - RetryPolicy: sleep delay grows exponentially (exponential strategy)
@@ -168,17 +168,17 @@ class TestRetryPolicyHappyPath:
 
 
 # ---------------------------------------------------------------------------
-# Tests: retry on TransientNetworkError
+# Tests: retry on TransientNetworkException
 # ---------------------------------------------------------------------------
 
-class TestRetryOnTransientNetworkError:
+class TestRetryOnTransientNetworkException:
 
     @pytest.mark.asyncio
     async def test_retries_and_eventually_succeeds(self, retry_policy_fixed, mock_llm_client, mock_response, mocker):
-        """Must retry on TransientNetworkError and return the response when it succeeds."""
-        from exceptions import TransientNetworkError
+        """Must retry on TransientNetworkException and return the response when it succeeds."""
+        from exceptions import TransientNetworkException
         mocker.patch("llm.retry.sleep", new=AsyncMock())
-        mock_llm_client.query.side_effect = [TransientNetworkError("timeout"), mock_response]
+        mock_llm_client.query.side_effect = [TransientNetworkException("timeout"), mock_response]
 
         result = await retry_policy_fixed.query(MagicMock())
 
@@ -187,12 +187,12 @@ class TestRetryOnTransientNetworkError:
 
     @pytest.mark.asyncio
     async def test_raises_after_exhausting_all_retries(self, retry_policy_fixed, mock_llm_client, fixed_config, mocker):
-        """Must raise TransientNetworkError after exhausting all retries."""
-        from exceptions import TransientNetworkError
+        """Must raise TransientNetworkException after exhausting all retries."""
+        from exceptions import TransientNetworkException
         mocker.patch("llm.retry.sleep", new=AsyncMock())
-        mock_llm_client.query.side_effect = TransientNetworkError("persistent")
+        mock_llm_client.query.side_effect = TransientNetworkException("persistent")
 
-        with pytest.raises(TransientNetworkError):
+        with pytest.raises(TransientNetworkException):
             await retry_policy_fixed.query(MagicMock())
 
         assert mock_llm_client.query.call_count == fixed_config.max_retries
@@ -238,11 +238,11 @@ class TestFixedBackoff:
     @pytest.mark.asyncio
     async def test_sleep_uses_constant_delay(self, retry_policy_fixed, mock_llm_client, mock_response, fixed_config, mocker):
         """Every sleep call must use exactly delay_between_retries (no growth)."""
-        from exceptions import TransientNetworkError
+        from exceptions import TransientNetworkException
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = [
-            TransientNetworkError("fail 1"),
-            TransientNetworkError("fail 2"),
+            TransientNetworkException("fail 1"),
+            TransientNetworkException("fail 2"),
             mock_response
         ]
 
@@ -254,11 +254,11 @@ class TestFixedBackoff:
     @pytest.mark.asyncio
     async def test_sleep_not_called_after_final_attempt(self, retry_policy_fixed, mock_llm_client, fixed_config, mocker):
         """Sleep must be called max_retries-1 times — never after the last failed attempt."""
-        from exceptions import TransientNetworkError
+        from exceptions import TransientNetworkException
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
-        mock_llm_client.query.side_effect = TransientNetworkError("always fails")
+        mock_llm_client.query.side_effect = TransientNetworkException("always fails")
 
-        with pytest.raises(TransientNetworkError):
+        with pytest.raises(TransientNetworkException):
             await retry_policy_fixed.query(MagicMock())
 
         assert mock_sleep.call_count == fixed_config.max_retries - 1
@@ -274,14 +274,14 @@ class TestExponentialBackoff:
     async def test_delay_grows_between_retries(self, mock_llm_client, exponential_config, mocker):
         """Each successive sleep delay must be strictly greater than the previous one."""
         from llm.retry import RetryPolicy
-        from exceptions import TransientNetworkError
+        from exceptions import TransientNetworkException
 
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
-        mock_llm_client.query.side_effect = TransientNetworkError("always fails")
+        mock_llm_client.query.side_effect = TransientNetworkException("always fails")
 
         policy = RetryPolicy(llm_client=mock_llm_client, config=exponential_config)
 
-        with pytest.raises(TransientNetworkError):
+        with pytest.raises(TransientNetworkException):
             await policy.query(MagicMock())
 
         delays = [call.args[0] for call in mock_sleep.call_args_list]
@@ -295,11 +295,11 @@ class TestExponentialBackoff:
     async def test_first_delay_equals_base(self, mock_llm_client, exponential_config, mocker):
         """The first sleep delay must equal delay_between_retries (the base value)."""
         from llm.retry import RetryPolicy
-        from exceptions import TransientNetworkError
+        from exceptions import TransientNetworkException
 
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = [
-            TransientNetworkError("fail"),
+            TransientNetworkException("fail"),
             MagicMock()  # success on second attempt
         ]
 
@@ -320,14 +320,14 @@ class TestJitterBackoff:
     async def test_delay_is_non_negative(self, mock_llm_client, jitter_config, mocker):
         """Every jitter sleep delay must be >= 0."""
         from llm.retry import RetryPolicy
-        from exceptions import TransientNetworkError
+        from exceptions import TransientNetworkException
 
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
-        mock_llm_client.query.side_effect = TransientNetworkError("always fails")
+        mock_llm_client.query.side_effect = TransientNetworkException("always fails")
 
         policy = RetryPolicy(llm_client=mock_llm_client, config=jitter_config)
 
-        with pytest.raises(TransientNetworkError):
+        with pytest.raises(TransientNetworkException):
             await policy.query(MagicMock())
 
         for call in mock_sleep.call_args_list:
@@ -340,15 +340,15 @@ class TestJitterBackoff:
         Adjust the multiplier if your implementation uses a different cap.
         """
         from llm.retry import RetryPolicy
-        from exceptions import TransientNetworkError
+        from exceptions import TransientNetworkException
 
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
-        mock_llm_client.query.side_effect = TransientNetworkError("always fails")
+        mock_llm_client.query.side_effect = TransientNetworkException("always fails")
 
         policy = RetryPolicy(llm_client=mock_llm_client, config=jitter_config)
         upper_bound = jitter_config.delay_between_retries * 2
 
-        with pytest.raises(TransientNetworkError):
+        with pytest.raises(TransientNetworkException):
             await policy.query(MagicMock())
 
         for call in mock_sleep.call_args_list:
@@ -366,15 +366,15 @@ class TestRetryCountBoundary:
         """With max_retries=1, a single failure must raise with no sleep at all."""
         from llm.retry import RetryPolicy
         from llm.config import RetryPolicyConfig, BackoffStrategy
-        from exceptions import TransientNetworkError
+        from exceptions import TransientNetworkException
 
         config = RetryPolicyConfig(max_retries=1, delay_between_retries=1, backoff_strategy=BackoffStrategy.FIXED)
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
-        mock_llm_client.query.side_effect = TransientNetworkError("fail")
+        mock_llm_client.query.side_effect = TransientNetworkException("fail")
 
         policy = RetryPolicy(llm_client=mock_llm_client, config=config)
 
-        with pytest.raises(TransientNetworkError):
+        with pytest.raises(TransientNetworkException):
             await policy.query(MagicMock())
 
         assert mock_llm_client.query.call_count == 1
@@ -385,13 +385,13 @@ class TestRetryCountBoundary:
         """With max_retries=3, the third attempt succeeding must return the response."""
         from llm.retry import RetryPolicy
         from llm.config import RetryPolicyConfig, BackoffStrategy
-        from exceptions import TransientNetworkError
+        from exceptions import TransientNetworkException
 
         config = RetryPolicyConfig(max_retries=3, delay_between_retries=0, backoff_strategy=BackoffStrategy.FIXED)
         mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = [
-            TransientNetworkError("fail 1"),
-            TransientNetworkError("fail 2"),
+            TransientNetworkException("fail 1"),
+            TransientNetworkException("fail 2"),
             mock_response
         ]
 
