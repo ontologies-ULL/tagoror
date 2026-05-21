@@ -3,6 +3,12 @@
 """
 
 from dataclasses import dataclass
+from enum import Enum
+
+class BackoffStrategy(str, Enum):
+    FIXED = "fixed"
+    EXPONENTIAL = "exponential"
+    JITTER = "jitter"
 
 @dataclass(frozen=True)
 class RetryPolicyConfig:
