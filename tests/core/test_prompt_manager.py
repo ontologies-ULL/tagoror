@@ -179,7 +179,11 @@ class TestGetAssembledSystemPrompt:
         path = write_yaml(tmp_path, content)
         from core.prompt_manager import PromptManager
         result = PromptManager(path).get_assembled_system_prompt()
-        assert result == "ROLE_CONTENT\n\nCONSTRAINTS_CONTENT"
+        expected_role = "### ROLE\nROLE_CONTENT"
+        expected_constraints = "### CONSTRAINTS\nCONSTRAINTS_CONTENT"
+        assert expected_role in result
+        assert expected_constraints in result
+        assert result.count("\n\n") == 1
 
     def test_single_section_no_separator(self, tmp_path):
         """A single section must return its value with no trailing separator."""
@@ -187,7 +191,7 @@ class TestGetAssembledSystemPrompt:
         path = write_yaml(tmp_path, content)
         from core.prompt_manager import PromptManager
         result = PromptManager(path).get_assembled_system_prompt()
-        assert result == "Only role here"
+        assert result == "### ROLE\nOnly role here"
 
     def test_returns_string(self, tmp_path):
         """Return value must always be a plain string."""
