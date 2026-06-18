@@ -10,40 +10,31 @@ Contract covered here:
 """
 
 import pytest
-from unittest.mock import MagicMock
-
+from types import SimpleNamespace
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 def make_fake_class(name: str):
-    cls = MagicMock()
-    cls.name = name
-    return cls
-
+    return SimpleNamespace(name=name)
 
 def make_fake_property(name: str, kind: str):
-    prop = MagicMock()
-    prop.name = name
-    prop.is_object_property = kind == "object"
-    prop.kind = "object_property" if kind == "object" else "data_property"
-    prop.property_kind = "object" if kind == "object" else "data"
-    return prop
-
+    return SimpleNamespace(
+        name=name,
+        is_object_property=(kind == "object"),
+        kind="object_property" if kind == "object" else "data_property",
+        property_kind="object" if kind == "object" else "data"
+    )
 
 def make_fake_annotation(name: str):
-    annotation = MagicMock()
-    annotation.name = name
-    return annotation
-
+    return SimpleNamespace(name=name)
 
 def make_fake_entity(name: str, classes=None):
-    entity = MagicMock()
-    entity.name = name
-    entity.is_a = [make_fake_class(class_name) for class_name in (classes or [])]
-    return entity
-
+    return SimpleNamespace(
+        name=name,
+        is_a=[make_fake_class(class_name) for class_name in (classes or [])]
+    )
 
 def make_fake_individual(name: str, classes=None, object_properties=None, data_properties=None, annotations=None):
     classes = classes or []
@@ -52,8 +43,8 @@ def make_fake_individual(name: str, classes=None, object_properties=None, data_p
     annotations = annotations or {}
 
     individual = make_fake_entity(name, classes=classes)
-
     property_descriptors = []
+
     for property_name, values in object_properties.items():
         property_descriptors.append(make_fake_property(property_name, "object"))
         setattr(individual, property_name, values)
@@ -62,23 +53,21 @@ def make_fake_individual(name: str, classes=None, object_properties=None, data_p
         property_descriptors.append(make_fake_property(property_name, "data"))
         setattr(individual, property_name, values)
 
-    individual.get_properties.return_value = property_descriptors
-
+    individual.get_properties = lambda: property_descriptors
     annotation_descriptors = []
+    
     for annotation_name, values in annotations.items():
         annotation_descriptors.append(make_fake_annotation(annotation_name))
         setattr(individual, annotation_name, values)
 
-    individual.get_annotations.return_value = annotation_descriptors
+    individual.get_annotations = lambda: annotation_descriptors
 
     return individual
 
-
 def make_fake_ontology(individuals=None):
-    ontology = MagicMock()
-    ontology.individuals.return_value = individuals or []
-    return ontology
-
+    return SimpleNamespace(
+        individuals=lambda: individuals or []
+    )
 
 # ---------------------------------------------------------------------------
 # Tests: extract() -> individuals only
