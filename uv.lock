@@ -313,6 +313,7 @@ dependencies = [
     { name = "google-genai" },
     { name = "opentelemetry-distro" },
     { name = "opentelemetry-exporter-otlp" },
+    { name = "owlready2" },
     { name = "pydantic" },
     { name = "pytest-asyncio" },
     { name = "pytest-mock" },
@@ -330,6 +331,7 @@ requires-dist = [
     { name = "google-genai", specifier = ">=2.4.0" },
     { name = "opentelemetry-distro", specifier = ">=0.62b1" },
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.41.1" },
+    { name = "owlready2", specifier = ">=0.50" },
     { name = "pydantic", specifier = ">=2.13.4" },
     { name = "pytest-asyncio", specifier = ">=1.3.0" },
     { name = "pytest-mock", specifier = ">=3.15.1" },
@@ -681,6 +683,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/9e/de/911ac9e309052aca1
 wheels = [
     { url = "https://files.pythonhosted.org/packages/eb/a6/83dc2ab6fa397ee66fba04fe2e74bdf7be3b3870005359ceb7689103c058/opentelemetry_semantic_conventions-0.62b1-py3-none-any.whl", hash = "sha256:cf506938103d331fbb78eded0d9788095f7fd59016f2bda813c3324e5a74a93c", size = 231620 },
 ]
+
+[[package]]
+name = "owlready2"
+version = "0.50"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a4/67/6fb3a628889d97f8a3d3c64d4597f0637db61a1856c835fe7c65d8e89658/owlready2-0.50.tar.gz", hash = "sha256:7be74c53a35497df138c8223dddcf65510def9b38494ae1fac4aa2a61c4677eb", size = 27328931 }
 
 [[package]]
 name = "packaging"
