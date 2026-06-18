@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from owlready2 import get_ontology
+from owlready2 import get_ontology, ObjectProperty
 
 
 @dataclass(frozen=True)
@@ -48,11 +48,7 @@ class OntologyExtractor:
     """
     if ontology_loader is None:
       ontology_loader = get_ontology
-
-    try:
-      return ontology_loader(file_path).load()
-    except Exception as error:
-      raise FileNotFoundError(file_path) from error
+    return ontology_loader(file_path).load()
 
   @staticmethod
   def _build_case_id(file_path: str) -> str:
@@ -77,15 +73,10 @@ class OntologyExtractor:
     """
     Normalize property values into a list.
     """
-    if isinstance(values, list):
-      normalized_values = values
-    elif isinstance(values, tuple):
-      normalized_values = list(values)
-    elif isinstance(values, set):
+    if isinstance(values, (list, tuple, set)):
       normalized_values = list(values)
     else:
       normalized_values = [values]
-
     if resolve_names:
       return [OntologyExtractor._resolve_name(value) for value in normalized_values]
 
@@ -104,12 +95,15 @@ class OntologyExtractor:
   @staticmethod
   def _is_object_property(property_descriptor) -> bool:
     """
-    Detect whether a property descriptor behaves like an object property.
+    Detect whether a property descriptor is an object property.
+    Works with both real OWL properties and mock objects in tests.
     """
+    if isinstance(property_descriptor, type):
+        return issubclass(property_descriptor, ObjectProperty)
+    
     return bool(
-      getattr(property_descriptor, "is_object_property", False)
-      or getattr(property_descriptor, "kind", "") == "object_property"
-      or getattr(property_descriptor, "property_kind", "") == "object"
+        getattr(property_descriptor, 'is_object_property', False) or 
+        getattr(property_descriptor, 'kind', '') == 'object_property'
     )
 
   @staticmethod
@@ -154,17 +148,13 @@ class OntologyExtractor:
     """
     Collect annotations for one ontology individual when they are available.
     """
-    get_annotations = getattr(individual, "get_annotations", None)
-    if not callable(get_annotations):
-      return {}
-
     annotations: dict[str, list[Any]] = {}
-
-    for annotation_descriptor in get_annotations():
-      annotation_name = annotation_descriptor.name
-      annotation_values = getattr(individual, annotation_name, [])
-      annotations[annotation_name] = OntologyExtractor._normalize_values(annotation_values)
-
+    
+    for attr_name in ["label", "comment", "isDefinedBy", "seeAlso"]:
+        values = getattr(individual, attr_name, [])
+        if values:
+            annotations[attr_name] = OntologyExtractor._normalize_values(values)
+            
     return annotations
 
   @staticmethod
