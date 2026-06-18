@@ -1,0 +1,5007 @@
+<?xml version="1.0"?>
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.ull.es/iis/simulation/ontologies/disease-simulation"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     ontologyIRI="http://www.ull.es/iis/simulation/ontologies/disease-simulation"
+     versionIRI="http://www.ull.es/iis/simulation/ontologies/disease-simulation/1.0">
+    <Prefix name="" IRI="http://www.ull.es/iis/simulation/ontologies/disease-simulation#"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Annotation>
+        <AnnotationProperty IRI="#contributor"/>
+        <Literal>María Luz Couce Pico (https://orcid.org/0000-0003-4861-9905)</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty IRI="#creator"/>
+        <Literal>David Prieto González (https://orcid.org/0000-0003-1411-129X)</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty IRI="#creator"/>
+        <Literal>Evelio J. González González (https://orcid.org/0000-0002-2203-3757)</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty IRI="#creator"/>
+        <Literal>Iván Castilla Rodríguez (http://orcid.org/0000-0003-3933-2582)</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Ontology designed for collecting and inferring the parameters required to create a simulation-based Health Technology Assesment</Literal>
+    </Annotation>
+    <Declaration>
+        <Class IRI="#AcuteManifestation"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#AgentBasedModel"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Attribute"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#BernoulliDistributionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#BetaDistributionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#CalculatedParameter"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ChronicManifestation"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ConditionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Cost"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Currency"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DataItemType"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DecisionTreeModel"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DetectionIntervention"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DetectionStrategy"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DeterministicParameter"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Development"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DevelopmentPathway"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DiagnosisIntervention"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DiagnosisStrategy"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DiscreteEventSimulationModel"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Disease"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DiseasePathway"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DiseaseProgression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DiseaseProgressionPathway"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Drug"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#EpidemiologicalParameter"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ExponentialDistributionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ExpressionLanguage"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#FirstOrderUncertaintyParameter"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#FollowUpStrategy"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#FollowUpTest"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GammaDistributionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Group"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GroupableModelItem"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Guideline"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#HealthTechnology"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Intervention"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#LineOfTherapy"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Manifestation"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#MarkovModel"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#MeasuredDataItemType"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Model"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ModelItem"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#NormalDistributionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Parameter"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ParameterNature"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Pathway"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#PoissonDistributionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Population"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ProportionWithinGroup"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#RareDisease"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ScreeningIntervention"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ScreeningStrategy"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#SecondOrderUncertaintyParameter"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Stage"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Strategy"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#TherapeuticIntervention"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Treatment"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#UniformDistributionExpression"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Utility"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#belongsToGroup"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#dependsOnAttribute"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#dependsOnParameter"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#excludesManifestation"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#followedByStrategy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasAge"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasAttributeValue"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasComponent"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasConditionExpression"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasCost"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasDataItemType"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasDevelopment"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasDiagnosisCost"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasDiagnosisStrategy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasDose"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasDuration"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasEndAge"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasEpidemiologicalParameter"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasExpressionLanguage"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasFollowUpCost"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasFollowUpStrategy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasFrequency"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasGuideline"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasIncreasedMortalityRate"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasInitialProportion"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasIntervention"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasLifeExpectancy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasLifeExpectancyReduction"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasLineOfTherapy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasManifestation"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasNaturalDevelopment"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasOnsetAge"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasParameter"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasProbabilityOfDeath"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasProbabilityOfDiagnosis"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasProportionWithinGroup"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasRiskCharacterization"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasScreeningStrategy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasSensitivity"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasSex"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasSpecificity"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasStage"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasStrategy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasSubpopulation"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasTemporaryThreshold"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasTreatmentCost"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasUncertaintyCharacterization"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasUtility"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasValue"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#includedByModel"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#includesModelItem"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#involvesModification"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isModifiedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isParameterOf"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isParameterOfDisease"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isParameterOfManifestation"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isParameterOfPopulation"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isSubpopulationOf"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isValueOfAttribute"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#modifies"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#requires"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#usesDrug"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#usesFollowUpTest"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#usesHealthTechnology"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#usesSameModelItemsAs"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#usesTreatment"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#REMOVEhasFrequency"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#appliesOneTime"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#failsIf"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasAlfaParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasAuthor"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasAverageParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasBetaParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasCalculationMethod"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasDescription"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasDisutilityCombinationMethod"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasExpectedValue"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasExpressionValue"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasGeographicalContext"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasHoursInterval"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasLambdaParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasLowerLimitParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasMaxAge"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasMinAge"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasName"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasOffsetParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasProbabilityParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRange"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefTo"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefToDO"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefToGARD"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefToICD"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefToOMIM"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefToORDO"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefToSNOMED"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefToSTATO"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasRefToWikidata"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasScaleParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasSize"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasSource"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasStandardDeviationParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasUnit"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasUpperLimitParameter"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasYear"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#isTrueEpidemiologicalParameterEstimate"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Attribute_Age"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Attribute_LifeExpectancy"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Attribute_Sex"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Constant_Incidence1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Constant_Prevalence1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Constant_Probability0"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Constant_Probability1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Constant_Sensitivity1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Constant_Specificity1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Currency_Dollar"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Currency_Euro"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Currency_Pound"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_BirthPrevalence"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Continuous_Variable"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Count"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Disutility"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Factor"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Incidence"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Lower95ConfidenceLimit"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_MeanDifference"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Other"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Prevalence"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Probability"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Proportion"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Ratio"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_RelativeRisk"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Sensitivity"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Specificity"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_StandardDeviation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_TimeToEvent"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Upper95ConfidenceLimit"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#DI_Utility"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Exp_Excel"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Exp_JEXL"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Exp_Java"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Exp_Javaluator"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#GuidelineLifetimeAnual"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#InterventionDoNothing"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="http://ainf.aau.at/ontodebug#testCase"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPosition"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionX"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionY"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#TODO"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#contributor"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty IRI="#creator"/>
+    </Declaration>
+    <EquivalentClasses>
+        <Class IRI="#ExpressionLanguage"/>
+        <ObjectOneOf>
+            <NamedIndividual IRI="#Exp_Excel"/>
+            <NamedIndividual IRI="#Exp_JEXL"/>
+            <NamedIndividual IRI="#Exp_Java"/>
+            <NamedIndividual IRI="#Exp_Javaluator"/>
+        </ObjectOneOf>
+    </EquivalentClasses>
+    <SubClassOf>
+        <Class IRI="#AcuteManifestation"/>
+        <Class IRI="#Manifestation"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#AcuteManifestation"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasFrequency"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#AgentBasedModel"/>
+        <Class IRI="#Model"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Attribute"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Attribute"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasAttributeValue"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Attribute"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefToSNOMED"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Attribute"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#hasName"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Attribute"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#BernoulliDistributionExpression"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#BernoulliDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasProbabilityParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#BetaDistributionExpression"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#BetaDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasAlfaParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#BetaDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasBetaParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CalculatedParameter"/>
+        <Class IRI="#ParameterNature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CalculatedParameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#dependsOnAttribute"/>
+            <Class IRI="#Attribute"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CalculatedParameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#dependsOnParameter"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CalculatedParameter"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="#hasExpressionLanguage"/>
+            <Class IRI="#ExpressionLanguage"/>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CalculatedParameter"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#hasExpressionValue"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChronicManifestation"/>
+        <Class IRI="#Manifestation"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ChronicManifestation"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasInitialProportion"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ConditionExpression"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ConditionExpression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#dependsOnAttribute"/>
+            <Class IRI="#Attribute"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ConditionExpression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#dependsOnParameter"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ConditionExpression"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="#hasExpressionLanguage"/>
+            <Class IRI="#ExpressionLanguage"/>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ConditionExpression"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#hasExpressionValue"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Cost"/>
+        <Class IRI="#Parameter"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Cost"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="#hasDataItemType"/>
+            <Class IRI="#Currency"/>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Cost"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#appliesOneTime"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Currency"/>
+        <Class IRI="#MeasuredDataItemType"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Currency"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasRefToWikidata"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DataItemType"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DataItemType"/>
+        <DataMinCardinality cardinality="1">
+            <DataProperty IRI="#hasName"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DataItemType"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasRefToSTATO"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DecisionTreeModel"/>
+        <Class IRI="#Model"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionIntervention"/>
+        <Class IRI="#Intervention"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionIntervention"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasSensitivity"/>
+            <ObjectHasValue>
+                <ObjectProperty IRI="#hasDataItemType"/>
+                <NamedIndividual IRI="#DI_Sensitivity"/>
+            </ObjectHasValue>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionIntervention"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasSpecificity"/>
+            <ObjectHasValue>
+                <ObjectProperty IRI="#hasDataItemType"/>
+                <NamedIndividual IRI="#DI_Specificity"/>
+            </ObjectHasValue>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionStrategy"/>
+        <Class IRI="#Strategy"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionStrategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#DetectionStrategy"/>
+            </ObjectAllValuesFrom>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionStrategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasSensitivity"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionStrategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasSpecificity"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DeterministicParameter"/>
+        <Class IRI="#ParameterNature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DeterministicParameter"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#hasExpectedValue"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Development"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Development"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasConditionExpression"/>
+            <Class IRI="#ConditionExpression"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Development"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Development"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasLifeExpectancy"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Development"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasManifestation"/>
+            <Class IRI="#Manifestation"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Development"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasStage"/>
+            <Class IRI="#Stage"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Development"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUtility"/>
+            <Class IRI="#Utility"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Development"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DevelopmentPathway"/>
+        <Class IRI="#Pathway"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiagnosisIntervention"/>
+        <Class IRI="#DetectionIntervention"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiagnosisIntervention"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#hasDiagnosisStrategy"/>
+            <Class IRI="#DiagnosisStrategy"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiagnosisStrategy"/>
+        <Class IRI="#DetectionStrategy"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiagnosisStrategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#DiagnosisStrategy"/>
+            </ObjectAllValuesFrom>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiscreteEventSimulationModel"/>
+        <Class IRI="#Model"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasAttributeValue"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasDevelopment"/>
+            <Class IRI="#Development"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasDiagnosisCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasDiagnosisStrategy"/>
+            <Class IRI="#DiagnosisStrategy"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasEpidemiologicalParameter"/>
+            <Class IRI="#EpidemiologicalParameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasFollowUpCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasFollowUpStrategy"/>
+            <Class IRI="#FollowUpStrategy"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasIntervention"/>
+            <Class IRI="#Intervention"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasLifeExpectancy"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasLineOfTherapy"/>
+            <Class IRI="#LineOfTherapy"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasManifestation"/>
+            <Class IRI="#Manifestation"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasParameter"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasScreeningStrategy"/>
+            <Class IRI="#ScreeningStrategy"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasStage"/>
+            <Class IRI="#Stage"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasTreatmentCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUtility"/>
+            <Class IRI="#Utility"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefToDO"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefToICD"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefToOMIM"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefToSNOMED"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Disease"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseasePathway"/>
+        <Class IRI="#Pathway"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasDuration"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasEndAge"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasIncreasedMortalityRate"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasLifeExpectancyReduction"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasOnsetAge"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasProbabilityOfDeath"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasProbabilityOfDiagnosis"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasRiskCharacterization"/>
+            <ObjectUnionOf>
+                <Class IRI="#Parameter"/>
+                <Class IRI="#Pathway"/>
+            </ObjectUnionOf>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUtility"/>
+            <Class IRI="#Utility"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefToICD"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgressionPathway"/>
+        <Class IRI="#Pathway"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgressionPathway"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#requires"/>
+            <Class IRI="#Development"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgressionPathway"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#requires"/>
+            <Class IRI="#DiseaseProgression"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiseaseProgressionPathway"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#requires"/>
+            <Class IRI="#Intervention"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Drug"/>
+        <Class IRI="#HealthTechnology"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Drug"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasGuideline"/>
+            <Class IRI="#Guideline"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#EpidemiologicalParameter"/>
+        <Class IRI="#Parameter"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#EpidemiologicalParameter"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#isTrueEpidemiologicalParameterEstimate"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ExponentialDistributionExpression"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ExponentialDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasLambdaParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FirstOrderUncertaintyParameter"/>
+        <Class IRI="#ParameterNature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FirstOrderUncertaintyParameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUncertaintyCharacterization"/>
+            <ObjectUnionOf>
+                <Class IRI="#Parameter"/>
+                <Class IRI="#ProbabilityDistributionExpression"/>
+            </ObjectUnionOf>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FollowUpStrategy"/>
+        <Class IRI="#Strategy"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FollowUpStrategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#FollowUpStrategy"/>
+            </ObjectAllValuesFrom>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FollowUpStrategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasGuideline"/>
+            <Class IRI="#Guideline"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FollowUpStrategy"/>
+        <ObjectAllValuesFrom>
+            <ObjectProperty IRI="#usesHealthTechnology"/>
+            <Class IRI="#FollowUpTest"/>
+        </ObjectAllValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FollowUpTest"/>
+        <Class IRI="#HealthTechnology"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FollowUpTest"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasGuideline"/>
+            <Class IRI="#Guideline"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GammaDistributionExpression"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GammaDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasAlfaParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GammaDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasLambdaParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Group"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Group"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasComponent"/>
+            <Class IRI="#GroupableModelItem"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Group"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GroupableModelItem"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GroupableModelItem"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <Class IRI="#Group"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Guideline"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Guideline"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasConditionExpression"/>
+            <Class IRI="#ConditionExpression"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Guideline"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasGuideline"/>
+            <Class IRI="#Guideline"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Guideline"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#hasDose"/>
+            <Class IRI="#Parameter"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Guideline"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#hasFrequency"/>
+            <Class IRI="#Parameter"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Guideline"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#hasRange"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Guideline"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Guideline"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasHoursInterval"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#HealthTechnology"/>
+        <Class IRI="#GroupableModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#HealthTechnology"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#HealthTechnology"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#HealthTechnology"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasProportionWithinGroup"/>
+            <Class IRI="#Group"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#HealthTechnology"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Intervention"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Intervention"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Intervention"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUtility"/>
+            <Class IRI="#Utility"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Intervention"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#involvesModification"/>
+            <ObjectMinCardinality cardinality="1">
+                <ObjectProperty IRI="#modifies"/>
+                <Class IRI="#Parameter"/>
+            </ObjectMinCardinality>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Intervention"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#LineOfTherapy"/>
+        <Class IRI="#Strategy"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#LineOfTherapy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#LineOfTherapy"/>
+            </ObjectAllValuesFrom>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#LineOfTherapy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasGuideline"/>
+            <Class IRI="#Guideline"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#LineOfTherapy"/>
+        <ObjectAllValuesFrom>
+            <ObjectProperty IRI="#usesHealthTechnology"/>
+            <ObjectUnionOf>
+                <Class IRI="#Drug"/>
+                <Class IRI="#Treatment"/>
+            </ObjectUnionOf>
+        </ObjectAllValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#LineOfTherapy"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#failsIf"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Manifestation"/>
+        <Class IRI="#DiseaseProgression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Manifestation"/>
+        <Class IRI="#GroupableModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Manifestation"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#Manifestation"/>
+            </ObjectAllValuesFrom>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Manifestation"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#excludesManifestation"/>
+            <Class IRI="#Manifestation"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#MarkovModel"/>
+        <Class IRI="#Model"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#MeasuredDataItemType"/>
+        <Class IRI="#DataItemType"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#MeasuredDataItemType"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#hasUnit"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Model"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#usesSameModelItemsAs"/>
+            <Class IRI="#Model"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Model"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasAuthor"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Model"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasGeographicalContext"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Model"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefTo"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Model"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasYear"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Model"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#hasDisutilityCombinationMethod"/>
+            <DataOneOf>
+                <Literal>ADD</Literal>
+                <Literal>MAX</Literal>
+            </DataOneOf>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Model"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ModelItem"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#includedByModel"/>
+            <Class IRI="#Model"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#NormalDistributionExpression"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#isModifiedBy"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#isParameterOfDisease"/>
+            <Class IRI="#Disease"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#isParameterOfManifestation"/>
+            <Class IRI="#Manifestation"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#isParameterOfPopulation"/>
+            <Class IRI="#Population"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#modifies"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="#hasDataItemType"/>
+            <Class IRI="#DataItemType"/>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#isValueOfAttribute"/>
+            <Class IRI="#Attribute"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasGeographicalContext"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasSource"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Parameter"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasYear"/>
+            <Datatype abbreviatedIRI="xsd:short"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ParameterNature"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Pathway"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Pathway"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasConditionExpression"/>
+            <Class IRI="#ConditionExpression"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Pathway"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Pathway"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasRiskCharacterization"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Pathway"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUtility"/>
+            <Class IRI="#Utility"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#PoissonDistributionExpression"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#PoissonDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasLambdaParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasAttributeValue"/>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="#isValueOfAttribute"/>
+                <Class IRI="#Attribute"/>
+            </ObjectExactCardinality>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasEpidemiologicalParameter"/>
+            <Class IRI="#EpidemiologicalParameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasInitialProportion"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasLifeExpectancy"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasParameter"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasSubpopulation"/>
+            <Class IRI="#Population"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUtility"/>
+            <Class IRI="#Utility"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="#hasAge"/>
+            <ObjectHasValue>
+                <ObjectProperty IRI="#isValueOfAttribute"/>
+                <NamedIndividual IRI="#Attribute_Age"/>
+            </ObjectHasValue>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="#hasSex"/>
+            <ObjectHasValue>
+                <ObjectProperty IRI="#isValueOfAttribute"/>
+                <NamedIndividual IRI="#Attribute_Sex"/>
+            </ObjectHasValue>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#isSubpopulationOf"/>
+            <Class IRI="#Population"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasGeographicalContext"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasYear"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasMaxAge"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasMinAge"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Population"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasSize"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasAverageParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasOffsetParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasScaleParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasStandardDeviationParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ProportionWithinGroup"/>
+        <Class IRI="#Parameter"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ProportionWithinGroup"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <Class IRI="#Group"/>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#RareDisease"/>
+        <Class IRI="#Disease"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#RareDisease"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefToGARD"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#RareDisease"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="#hasRefToORDO"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ScreeningIntervention"/>
+        <Class IRI="#DetectionIntervention"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ScreeningIntervention"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#hasDiagnosisStrategy"/>
+            <Class IRI="#DiagnosisStrategy"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ScreeningIntervention"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#hasScreeningStrategy"/>
+            <Class IRI="#ScreeningStrategy"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ScreeningStrategy"/>
+        <Class IRI="#DetectionStrategy"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ScreeningStrategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#ScreeningStrategy"/>
+            </ObjectAllValuesFrom>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ScreeningStrategy"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#hasTemporaryThreshold"/>
+            <Class IRI="#Parameter"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#SecondOrderUncertaintyParameter"/>
+        <Class IRI="#ParameterNature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#SecondOrderUncertaintyParameter"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUncertaintyCharacterization"/>
+            <ObjectUnionOf>
+                <Class IRI="#Parameter"/>
+                <Class IRI="#ProbabilityDistributionExpression"/>
+            </ObjectUnionOf>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#SecondOrderUncertaintyParameter"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasExpectedValue"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Stage"/>
+        <Class IRI="#DiseaseProgression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Stage"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasInitialProportion"/>
+            <Class IRI="#Parameter"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Stage"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasManifestation"/>
+            <Class IRI="#Manifestation"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <Class IRI="#GroupableModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <Class IRI="#ModelItem"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#belongsToGroup"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#Strategy"/>
+            </ObjectAllValuesFrom>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#followedByStrategy"/>
+            <ObjectUnionOf>
+                <Class IRI="#Strategy"/>
+                <ObjectAllValuesFrom>
+                    <ObjectProperty IRI="#hasComponent"/>
+                    <Class IRI="#Strategy"/>
+                </ObjectAllValuesFrom>
+            </ObjectUnionOf>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasConditionExpression"/>
+            <Class IRI="#ConditionExpression"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasCost"/>
+            <Class IRI="#Cost"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasProportionWithinGroup"/>
+            <Class IRI="#Group"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasUtility"/>
+            <Class IRI="#Utility"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Strategy"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasDescription"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#TherapeuticIntervention"/>
+        <Class IRI="#Intervention"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#TherapeuticIntervention"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#hasFollowUpStrategy"/>
+            <Class IRI="#FollowUpStrategy"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#TherapeuticIntervention"/>
+        <ObjectMaxCardinality cardinality="1">
+            <ObjectProperty IRI="#hasLineOfTherapy"/>
+            <Class IRI="#LineOfTherapy"/>
+        </ObjectMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Treatment"/>
+        <Class IRI="#HealthTechnology"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Treatment"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#hasGuideline"/>
+            <Class IRI="#Guideline"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#UniformDistributionExpression"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#UniformDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasLowerLimitParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#UniformDistributionExpression"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasUpperLimitParameter"/>
+            <Datatype abbreviatedIRI="xsd:double"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Utility"/>
+        <Class IRI="#Parameter"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Utility"/>
+        <DataExactCardinality cardinality="1">
+            <DataProperty IRI="#appliesOneTime"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Utility"/>
+        <DataMaxCardinality cardinality="1">
+            <DataProperty IRI="#hasCalculationMethod"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataMaxCardinality>
+    </SubClassOf>
+    <DisjointClasses>
+        <Class IRI="#DiagnosisIntervention"/>
+        <Class IRI="#ScreeningIntervention"/>
+    </DisjointClasses>
+    <ClassAssertion>
+        <Class IRI="#Attribute"/>
+        <NamedIndividual IRI="#Attribute_Age"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Attribute"/>
+        <NamedIndividual IRI="#Attribute_LifeExpectancy"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Attribute"/>
+        <NamedIndividual IRI="#Attribute_Sex"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DeterministicParameter"/>
+        <NamedIndividual IRI="#Constant_Incidence1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#EpidemiologicalParameter"/>
+        <NamedIndividual IRI="#Constant_Incidence1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DeterministicParameter"/>
+        <NamedIndividual IRI="#Constant_Prevalence1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#EpidemiologicalParameter"/>
+        <NamedIndividual IRI="#Constant_Prevalence1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DeterministicParameter"/>
+        <NamedIndividual IRI="#Constant_Probability0"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Parameter"/>
+        <NamedIndividual IRI="#Constant_Probability0"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DeterministicParameter"/>
+        <NamedIndividual IRI="#Constant_Probability1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Parameter"/>
+        <NamedIndividual IRI="#Constant_Probability1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DeterministicParameter"/>
+        <NamedIndividual IRI="#Constant_Sensitivity1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Parameter"/>
+        <NamedIndividual IRI="#Constant_Sensitivity1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DeterministicParameter"/>
+        <NamedIndividual IRI="#Constant_Specificity1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Parameter"/>
+        <NamedIndividual IRI="#Constant_Specificity1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Currency"/>
+        <NamedIndividual IRI="#Currency_Dollar"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Currency"/>
+        <NamedIndividual IRI="#Currency_Euro"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Currency"/>
+        <NamedIndividual IRI="#Currency_Pound"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_BirthPrevalence"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Continuous_Variable"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Count"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Disutility"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Factor"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Incidence"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Lower95ConfidenceLimit"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_MeanDifference"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Other"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Prevalence"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Probability"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Proportion"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Ratio"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_RelativeRisk"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Sensitivity"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Specificity"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_StandardDeviation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#MeasuredDataItemType"/>
+        <NamedIndividual IRI="#DI_TimeToEvent"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Upper95ConfidenceLimit"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DataItemType"/>
+        <NamedIndividual IRI="#DI_Utility"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#ExpressionLanguage"/>
+        <NamedIndividual IRI="#Exp_Excel"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#ExpressionLanguage"/>
+        <NamedIndividual IRI="#Exp_JEXL"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#ExpressionLanguage"/>
+        <NamedIndividual IRI="#Exp_Java"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#ExpressionLanguage"/>
+        <NamedIndividual IRI="#Exp_Javaluator"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Guideline"/>
+        <NamedIndividual IRI="#GuidelineLifetimeAnual"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Intervention"/>
+        <NamedIndividual IRI="#InterventionDoNothing"/>
+    </ClassAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasDataItemType"/>
+        <NamedIndividual IRI="#Constant_Incidence1"/>
+        <NamedIndividual IRI="#DI_Incidence"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasDataItemType"/>
+        <NamedIndividual IRI="#Constant_Prevalence1"/>
+        <NamedIndividual IRI="#DI_Prevalence"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasDataItemType"/>
+        <NamedIndividual IRI="#Constant_Probability0"/>
+        <NamedIndividual IRI="#DI_Probability"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasDataItemType"/>
+        <NamedIndividual IRI="#Constant_Probability1"/>
+        <NamedIndividual IRI="#DI_Probability"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasDataItemType"/>
+        <NamedIndividual IRI="#Constant_Sensitivity1"/>
+        <NamedIndividual IRI="#DI_Sensitivity"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasDataItemType"/>
+        <NamedIndividual IRI="#Constant_Specificity1"/>
+        <NamedIndividual IRI="#DI_Specificity"/>
+    </ObjectPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#Attribute_Age"/>
+        <Literal>The age of an individual (in years)</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#Attribute_Age"/>
+        <Literal>AGE</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSNOMED"/>
+        <NamedIndividual IRI="#Attribute_Age"/>
+        <Literal>snomed:397669002</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#Attribute_LifeExpectancy"/>
+        <Literal>Maximum life expectacy of an individual</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#Attribute_LifeExpectancy"/>
+        <Literal>LIFE_EXPECTANCY</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#Attribute_Sex"/>
+        <Literal>Sex (0 for male; 1 for female)</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#Attribute_Sex"/>
+        <Literal>SEX</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSNOMED"/>
+        <NamedIndividual IRI="#Attribute_Sex"/>
+        <Literal>snomed:734000001</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasExpectedValue"/>
+        <NamedIndividual IRI="#Constant_Incidence1"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#isTrueEpidemiologicalParameterEstimate"/>
+        <NamedIndividual IRI="#Constant_Incidence1"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">true</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasExpectedValue"/>
+        <NamedIndividual IRI="#Constant_Prevalence1"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#isTrueEpidemiologicalParameterEstimate"/>
+        <NamedIndividual IRI="#Constant_Prevalence1"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">true</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasExpectedValue"/>
+        <NamedIndividual IRI="#Constant_Probability0"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasExpectedValue"/>
+        <NamedIndividual IRI="#Constant_Probability1"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasExpectedValue"/>
+        <NamedIndividual IRI="#Constant_Sensitivity1"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasExpectedValue"/>
+        <NamedIndividual IRI="#Constant_Specificity1"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#Currency_Dollar"/>
+        <Literal>Official currency of the USA</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#Currency_Dollar"/>
+        <Literal>Dollar</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToWikidata"/>
+        <NamedIndividual IRI="#Currency_Dollar"/>
+        <Literal>wiki:Q14083</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasUnit"/>
+        <NamedIndividual IRI="#Currency_Dollar"/>
+        <Literal>$</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#Currency_Euro"/>
+        <Literal>Official currency of the E. U.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#Currency_Euro"/>
+        <Literal>Euro</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToWikidata"/>
+        <NamedIndividual IRI="#Currency_Euro"/>
+        <Literal>wiki:Q4916</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasUnit"/>
+        <NamedIndividual IRI="#Currency_Euro"/>
+        <Literal>\u20ac</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#Currency_Pound"/>
+        <Literal>Official currency of the United Kingdom</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#Currency_Pound"/>
+        <Literal>Pound sterling</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToWikidata"/>
+        <NamedIndividual IRI="#Currency_Pound"/>
+        <Literal>wiki:Q25224</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasUnit"/>
+        <NamedIndividual IRI="#Currency_Pound"/>
+        <Literal>\u00a3</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_BirthPrevalence"/>
+        <Literal>The proportion of a birth year cohort that has certain condition</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_BirthPrevalence"/>
+        <Literal>Birth prevalence</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Continuous_Variable"/>
+        <Literal>A data item that can take any value in a continuous range</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Continuous_Variable"/>
+        <Literal>Continuous variable</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Continuous_Variable"/>
+        <Literal>stato:0000251</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Count"/>
+        <Literal>A discrete accounting of the appearance of certain event or outcome in a population</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Count"/>
+        <Literal>Count</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Count"/>
+        <Literal>stato:0000047</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Disutility"/>
+        <Literal>Decrement in utility (valued quality of life) due to a particular symptom or complication</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Disutility"/>
+        <Literal>Disutility</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Incidence"/>
+        <Literal>The ratio of the number of new cases of a disease/manifestation/stage divided by the number of persons at risk for the disease/manifestation/stage</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Incidence"/>
+        <Literal>Incidence</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Incidence"/>
+        <Literal>stato:0000413</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Lower95ConfidenceLimit"/>
+        <Literal>Lower limit for a 95% Confidence interval</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Lower95ConfidenceLimit"/>
+        <Literal>Lower 95% CI limit</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Lower95ConfidenceLimit"/>
+        <Literal>stato:0000315</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Other"/>
+        <Literal>A data item type not explicitly defined in the ontology</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Prevalence"/>
+        <Literal>The rratio formed by the number of subjects diagnosed with a disease or presenting certain disease progression divided by the total population size.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Prevalence"/>
+        <Literal>Prevalence</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Prevalence"/>
+        <Literal>stato:0000412</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Probability"/>
+        <Literal>Probability of certain event</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Probability"/>
+        <Literal>Probability</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Proportion"/>
+        <Literal>The fraction of population that has certain characteristic or event</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Proportion"/>
+        <Literal>Proportion</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Proportion"/>
+        <Literal>stato:0000423</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Ratio"/>
+        <Literal>A data item which is the quotient or r/s</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Ratio"/>
+        <Literal>Ratio</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Ratio"/>
+        <Literal>stato:0000184</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Sensitivity"/>
+        <Literal>The probability of a positive test result, conditioned on the individual truly being positive</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Sensitivity"/>
+        <Literal>Sensitivity</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Sensitivity"/>
+        <Literal>stato:0000233</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Specificity"/>
+        <Literal>The probability of a negative test result, conditioned on the individual truly being negative</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Specificity"/>
+        <Literal>Specificity</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Specificity"/>
+        <Literal>stato:0000134</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_StandardDeviation"/>
+        <Literal>A measure of variation which correspond to the average distance from the mean of the data set to any given point of that dataset</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_StandardDeviation"/>
+        <Literal>Standard deviation</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_StandardDeviation"/>
+        <Literal>stato:0000237</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_TimeToEvent"/>
+        <Literal>A scalar measument of the time interval until certain event happens</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_TimeToEvent"/>
+        <Literal>Time to event</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_TimeToEvent"/>
+        <Literal>stato:0000416</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Upper95ConfidenceLimit"/>
+        <Literal>Upper limit for a 95% Confidence interval</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Upper95ConfidenceLimit"/>
+        <Literal>Upper 95% CI limit</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <NamedIndividual IRI="#DI_Upper95ConfidenceLimit"/>
+        <Literal>stato:0000314</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#DI_Utility"/>
+        <Literal>The strength of individuals&apos; preferences for different health states</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasName"/>
+        <NamedIndividual IRI="#DI_Utility"/>
+        <Literal>Utility</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#REMOVEhasFrequency"/>
+        <NamedIndividual IRI="#GuidelineLifetimeAnual"/>
+        <Literal>1y</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasRange"/>
+        <NamedIndividual IRI="#GuidelineLifetimeAnual"/>
+        <Literal>0y-*</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasDescription"/>
+        <NamedIndividual IRI="#InterventionDoNothing"/>
+        <Literal>A null intervention that has no effect on the patient</Literal>
+    </DataPropertyAssertion>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasAge"/>
+        <ObjectProperty IRI="#hasAttributeValue"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasCost"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasDiagnosisCost"/>
+        <ObjectProperty IRI="#hasCost"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasDiagnosisStrategy"/>
+        <ObjectProperty IRI="#hasStrategy"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasDose"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasDuration"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasEndAge"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasEpidemiologicalParameter"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasFollowUpCost"/>
+        <ObjectProperty IRI="#hasCost"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasFollowUpStrategy"/>
+        <ObjectProperty IRI="#hasStrategy"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasFrequency"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasIncreasedMortalityRate"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasInitialProportion"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasLifeExpectancy"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasLifeExpectancyReduction"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasLineOfTherapy"/>
+        <ObjectProperty IRI="#hasStrategy"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasNaturalDevelopment"/>
+        <ObjectProperty IRI="#hasDevelopment"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasOnsetAge"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasProbabilityOfDeath"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasProbabilityOfDiagnosis"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasProportionWithinGroup"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasRiskCharacterization"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasScreeningStrategy"/>
+        <ObjectProperty IRI="#hasStrategy"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasSensitivity"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasSex"/>
+        <ObjectProperty IRI="#hasAttributeValue"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasSpecificity"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasTemporaryThreshold"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasTreatmentCost"/>
+        <ObjectProperty IRI="#hasCost"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasUtility"/>
+        <ObjectProperty IRI="#hasParameter"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#isParameterOfDisease"/>
+        <ObjectProperty IRI="#isParameterOf"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#isParameterOfManifestation"/>
+        <ObjectProperty IRI="#isParameterOf"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#isParameterOfPopulation"/>
+        <ObjectProperty IRI="#isParameterOf"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#usesDrug"/>
+        <ObjectProperty IRI="#usesHealthTechnology"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#usesFollowUpTest"/>
+        <ObjectProperty IRI="#usesHealthTechnology"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#usesTreatment"/>
+        <ObjectProperty IRI="#usesHealthTechnology"/>
+    </SubObjectPropertyOf>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#belongsToGroup"/>
+        <ObjectProperty IRI="#hasComponent"/>
+    </InverseObjectProperties>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#hasParameter"/>
+        <ObjectProperty IRI="#isParameterOf"/>
+    </InverseObjectProperties>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#hasSubpopulation"/>
+        <ObjectProperty IRI="#isSubpopulationOf"/>
+    </InverseObjectProperties>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#hasValue"/>
+        <ObjectProperty IRI="#isValueOfAttribute"/>
+    </InverseObjectProperties>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#includedByModel"/>
+        <ObjectProperty IRI="#includesModelItem"/>
+    </InverseObjectProperties>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#isModifiedBy"/>
+        <ObjectProperty IRI="#modifies"/>
+    </InverseObjectProperties>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#belongsToGroup"/>
+        <ObjectUnionOf>
+            <Class IRI="#GroupableModelItem"/>
+            <Class IRI="#ProportionWithinGroup"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#dependsOnAttribute"/>
+        <Class IRI="#CalculatedParameter"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#dependsOnParameter"/>
+        <Class IRI="#CalculatedParameter"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#excludesManifestation"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#followedByStrategy"/>
+        <Class IRI="#Strategy"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasAge"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasAttributeValue"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#Population"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasComponent"/>
+        <Class IRI="#Group"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasConditionExpression"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Guideline"/>
+            <Class IRI="#Pathway"/>
+            <Class IRI="#Strategy"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasCost"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#HealthTechnology"/>
+            <Class IRI="#Intervention"/>
+            <Class IRI="#Manifestation"/>
+            <Class IRI="#Stage"/>
+            <Class IRI="#Strategy"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasDataItemType"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasDevelopment"/>
+        <Class IRI="#Disease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasDiagnosisCost"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasDiagnosisStrategy"/>
+        <ObjectUnionOf>
+            <Class IRI="#DiagnosisIntervention"/>
+            <Class IRI="#DiagnosisStrategy"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#ScreeningStrategy"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasDose"/>
+        <Class IRI="#Guideline"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasDuration"/>
+        <Class IRI="#DiseaseProgression"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasEndAge"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasEpidemiologicalParameter"/>
+        <Class IRI="#Disease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasEpidemiologicalParameter"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasExpressionLanguage"/>
+        <Class IRI="#CalculatedParameter"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasFollowUpCost"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#Manifestation"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasFollowUpStrategy"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#FollowUpStrategy"/>
+            <Class IRI="#LineOfTherapy"/>
+            <Class IRI="#Manifestation"/>
+            <Class IRI="#TherapeuticIntervention"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasFrequency"/>
+        <ObjectUnionOf>
+            <Class IRI="#AcuteManifestation"/>
+            <Class IRI="#Guideline"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasGuideline"/>
+        <ObjectUnionOf>
+            <Class IRI="#Drug"/>
+            <Class IRI="#FollowUpStrategy"/>
+            <Class IRI="#FollowUpTest"/>
+            <Class IRI="#LineOfTherapy"/>
+            <Class IRI="#Treatment"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasIncreasedMortalityRate"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasInitialProportion"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasInitialProportion"/>
+        <ObjectUnionOf>
+            <Class IRI="#ChronicManifestation"/>
+            <Class IRI="#Stage"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasIntervention"/>
+        <Class IRI="#Disease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasLifeExpectancy"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#Population"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasLifeExpectancyReduction"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasLineOfTherapy"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#LineOfTherapy"/>
+            <Class IRI="#Manifestation"/>
+            <Class IRI="#TherapeuticIntervention"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasManifestation"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#Stage"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasOnsetAge"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasProbabilityOfDeath"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasProbabilityOfDiagnosis"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasProportionWithinGroup"/>
+        <Class IRI="#GroupableModelItem"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasRiskCharacterization"/>
+        <Class IRI="#DiseaseProgression"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasScreeningStrategy"/>
+        <ObjectUnionOf>
+            <Class IRI="#Disease"/>
+            <Class IRI="#ScreeningIntervention"/>
+            <Class IRI="#ScreeningStrategy"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasSensitivity"/>
+        <ObjectUnionOf>
+            <Class IRI="#DetectionIntervention"/>
+            <Class IRI="#DetectionStrategy"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasSex"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasSpecificity"/>
+        <ObjectUnionOf>
+            <Class IRI="#DetectionIntervention"/>
+            <Class IRI="#DetectionStrategy"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasStage"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasSubpopulation"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasTreatmentCost"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#Manifestation"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasUncertaintyCharacterization"/>
+        <ObjectUnionOf>
+            <Class IRI="#FirstOrderUncertaintyParameter"/>
+            <Class IRI="#SecondOrderUncertaintyParameter"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasUtility"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Disease"/>
+            <Class IRI="#Guideline"/>
+            <Class IRI="#Intervention"/>
+            <Class IRI="#Manifestation"/>
+            <Class IRI="#Population"/>
+            <Class IRI="#Stage"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasValue"/>
+        <Class IRI="#Attribute"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#includedByModel"/>
+        <Class IRI="#ModelItem"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#includesModelItem"/>
+        <Class IRI="#Model"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#involvesModification"/>
+        <Class IRI="#Intervention"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#isModifiedBy"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#isParameterOf"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#isSubpopulationOf"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#isValueOfAttribute"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#modifies"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#requires"/>
+        <Class IRI="#DiseaseProgressionPathway"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#usesDrug"/>
+        <Class IRI="#LineOfTherapy"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#usesFollowUpTest"/>
+        <Class IRI="#FollowUpStrategy"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#usesSameModelItemsAs"/>
+        <Class IRI="#Model"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#usesTreatment"/>
+        <Class IRI="#LineOfTherapy"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#belongsToGroup"/>
+        <Class IRI="#Group"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#dependsOnAttribute"/>
+        <Class IRI="#Attribute"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#dependsOnParameter"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#excludesManifestation"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#followedByStrategy"/>
+        <Class IRI="#Strategy"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasAge"/>
+        <ObjectHasValue>
+            <ObjectProperty IRI="#isValueOfAttribute"/>
+            <NamedIndividual IRI="#Attribute_Age"/>
+        </ObjectHasValue>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasAttributeValue"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasComponent"/>
+        <Class IRI="#GroupableModelItem"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasConditionExpression"/>
+        <Class IRI="#ConditionExpression"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasCost"/>
+        <Class IRI="#Cost"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasDataItemType"/>
+        <Class IRI="#DataItemType"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasDevelopment"/>
+        <Class IRI="#Development"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasDiagnosisCost"/>
+        <Class IRI="#Cost"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasDiagnosisStrategy"/>
+        <ObjectUnionOf>
+            <Class IRI="#DiagnosisStrategy"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#DiagnosisStrategy"/>
+            </ObjectAllValuesFrom>
+        </ObjectUnionOf>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasDose"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasDuration"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasEndAge"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasEpidemiologicalParameter"/>
+        <Class IRI="#EpidemiologicalParameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasExpressionLanguage"/>
+        <Class IRI="#ExpressionLanguage"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasFollowUpCost"/>
+        <Class IRI="#Cost"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasFollowUpStrategy"/>
+        <ObjectUnionOf>
+            <Class IRI="#FollowUpStrategy"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#FollowUpStrategy"/>
+            </ObjectAllValuesFrom>
+        </ObjectUnionOf>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasFrequency"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasGuideline"/>
+        <Class IRI="#Guideline"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasIncreasedMortalityRate"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasInitialProportion"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasIntervention"/>
+        <Class IRI="#Intervention"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasLifeExpectancy"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasLifeExpectancyReduction"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasLineOfTherapy"/>
+        <ObjectUnionOf>
+            <Class IRI="#LineOfTherapy"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#LineOfTherapy"/>
+            </ObjectAllValuesFrom>
+        </ObjectUnionOf>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasManifestation"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasOnsetAge"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasProbabilityOfDeath"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasProbabilityOfDiagnosis"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasProportionWithinGroup"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasRiskCharacterization"/>
+        <ObjectUnionOf>
+            <Class IRI="#Parameter"/>
+            <Class IRI="#Pathway"/>
+        </ObjectUnionOf>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasScreeningStrategy"/>
+        <ObjectUnionOf>
+            <Class IRI="#ScreeningStrategy"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasComponent"/>
+                <Class IRI="#ScreeningStrategy"/>
+            </ObjectAllValuesFrom>
+        </ObjectUnionOf>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasSensitivity"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasSex"/>
+        <ObjectHasValue>
+            <ObjectProperty IRI="#isValueOfAttribute"/>
+            <NamedIndividual IRI="#Attribute_Sex"/>
+        </ObjectHasValue>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasSpecificity"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasStage"/>
+        <Class IRI="#Stage"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasSubpopulation"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasTreatmentCost"/>
+        <Class IRI="#Cost"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasUncertaintyCharacterization"/>
+        <ObjectUnionOf>
+            <Class IRI="#Parameter"/>
+            <Class IRI="#ProbabilityDistributionExpression"/>
+        </ObjectUnionOf>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasUtility"/>
+        <Class IRI="#Utility"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasValue"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#includedByModel"/>
+        <Class IRI="#Model"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#includesModelItem"/>
+        <Class IRI="#ModelItem"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#involvesModification"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#isModifiedBy"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#isParameterOfDisease"/>
+        <Class IRI="#Disease"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#isParameterOfManifestation"/>
+        <Class IRI="#Manifestation"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#isParameterOfPopulation"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#isSubpopulationOf"/>
+        <Class IRI="#Population"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#isValueOfAttribute"/>
+        <Class IRI="#Attribute"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#modifies"/>
+        <Class IRI="#Parameter"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#requires"/>
+        <ObjectUnionOf>
+            <Class IRI="#Development"/>
+            <Class IRI="#Intervention"/>
+            <Class IRI="#Manifestation"/>
+            <Class IRI="#Stage"/>
+        </ObjectUnionOf>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#usesDrug"/>
+        <Class IRI="#Drug"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#usesFollowUpTest"/>
+        <Class IRI="#FollowUpTest"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#usesSameModelItemsAs"/>
+        <Class IRI="#Model"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#usesTreatment"/>
+        <Class IRI="#Treatment"/>
+    </ObjectPropertyRange>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasAlfaParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasAverageParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasBetaParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasExpectedValue"/>
+        <DataProperty abbreviatedIRI="owl:topDataProperty"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasLambdaParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasLowerLimitParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasMaxAge"/>
+        <DataProperty abbreviatedIRI="owl:topDataProperty"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasMinAge"/>
+        <DataProperty abbreviatedIRI="owl:topDataProperty"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasOffsetParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasProbabilityParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasRefToDO"/>
+        <DataProperty IRI="#hasRefTo"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasRefToGARD"/>
+        <DataProperty IRI="#hasRefTo"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasRefToICD"/>
+        <DataProperty IRI="#hasRefTo"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasRefToOMIM"/>
+        <DataProperty IRI="#hasRefTo"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasRefToORDO"/>
+        <DataProperty IRI="#hasRefTo"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasRefToSNOMED"/>
+        <DataProperty IRI="#hasRefTo"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasRefToSTATO"/>
+        <DataProperty IRI="#hasRefTo"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasRefToWikidata"/>
+        <DataProperty IRI="#hasRefTo"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasScaleParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasStandardDeviationParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <SubDataPropertyOf>
+        <DataProperty IRI="#hasUpperLimitParameter"/>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+    </SubDataPropertyOf>
+    <DataPropertyDomain>
+        <DataProperty IRI="#appliesOneTime"/>
+        <ObjectUnionOf>
+            <Class IRI="#Cost"/>
+            <Class IRI="#Utility"/>
+        </ObjectUnionOf>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasAlfaParameter"/>
+        <Class IRI="#BetaDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasAuthor"/>
+        <Class IRI="#Model"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasAverageParameter"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasBetaParameter"/>
+        <Class IRI="#BetaDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasCalculationMethod"/>
+        <Class IRI="#Utility"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasDisutilityCombinationMethod"/>
+        <Class IRI="#Model"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasExpressionValue"/>
+        <Class IRI="#CalculatedParameter"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasGeographicalContext"/>
+        <ObjectUnionOf>
+            <Class IRI="#Model"/>
+            <Class IRI="#Parameter"/>
+            <Class IRI="#Population"/>
+        </ObjectUnionOf>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasLambdaParameter"/>
+        <ObjectUnionOf>
+            <Class IRI="#ExponentialDistributionExpression"/>
+            <Class IRI="#PoissonDistributionExpression"/>
+        </ObjectUnionOf>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasLowerLimitParameter"/>
+        <Class IRI="#UniformDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasName"/>
+        <ObjectUnionOf>
+            <Class IRI="#Attribute"/>
+            <Class IRI="#DataItemType"/>
+        </ObjectUnionOf>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasOffsetParameter"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasProbabilityDistributionParameter"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasProbabilityParameter"/>
+        <Class IRI="#BernoulliDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasScaleParameter"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasSize"/>
+        <Class IRI="#Population"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasSource"/>
+        <Class IRI="#Parameter"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasStandardDeviationParameter"/>
+        <Class IRI="#ProbabilityDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasUnit"/>
+        <Class IRI="#MeasuredDataItemType"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#hasUpperLimitParameter"/>
+        <Class IRI="#UniformDistributionExpression"/>
+    </DataPropertyDomain>
+    <DataPropertyRange>
+        <DataProperty IRI="#appliesOneTime"/>
+        <Datatype abbreviatedIRI="xsd:boolean"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasAuthor"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasCalculationMethod"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasDisutilityCombinationMethod"/>
+        <DataOneOf>
+            <Literal>ADD</Literal>
+            <Literal>MAX</Literal>
+        </DataOneOf>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasExpressionValue"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasGeographicalContext"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasName"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasOffsetParameter"/>
+        <Datatype abbreviatedIRI="xsd:double"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasScaleParameter"/>
+        <Datatype abbreviatedIRI="xsd:double"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasSize"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasSource"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#hasUnit"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#isTrueEpidemiologicalParameterEstimate"/>
+        <Datatype abbreviatedIRI="xsd:boolean"/>
+    </DataPropertyRange>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPosition"/>
+        <IRI>#AcuteManifestation</IRI>
+        <AnonymousIndividual nodeID="_:genid2147483649"/>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPosition"/>
+        <IRI>#Attribute</IRI>
+        <AnonymousIndividual nodeID="_:genid2147483650"/>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Attribute</IRI>
+        <Literal>Clinical parameters that define the state of a patient and whose value may modify the evolution of the Disease and/or specific manifestations</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPosition"/>
+        <IRI>#ChronicManifestation</IRI>
+        <AnonymousIndividual nodeID="_:genid2147483651"/>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Cost</IRI>
+        <Literal>Cost related to any class</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPosition"/>
+        <IRI>#DataItemType</IRI>
+        <AnonymousIndividual nodeID="_:genid2147483652"/>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DetectionIntervention</IRI>
+        <Literal>An intervention intended to detect the presence of a disease or condition in a person</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Development</IRI>
+        <Literal>Certain progression of a Disease that comprises a specific set of manifestations or a set of pathways to such manifestations</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DiagnosisIntervention</IRI>
+        <Literal>An intervention intended to establish the presence/absence of certain disease or condition</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DiseaseProgressionPathway</IRI>
+        <Literal>The way a manifestation appears. It may be a probability, time to event, a proportion of people affected..., and it may change depending on the Development of the Disease or a specific Intervention</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Drug</IRI>
+        <Literal>A natural or synthetic remedy for a disease or manifestation</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#FollowUpTest</IRI>
+        <Literal>Tests performed to monitor the state of a patient</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Guideline</IRI>
+        <Literal>The way a treatment, drug, test... is applied. It defines a period of time (range), dose, frequency, etc.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#HealthTechnology</IRI>
+        <Literal>Any treatment, drug, test... that may be applied to a patient</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Intervention</IRI>
+        <Literal>Some kind of treatment, drug, surgical procedure... used to modify the development of a Disease</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Manifestation</IRI>
+        <Literal>Symptoms and signs of a Disease. They may be chronic or acute</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Parameter</IRI>
+        <Literal>Parameters used for computing outcomes or characterize certain class. They have a source, a geographical context, year, description and value.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ParameterNature</IRI>
+        <Literal xml:lang="en">The nature of the values of a parameter, i.e., whether it is a constant, calculated, or characterizes uncertainty somehow</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Pathway</IRI>
+        <Literal xml:lang="en">The way a disease, development, manifestation or stage appears, i.e., the conditions that must be met to lead to any of these.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#REMOVEhasFrequency</IRI>
+        <Literal>Indicates the time cycle of how often the treatment, the follow-up test or their respective strategies have to be applied. In the case of a manifestation of the disease, it will indicate how many times a year the symptom manifests itself. 
+
+By default = 1, for the Manifestations.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#RareDisease</IRI>
+        <Literal>A Disease with very low  prevalence</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ScreeningIntervention</IRI>
+        <Literal>An intervention to identifiy the subset of population who may have certain disease or condition and require further testing to obtain a final diagnosis</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ScreeningStrategy</IRI>
+        <Literal>A test used to identify persons potentially suffering a disease among a population</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPosition"/>
+        <IRI>#Stage</IRI>
+        <AnonymousIndividual nodeID="_:genid2147483648"/>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Stage</IRI>
+        <Literal>A phase or step in the progression of a disease</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Treatment</IRI>
+        <Literal>Any non-drug intervention used to treat a disease or manifestation</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#appliesOneTime</IRI>
+        <Literal xml:lang="en">Defines the temporal behavior of a parameter (generally a cost or utility): if true, applies upon onset of some model item (disease, disease progression...); otherwise, it is assumed to apply annually.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#dependsOnAttribute</IRI>
+        <Literal xml:lang="en">Defines a relationship between a Valuable instance and an Attribute, where the &quot;hasExpression&quot; of the domain instance makes reference to the range instance. Hence, the hasExpression property should include a reference to that attribute, so that the final value of this Valuable is a function of the value of this attribute.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#dependsOnParameter</IRI>
+        <Literal xml:lang="en">Defines a relationship between a Valuable instance and a Parameter, where the &quot;hasExpression&quot; of the domain instance makes reference to the range instance. Hence, the hasExpression property should include a reference to that parameter, so that the final value of this Valuable is a function of the value of this parameter.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasConditionExpression</IRI>
+        <Literal xml:lang="en">It allows expressing conditions based on parameters that we will find in the model. For example, we can find that certain drugs will be administered depending on the weight or age of the patient.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasDescription</IRI>
+        <Literal>Description of the cost</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasDose</IRI>
+        <Literal xml:lang="en">Dosage of the indicated drug</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasFrequency</IRI>
+        <Literal xml:lang="en">Indicates the time cycle of how often the treatment, the follow-up test or their respective strategies have to be applied. In the case of a manifestation of the disease, it will indicate how many times a year the symptom manifests itself. 
+
+By default = 1, for the Manifestations.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasHoursInterval</IRI>
+        <Literal>Interval in which the indicated dose of drug should be given.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasIncreasedMortalityRate</IRI>
+        <Literal>By default = 1</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasInitialProportion</IRI>
+        <Literal xml:lang="en">The initial proportion of patients of a population that already present certain manifestation</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasProbabilityOfDiagnosis</IRI>
+        <Literal>Probability that the manifestation presented, the clinical diagnosis is made.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasRange</IRI>
+        <Literal>Age range in which the drug will be delivered.
+
+Examples: 
+   0y-2y    =&gt; 0 years to 2 years
+   3m-2y   =&gt; 3 months to 2 years</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="#TODO"/>
+        <IRI>#hasRiskCharacterization</IRI>
+        <Literal>Check if this is the best name for the property</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasSensitivity</IRI>
+        <Literal>The Sensitivity in epidemiology is the Probability of correctly classifying a sick individual, that is, the Probability that a positive result will be obtained in a diagnostic test for a sick subject. The Sensitivity is, therefore, the ability of the complementary test to detect the disease. Sensitivity is the percentage of true positives or the Probability that the test is positive if the disease is present; False negatives are sick subjects diagnosed as healthy.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasSpecificity</IRI>
+        <Literal>Start Age</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasSpecificity</IRI>
+        <Literal>The Specificity of a test is the Probability that a healthy subject will have a negative test result. Specificity is the percentage of true negatives or the Probability that the test will be negative if the disease is not present. False positives are healthy subjects diagnosed as sick.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasTemporaryThreshold</IRI>
+        <Literal>Time limit in which the sample must be made. For example on the third day of birth. This value must be expressed in number of days.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasYear</IRI>
+        <Literal>Year in which the cost data is collected</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#usesSameModelItemsAs</IRI>
+        <Literal>Defines that a model uses the same data items as another model. Useful for avoiding &quot;recreating&quot; that relationship for all the model items in models which are very similar and simply difer in some characteristics.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionX"/>
+        <AnonymousIndividual nodeID="_:genid2147483648"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">100.61244444225647</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionY"/>
+        <AnonymousIndividual nodeID="_:genid2147483648"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">133.2020154340692</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <AnonymousIndividual nodeID="_:genid2147483648"/>
+        <Literal xml:lang="en">This is an entity positioning annotation generated by CoModIDE (https://comodide.com/). Removing this annotation will break rendering the CoModIDE schema diagram view.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionX"/>
+        <AnonymousIndividual nodeID="_:genid2147483649"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">137.71094492073297</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionY"/>
+        <AnonymousIndividual nodeID="_:genid2147483649"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">111.01194217726372</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <AnonymousIndividual nodeID="_:genid2147483649"/>
+        <Literal xml:lang="en">This is an entity positioning annotation generated by CoModIDE (https://comodide.com/). Removing this annotation will break rendering the CoModIDE schema diagram view.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionX"/>
+        <AnonymousIndividual nodeID="_:genid2147483650"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">264.53086737911997</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionY"/>
+        <AnonymousIndividual nodeID="_:genid2147483650"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">35.59904284310582</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <AnonymousIndividual nodeID="_:genid2147483650"/>
+        <Literal xml:lang="en">This is an entity positioning annotation generated by CoModIDE (https://comodide.com/). Removing this annotation will break rendering the CoModIDE schema diagram view.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionX"/>
+        <AnonymousIndividual nodeID="_:genid2147483651"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">66.05568696358739</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionY"/>
+        <AnonymousIndividual nodeID="_:genid2147483651"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">4.9815693558255685</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <AnonymousIndividual nodeID="_:genid2147483651"/>
+        <Literal xml:lang="en">This is an entity positioning annotation generated by CoModIDE (https://comodide.com/). Removing this annotation will break rendering the CoModIDE schema diagram view.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionX"/>
+        <AnonymousIndividual nodeID="_:genid2147483652"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">163.9652551238964</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionY"/>
+        <AnonymousIndividual nodeID="_:genid2147483652"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">13.884426031710573</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <AnonymousIndividual nodeID="_:genid2147483652"/>
+        <Literal xml:lang="en">This is an entity positioning annotation generated by CoModIDE (https://comodide.com/). Removing this annotation will break rendering the CoModIDE schema diagram view.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionX"/>
+        <AnonymousIndividual nodeID="_:genid2147483653"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">80.67230303494442</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty IRI="http://ontologydesignpatterns.org/opla-sd#entityPositionY"/>
+        <AnonymousIndividual nodeID="_:genid2147483653"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#double">257.2295616088946</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <AnonymousIndividual nodeID="_:genid2147483653"/>
+        <Literal xml:lang="en">This is an entity positioning annotation generated by CoModIDE (https://comodide.com/). Removing this annotation will break rendering the CoModIDE schema diagram view.</Literal>
+    </AnnotationAssertion>
+    
+    <!-- Definición de la enfermedad principal -->
+<Declaration>
+<NamedIndividual IRI="#BTD_Disease"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Disease"/>
+<NamedIndividual IRI="#BTD_Disease"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Disease"/>
+<Literal>Deficiencia de biotinidasa</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Disease"/>
+<Literal>Wolf B. Disorders of biotin metabolism. In: Scriver CR et al., eds. The metabolic and molecular bases of inherited disease, 7th ed. 2001</Literal>
+</DataPropertyAssertion>
+
+<!-- Clasificaciones de la enfermedad -->
+<Declaration>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Disease"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+<Literal>Deficiencia profunda de biotinidasa (actividad enzimática menor del 10% del valor normal)</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Disease_Partial"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Disease"/>
+<NamedIndividual IRI="#BTD_Disease_Partial"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Disease_Partial"/>
+<Literal>Deficiencia parcial de biotinidasa (actividad enzimática 10-30% del valor normal)</Literal>
+</DataPropertyAssertion>
+
+<!-- Relaciones entre las clasificaciones y la enfermedad principal -->
+<ObjectPropertyAssertion>
+<ObjectProperty IRI="#isSubtypeOf"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+<NamedIndividual IRI="#BTD_Disease"/>
+</ObjectPropertyAssertion>
+
+<ObjectPropertyAssertion>
+<ObjectProperty IRI="#isSubtypeOf"/>
+<NamedIndividual IRI="#BTD_Disease_Partial"/>
+<NamedIndividual IRI="#BTD_Disease"/>
+</ObjectPropertyAssertion>
+
+<!-- Manifestaciones clínicas -->
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_Seizures"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Manifestation"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures"/>
+<Literal>Convulsiones refractarias a tratamiento anticonvulsivo</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_Hypotonia"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Manifestation"/>
+<NamedIndividual IRI="#BTD_Manif_Hypotonia"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_Hypotonia"/>
+<Literal>Hipotonía muscular</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Manifestation"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss"/>
+<Literal>Pérdida auditiva neurosensorial</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Manifestation"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy"/>
+<Literal>Atrofia óptica</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Manifestation"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay"/>
+<Literal>Retraso del desarrollo psicomotor</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_SkinProblems"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Manifestation"/>
+<NamedIndividual IRI="#BTD_Manif_SkinProblems"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_SkinProblems"/>
+<Literal>Problemas cutáneos (erupciones, alopecia)</Literal>
+</DataPropertyAssertion>
+
+<!-- Relaciones entre manifestaciones y enfermedad -->
+<ObjectPropertyAssertion>
+<ObjectProperty IRI="#hasFeature"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures"/>
+</ObjectPropertyAssertion>
+
+<ObjectPropertyAssertion>
+<ObjectProperty IRI="#hasFeature"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+<NamedIndividual IRI="#BTD_Manif_Hypotonia"/>
+</ObjectPropertyAssertion>
+
+<ObjectPropertyAssertion>
+<ObjectProperty IRI="#hasFeature"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss"/>
+</ObjectPropertyAssertion>
+
+<ObjectPropertyAssertion>
+<ObjectProperty IRI="#hasFeature"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy"/>
+</ObjectPropertyAssertion>
+
+<ObjectPropertyAssertion>
+<ObjectProperty IRI="#hasFeature"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay"/>
+</ObjectPropertyAssertion>
+
+<ObjectPropertyAssertion>
+<ObjectProperty IRI="#hasFeature"/>
+<NamedIndividual IRI="#BTD_Disease_Profound"/>
+<NamedIndividual IRI="#BTD_Manif_SkinProblems"/>
+</ObjectPropertyAssertion>
+
+<!-- Intervenciones -->
+<Declaration>
+<NamedIndividual IRI="#BTD_Intervention_Screening"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Intervention"/>
+<NamedIndividual IRI="#BTD_Intervention_Screening"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Intervention_Screening"/>
+<Literal>Cribado neonatal de la deficiencia de biotinidasa mediante ensayo enzimático o fluorimétrico semicuantitativo</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Intervention_ClinicalDiagnosis"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Intervention"/>
+<NamedIndividual IRI="#BTD_Intervention_ClinicalDiagnosis"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Intervention_ClinicalDiagnosis"/>
+<Literal>Detección clínica de la deficiencia de biotinidasa tras aparición de síntomas</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Intervention_BiotinTreatment"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Intervention"/>
+<NamedIndividual IRI="#BTD_Intervention_BiotinTreatment"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Intervention_BiotinTreatment"/>
+<Literal>Tratamiento con biotina oral (5-30 mg/día)</Literal>
+</DataPropertyAssertion>
+
+<!-- Parámetros epidemiológicos -->
+<Declaration>
+<NamedIndividual IRI="#BTD_Incidence"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#EpidemiologicalParameter"/>
+<NamedIndividual IRI="#BTD_Incidence"/>
+</ClassAssertion>
+
+<ClassAssertion>
+<Class IRI="#SecondOrderUncertaintyParameter"/>
+<NamedIndividual IRI="#BTD_Incidence"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Incidence"/>
+<Literal>Incidencia de la deficiencia profunda de biotinidasa</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Incidence"/>
+<Literal>0.0000125</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Incidence"/>
+<Literal>Wolf B. Worldwide survey of neonatal screening for biotinidase deficiency. J Inherit Metab Dis 1991;14:923-927</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Screening_Sensitivity"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Screening_Sensitivity"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Screening_Sensitivity"/>
+<Literal>Sensibilidad del cribado neonatal para la deficiencia de biotinidasa</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Screening_Sensitivity"/>
+<Literal>0.99</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Screening_Specificity"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Screening_Specificity"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Screening_Specificity"/>
+<Literal>Especificidad del cribado neonatal para la deficiencia de biotinidasa</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Screening_Specificity"/>
+<Literal>0.998</Literal>
+</DataPropertyAssertion>
+
+<!-- Parámetros de progresión de la enfermedad -->
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_Seizures_Prob_WithoutTreatment"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures_Prob_WithoutTreatment"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures_Prob_WithoutTreatment"/>
+<Literal>Probabilidad de desarrollar convulsiones sin tratamiento</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures_Prob_WithoutTreatment"/>
+<Literal>0.70</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures_Prob_WithoutTreatment"/>
+<Literal>Weber P et al. Outcome in patients with profound biotinidase deficiency: relevance of newborn screening. Dev Med Child Neurol 2004;46:481-4</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_WithoutTreatment"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_WithoutTreatment"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_WithoutTreatment"/>
+<Literal>Probabilidad de desarrollar pérdida auditiva sin tratamiento</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_WithoutTreatment"/>
+<Literal>0.55</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_WithoutTreatment"/>
+<Literal>Wolf B, Spencer R, Gleason T. Hearing loss is a common feature of symptomatic children with profound biotinidase deficiency. J Pediatr 2002;140:242-246</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_WithoutTreatment"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_WithoutTreatment"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_WithoutTreatment"/>
+<Literal>Probabilidad de desarrollar atrofia óptica sin tratamiento</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_WithoutTreatment"/>
+<Literal>0.30</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_WithoutTreatment"/>
+<Literal>Salbert BA, Astruc J, Wolf B. Ophthalmologic findings in biotinidase deficiency. Ophthalmologica 1993;206:177-181</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_WithoutTreatment"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_WithoutTreatment"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_WithoutTreatment"/>
+<Literal>Probabilidad de desarrollar retraso del desarrollo sin tratamiento</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_WithoutTreatment"/>
+<Literal>0.60</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_WithoutTreatment"/>
+<Literal>Moslinger D et al. Clinical and neuropsychological outcome in 33 patients with biotinidase deficiency ascertained by nationwide newborn screening and family studies in Austria. Eur J Pediatr 2001;160:277-282</Literal>
+</DataPropertyAssertion>
+
+<!-- Parámetros de calidad de vida (utilidades) -->
+<Declaration>
+<NamedIndividual IRI="#BTD_Normal_U"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#UtilityParameter"/>
+<NamedIndividual IRI="#BTD_Normal_U"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Normal_U"/>
+<Literal>Utilidad de vida normal sin síntomas</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Normal_U"/>
+<Literal>1.0</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_Seizures_U"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#UtilityParameter"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures_U"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures_U"/>
+<Literal>Desutilidad anual asociada a convulsiones refractarias</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures_U"/>
+<Literal>0.32</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#appliesOneTime"/>
+<NamedIndividual IRI="#BTD_Manif_Seizures_U"/>
+<Literal>false</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_U"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#UtilityParameter"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_U"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_U"/>
+<Literal>Desutilidad anual asociada a pérdida auditiva neurosensorial</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_U"/>
+<Literal>0.18</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#appliesOneTime"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_U"/>
+<Literal>false</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_U"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#UtilityParameter"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_U"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_U"/>
+<Literal>Desutilidad anual asociada a atrofia óptica</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_U"/>
+<Literal>0.23</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#appliesOneTime"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_U"/>
+<Literal>false</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_U"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#UtilityParameter"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_U"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_U"/>
+<Literal>Desutilidad anual asociada a retraso del desarrollo</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_U"/>
+<Literal>0.29</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#appliesOneTime"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_U"/>
+<Literal>false</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_Combined_U"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#UtilityParameter"/>
+<NamedIndividual IRI="#BTD_Manif_Combined_U"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_Combined_U"/>
+<Literal>Desutilidad anual para casos graves con múltiples síntomas</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_Combined_U"/>
+<Literal>0.49</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#appliesOneTime"/>
+<NamedIndividual IRI="#BTD_Manif_Combined_U"/>
+<Literal>false</Literal>
+</DataPropertyAssertion>
+
+<!-- Parámetros de progresión con tratamiento precoz vs tardío -->
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_LateTraeatment"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_LateTraeatment"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_LateTraeatment"/>
+<Literal>Probabilidad de pérdida auditiva persistente con tratamiento tardío</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_LateTraeatment"/>
+<Literal>0.36</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_LateTraeatment"/>
+<Literal>Weber P et al. Outcome in patients with profound biotinidase deficiency: relevance of newborn screening. Dev Med Child Neurol 2004;46:481-4</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_LateTraeatment"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_LateTraeatment"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_LateTraeatment"/>
+<Literal>Probabilidad de atrofia óptica persistente con tratamiento tardío</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_LateTraeatment"/>
+<Literal>0.20</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Manif_OpticAtrophy_Prob_LateTraeatment"/>
+<Literal>Salbert BA, Astruc J, Wolf B. Ophthalmologic findings in biotinidase deficiency. Ophthalmologica 1993;206:177-181</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_LateTraeatment"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#Parameter"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_LateTraeatment"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_LateTraeatment"/>
+<Literal>Probabilidad de retraso del desarrollo persistente con tratamiento tardío</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_LateTraeatment"/>
+<Literal>0.27</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasSource"/>
+<NamedIndividual IRI="#BTD_Manif_DevelopmentalDelay_Prob_LateTraeatment"/>
+<Literal>Moslinger D et al. Clinical and neuropsychological outcome in 33 patients with biotinidase deficiency ascertained by nationwide newborn screening and family studies in Austria. Eur J Pediatr 2001;160:277-282</Literal>
+</DataPropertyAssertion>
+
+<!-- Parámetros de diagnóstico y tratamiento para estimación de costes -->
+<Declaration>
+<NamedIndividual IRI="#BTD_DiagnosticTest_Cost"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#CostParameter"/>
+<NamedIndividual IRI="#BTD_DiagnosticTest_Cost"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_DiagnosticTest_Cost"/>
+<Literal>Coste de la prueba diagnóstica confirmatoria</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_DiagnosticTest_Cost"/>
+<Literal>150</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_Screening_Cost"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#CostParameter"/>
+<NamedIndividual IRI="#BTD_Screening_Cost"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_Screening_Cost"/>
+<Literal>Coste del cribado neonatal por recién nacido</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_Screening_Cost"/>
+<Literal>3.50</Literal>
+</DataPropertyAssertion>
+
+<Declaration>
+<NamedIndividual IRI="#BTD_BiotinTreatment_AnnualCost"/>
+</Declaration>
+
+<ClassAssertion>
+<Class IRI="#CostParameter"/>
+<NamedIndividual IRI="#BTD_BiotinTreatment_AnnualCost"/>
+</ClassAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasDescription"/>
+<NamedIndividual IRI="#BTD_BiotinTreatment_AnnualCost"/>
+<Literal>Coste anual del tratamiento con biotina (5-10 mg/día)</Literal>
+</DataPropertyAssertion>
+
+<DataPropertyAssertion>
+<DataProperty IRI="#hasExpectedValue"/>
+<NamedIndividual IRI="#BTD_BiotinTreatment_AnnualCost"/>
+<Literal>730</Literal>
+</DataPropertyAssertion>
+
+
+<!-- Clasificación como Enfermedad Rara -->
+<ClassAssertion>
+    <Class IRI="#RareDisease"/>
+    <NamedIndividual IRI="#BTD_Disease"/>
+</ClassAssertion>
+
+<!-- Población objetivo -->
+<Declaration>
+    <NamedIndividual IRI="#BTD_Population_Newborns_ES"/>
+</Declaration>
+<ClassAssertion>
+    <Class IRI="#Population"/>
+    <NamedIndividual IRI="#BTD_Population_Newborns_ES"/>
+</ClassAssertion>
+<DataPropertyAssertion>
+    <DataProperty IRI="#hasDescription"/>
+    <NamedIndividual IRI="#BTD_Population_Newborns_ES"/>
+    <Literal>Recién nacidos en España durante un año natural</Literal>
+</DataPropertyAssertion>
+<DataPropertyAssertion>
+    <DataProperty IRI="#hasGeographicalContext"/>
+    <NamedIndividual IRI="#BTD_Population_Newborns_ES"/>
+    <Literal>España</Literal>
+</DataPropertyAssertion>
+<DataPropertyAssertion>
+    <DataProperty IRI="#hasMinAge"/>
+    <NamedIndividual IRI="#BTD_Population_Newborns_ES"/>
+    <Literal>0</Literal>
+</DataPropertyAssertion>
+<DataPropertyAssertion>
+    <DataProperty IRI="#hasMaxAge"/>
+    <NamedIndividual IRI="#BTD_Population_Newborns_ES"/>
+    <Literal>1</Literal>
+</DataPropertyAssertion>
+
+<!-- Vinculación parámetros epidemiológicos -->
+<ObjectPropertyAssertion>
+    <ObjectProperty IRI="#hasEpidemiologicalParameter"/>
+    <NamedIndividual IRI="#BTD_Disease"/>
+    <NamedIndividual IRI="#BTD_Incidence"/>
+</ObjectPropertyAssertion>
+
+<!-- Estrategias de seguimiento -->
+<Declaration>
+    <NamedIndividual IRI="#BTD_FollowUp_AnnualMonitoring"/>
+</Declaration>
+<ClassAssertion>
+    <Class IRI="#FollowUpStrategy"/>
+    <NamedIndividual IRI="#BTD_FollowUp_AnnualMonitoring"/>
+</ClassAssertion>
+<ObjectPropertyAssertion>
+    <ObjectProperty IRI="#hasFollowUpStrategy"/>
+    <NamedIndividual IRI="#BTD_Disease"/>
+    <NamedIndividual IRI="#BTD_FollowUp_AnnualMonitoring"/>
+</ObjectPropertyAssertion>
+
+<!-- Relaciones de costes detalladas -->
+<ObjectPropertyAssertion>
+    <ObjectProperty IRI="#hasTreatmentCost"/>
+    <NamedIndividual IRI="#BTD_Intervention_BiotinTreatment"/>
+    <NamedIndividual IRI="#BTD_BiotinTreatment_AnnualCost"/>
+</ObjectPropertyAssertion>
+
+<DataPropertyAssertion>
+    <DataProperty IRI="#hasUnit"/>
+    <NamedIndividual IRI="#BTD_Screening_Cost"/>
+    <Literal>EUR</Literal>
+</DataPropertyAssertion>
+<DataPropertyAssertion>
+    <DataProperty IRI="#hasUnit"/>
+    <NamedIndividual IRI="#BTD_BiotinTreatment_AnnualCost"/>
+    <Literal>EUR</Literal>
+</DataPropertyAssertion>
+
+<!-- Actualización de probabilidades basada en [2] -->
+<DataPropertyAssertion>
+    <DataProperty IRI="#hasExpectedValue"/>
+    <NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_WithoutTreatment"/>
+    <Literal>0.75</Literal>
+</DataPropertyAssertion>
+<DataPropertyAssertion>
+    <DataProperty IRI="#hasSource"/>
+    <NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_WithoutTreatment"/>
+    <Literal>Wolf B et al. Hearing loss is a common feature... J Pediatr 2002;140:242-246</Literal>
+</DataPropertyAssertion>
+
+<!-- Modificación de progresión por intervención -->
+<ObjectPropertyAssertion>
+    <ObjectProperty IRI="#modifies"/>
+    <NamedIndividual IRI="#BTD_Intervention_Screening"/>
+    <NamedIndividual IRI="#BTD_Manif_HearingLoss_Prob_WithoutTreatment"/>
+</ObjectPropertyAssertion>
+
+<!-- Relaciones de utilidad mejoradas -->
+<ObjectPropertyAssertion>
+    <ObjectProperty IRI="#hasDisutilityCombinationMethod"/>
+    <NamedIndividual IRI="#BTD_Disease"/>
+    <NamedIndividual IRI="#AdditiveDisutility"/>
+</ObjectPropertyAssertion>
+
+<!-- Clasificación de parámetros -->
+<ClassAssertion>
+    <Class IRI="#SecondOrderUncertaintyParameter"/>
+    <NamedIndividual IRI="#BTD_Incidence"/>
+</ClassAssertion>
+<ClassAssertion>
+    <Class IRI="#DeterministicParameter"/>
+    <NamedIndividual IRI="#BTD_Screening_Sensitivity"/>
+</ClassAssertion>
+
+<!-- Vincular población al modelo -->
+<ObjectPropertyAssertion>
+    <ObjectProperty IRI="#hasSubpopulation"/>
+    <NamedIndividual IRI="#BTD_Population_Newborns_ES"/>
+    <NamedIndividual IRI="#GeneralPopulation"/>
+</ObjectPropertyAssertion>
+
+
+    
+</Ontology>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+
