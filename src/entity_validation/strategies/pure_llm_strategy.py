@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from entity_validation.base_entity_validation import ValidationStrategy
 from core.models import (
     ExecutionSummary,
-    ExcecutionMetrics,
+    ExecutionMetrics,
     TaskOutcome,
     TaskStatus,
     PromptRegistry,
@@ -26,7 +26,7 @@ class PureLLMStrategy(ValidationStrategy):
       1. Builds an LLMPayload with the prompt and the OWL entity.
       2. Calls the injected BaseLLMClient.
       3. Transforms the free-text LLM response into a TaskOutcome.
-      4. Aggregates ExcecutionMetrics across all calls into the ExecutionSummary.
+      4. Aggregates ExecutionMetrics across all calls into the ExecutionSummary.
     """
 
     def __init__(self, llm_client: BaseLLMClient, context: PromptRegistry):
@@ -42,7 +42,7 @@ class PureLLMStrategy(ValidationStrategy):
 
         Returns:
             ExecutionSummary with one TaskOutcome per prompt and
-            aggregated ExcecutionMetrics.
+            aggregated ExecutionMetrics.
         """
         outcomes: list[TaskOutcome] = []
         total_duration_ms = 0
@@ -64,7 +64,7 @@ class PureLLMStrategy(ValidationStrategy):
             individual_id=owl_entity,
             timestamp=datetime.now(timezone.utc).isoformat(),
             results=outcomes,
-            total_metrics=ExcecutionMetrics(
+            total_metrics=ExecutionMetrics(
                 duration_ms=total_duration_ms,
                 tokens_consumed=total_tokens,
                 cost=total_cost,
@@ -90,7 +90,7 @@ class PureLLMStrategy(ValidationStrategy):
             task_id=task_id,
             status=TaskStatus.SUCCESS,
             findings=[response.raw_content],
-            metrics=ExcecutionMetrics(
+            metrics=ExecutionMetrics(
                 duration_ms=response.duration_ms,
                 tokens_consumed=response.tokens_consumed,
                 cost=response.cost,

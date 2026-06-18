@@ -3,7 +3,7 @@ Unit tests for ValidationStrategy (base) and PureLLMStrategy
 ==============================================================
 
 Models used (from validation/models.py):
-  - ExcecutionMetrics(duration_ms, cost, tokens_consumed)  [frozen dataclass]
+  - ExecutionMetrics(duration_ms, cost, tokens_consumed)  [frozen dataclass]
   - TaskStatus(SUCCESS, FAILURE, SKIPPED, PARTIAL_SUCCESS) [Enum]
   - TaskOutcome(task_id, status, findings, metrics, rawResponse) [frozen dataclass]
   - ExecutionSummary(individual_id, timestamp, results,
@@ -42,7 +42,7 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock
 from datetime import datetime
 from core.models import (
-    ExcecutionMetrics,
+    ExecutionMetrics,
     TaskOutcome,
     TaskStatus,
     ExecutionSummary,
@@ -424,7 +424,7 @@ class TestExecutionSummaryIsSuccessful:
             task_id="t",
             status=status,
             findings=[],
-            metrics=ExcecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
+            metrics=ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
             rawResponse="",
         )
 
@@ -437,7 +437,7 @@ class TestExecutionSummaryIsSuccessful:
                 self._make_outcome(TaskStatus.SUCCESS),
                 self._make_outcome(TaskStatus.SUCCESS),
             ],
-            total_metrics=ExcecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
+            total_metrics=ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
             system_summary="",
         )
         assert summary.is_successful() is True
@@ -451,7 +451,7 @@ class TestExecutionSummaryIsSuccessful:
                 self._make_outcome(TaskStatus.SUCCESS),
                 self._make_outcome(TaskStatus.FAILURE),
             ],
-            total_metrics=ExcecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
+            total_metrics=ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
             system_summary="",
         )
         assert summary.is_successful() is False
@@ -462,7 +462,7 @@ class TestExecutionSummaryIsSuccessful:
             individual_id="e",
             timestamp="2024-01-01T00:00:00+00:00",
             results=[self._make_outcome(TaskStatus.PARTIAL_SUCCESS)],
-            total_metrics=ExcecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
+            total_metrics=ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
             system_summary="",
         )
         assert summary.is_successful() is False
@@ -473,7 +473,7 @@ class TestExecutionSummaryIsSuccessful:
             individual_id="e",
             timestamp="2024-01-01T00:00:00+00:00",
             results=[self._make_outcome(TaskStatus.SKIPPED)],
-            total_metrics=ExcecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
+            total_metrics=ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
             system_summary="",
         )
         assert summary.is_successful() is False
@@ -484,7 +484,7 @@ class TestExecutionSummaryIsSuccessful:
             individual_id="e",
             timestamp="2024-01-01T00:00:00+00:00",
             results=[],
-            total_metrics=ExcecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
+            total_metrics=ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0),
             system_summary="",
         )
         assert summary.is_successful() is True
