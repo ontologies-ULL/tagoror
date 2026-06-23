@@ -28,9 +28,13 @@ Implementation notes observed in retry.py:
   - EXPONENTIAL formula: base * 2^attempt
   - JITTER formula: random.uniform(base, base * 2^attempt)
 """
-
 import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+from llm.config import RetryPolicyConfig, BackoffStrategy
+from exceptions import TransientNetworkException, LLMParseException
+from llm.models import LLMPayload, LLMResponse
+from llm.retry import RetryableLLMClient
 
 
 # ---------------------------------------------------------------------------
@@ -39,13 +43,11 @@ from unittest.mock import AsyncMock, MagicMock
 
 @pytest.fixture
 def TransientNetworkException():
-    from exceptions import TransientNetworkException
     return TransientNetworkException
 
 
 @pytest.fixture
 def LLMParseException():
-    from exceptions import LLMParseException
     return LLMParseException
 
 
@@ -58,7 +60,6 @@ def mock_llm_client():
 
 @pytest.fixture
 def fixed_config():
-    from llm.config import RetryPolicyConfig, BackoffStrategy
     return RetryPolicyConfig(
         max_retries=3,
         delay_between_retries=2,
@@ -68,7 +69,6 @@ def fixed_config():
 
 @pytest.fixture
 def exponential_config():
-    from llm.config import RetryPolicyConfig, BackoffStrategy
     return RetryPolicyConfig(
         max_retries=3,
         delay_between_retries=2,
@@ -78,7 +78,6 @@ def exponential_config():
 
 @pytest.fixture
 def jitter_config():
-    from llm.config import RetryPolicyConfig, BackoffStrategy
     return RetryPolicyConfig(
         max_retries=3,
         delay_between_retries=2,
@@ -88,19 +87,16 @@ def jitter_config():
 
 @pytest.fixture
 def retry_fixed(mock_llm_client, fixed_config):
-    from llm.retry import RetryPolicy
-    return RetryPolicy(llm_client=mock_llm_client, config=fixed_config)
+    return RetryableLLMClient(llm_client=mock_llm_client, config=fixed_config)
 
 
 @pytest.fixture
 def mock_payload():
-    from llm.models import LLMPayload
     return LLMPayload(user_prompt="Hello")
 
 
 @pytest.fixture
 def mock_response():
-    from llm.models import LLMResponse
     return LLMResponse(raw_content="ok", tokens_consumed=10, duration_ms=100, cost=0.001)
 
 
@@ -122,7 +118,6 @@ class TestRetryPolicyConfig:
 
     def test_backoff_strategy_stores_enum_value(self, fixed_config):
         """backoff_strategy field must store a BackoffStrategy member."""
-        from llm.config import BackoffStrategy
         assert fixed_config.backoff_strategy == BackoffStrategy.FIXED
 
 
@@ -133,26 +128,21 @@ class TestRetryPolicyConfig:
 class TestBackoffStrategyEnum:
 
     def test_fixed_member_exists(self):
-        from llm.config import BackoffStrategy
         assert BackoffStrategy.FIXED is not None
 
     def test_exponential_member_exists(self):
-        from llm.config import BackoffStrategy
         assert BackoffStrategy.EXPONENTIAL is not None
 
     def test_jitter_member_exists(self):
-        from llm.config import BackoffStrategy
         assert BackoffStrategy.JITTER is not None
 
     def test_all_members_are_distinct(self):
         """All three strategy values must be different from each other."""
-        from llm.config import BackoffStrategy
         values = {BackoffStrategy.FIXED, BackoffStrategy.EXPONENTIAL, BackoffStrategy.JITTER}
         assert len(values) == 3
 
     def test_inherits_from_str(self):
         """BackoffStrategy(str, Enum) members must be usable as plain strings."""
-        from llm.config import BackoffStrategy
         assert isinstance(BackoffStrategy.FIXED, str)
 
 
@@ -160,6 +150,7 @@ class TestBackoffStrategyEnum:
 # Tests: happy path
 # ---------------------------------------------------------------------------
 
+@pytest.mark.asyncio
 class TestRetryPolicyHappyPath:
 
     @pytest.mark.asyncio
@@ -201,7 +192,6 @@ class TestRetryOnTransientNetworkException:
     @pytest.mark.asyncio
     async def test_retries_and_succeeds(self, retry_fixed, mock_llm_client, mock_response, mock_payload, mocker):
         """Must retry after TransientNetworkException and return the response on recovery."""
-        from exceptions import TransientNetworkException
         mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = [TransientNetworkException("timeout"), mock_response]
         result = await retry_fixed.query(mock_payload)
@@ -211,7 +201,6 @@ class TestRetryOnTransientNetworkException:
     @pytest.mark.asyncio
     async def test_raises_after_all_retries_exhausted(self, retry_fixed, mock_llm_client, fixed_config, mock_payload, mocker):
         """Must raise TransientNetworkException after exhausting max_retries attempts."""
-        from exceptions import TransientNetworkException
         mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = TransientNetworkException("persistent")
         with pytest.raises(TransientNetworkException):
@@ -221,7 +210,6 @@ class TestRetryOnTransientNetworkException:
     @pytest.mark.asyncio
     async def test_sleep_called_between_retries(self, retry_fixed, mock_llm_client, mock_response, mock_payload, mocker):
         """Sleep must be called after a TransientNetworkException before the next attempt."""
-        from exceptions import TransientNetworkException
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = [TransientNetworkException("fail"), mock_response]
         await retry_fixed.query(mock_payload)
@@ -237,7 +225,6 @@ class TestRetryOnLLMParseException:
     @pytest.mark.asyncio
     async def test_retries_and_succeeds(self, retry_fixed, mock_llm_client, mock_response, mock_payload, mocker):
         """Must retry after LLMParseException and return the response on recovery."""
-        from exceptions import LLMParseException
         mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = [LLMParseException("bad json"), mock_response]
         result = await retry_fixed.query(mock_payload)
@@ -247,7 +234,6 @@ class TestRetryOnLLMParseException:
     @pytest.mark.asyncio
     async def test_raises_after_all_retries_exhausted(self, retry_fixed, mock_llm_client, fixed_config, mock_payload, mocker):
         """Must raise LLMParseException after exhausting max_retries attempts."""
-        from exceptions import LLMParseException
         mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = LLMParseException("keeps failing")
         with pytest.raises(LLMParseException):
@@ -303,7 +289,6 @@ class TestSleepBoundary:
         Sleep must be called exactly max_retries-1 times.
         There is no sleep after the last attempt since there is nothing left to wait for.
         """
-        from exceptions import TransientNetworkException
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = TransientNetworkException("always fails")
         with pytest.raises(TransientNetworkException):
@@ -315,20 +300,17 @@ class TestSleepBoundary:
 # Tests: retry count boundary
 # ---------------------------------------------------------------------------
 
+@pytest.mark.asyncio
 class TestRetryCountBoundary:
 
     @pytest.mark.asyncio
     async def test_max_retries_one_raises_with_no_sleep(self, mock_llm_client, mock_payload, mocker):
         """With max_retries=1 a single failure must raise immediately with no sleep."""
-        from llm.retry import RetryPolicy
-        from llm.config import RetryPolicyConfig, BackoffStrategy
-        from exceptions import TransientNetworkException
-
         config = RetryPolicyConfig(max_retries=1, delay_between_retries=1, backoff_strategy=BackoffStrategy.FIXED)
         mock_sleep = mocker.patch("llm.retry.sleep", new=AsyncMock())
         mock_llm_client.query.side_effect = TransientNetworkException("fail")
 
-        policy = RetryPolicy(llm_client=mock_llm_client, config=config)
+        policy = RetryableLLMClient(llm_client=mock_llm_client, config=config)
         with pytest.raises(TransientNetworkException):
             await policy.query(mock_payload)
 
@@ -338,9 +320,6 @@ class TestRetryCountBoundary:
     @pytest.mark.asyncio
     async def test_succeeds_on_last_possible_attempt(self, mock_llm_client, mock_response, mock_payload, mocker):
         """With max_retries=3 a response on the third attempt must be returned."""
-        from llm.retry import RetryPolicy
-        from llm.config import RetryPolicyConfig, BackoffStrategy
-        from exceptions import TransientNetworkException
 
         config = RetryPolicyConfig(max_retries=3, delay_between_retries=0, backoff_strategy=BackoffStrategy.FIXED)
         mocker.patch("llm.retry.sleep", new=AsyncMock())
@@ -350,7 +329,7 @@ class TestRetryCountBoundary:
             mock_response,
         ]
 
-        policy = RetryPolicy(llm_client=mock_llm_client, config=config)
+        policy = RetryableLLMClient(llm_client=mock_llm_client, config=config)
         result = await policy.query(mock_payload)
 
         assert result is mock_response
@@ -387,8 +366,7 @@ class TestCalculateDelayExponential:
 
     @pytest.fixture
     def retry_exp(self, mock_llm_client, exponential_config):
-        from llm.retry import RetryPolicy
-        return RetryPolicy(llm_client=mock_llm_client, config=exponential_config)
+        return RetryableLLMClient(llm_client=mock_llm_client, config=exponential_config)
 
     def test_formula_is_base_times_two_pow_attempt(self, retry_exp, exponential_config):
         """EXPONENTIAL delay must equal base * 2^attempt for each attempt."""
@@ -414,8 +392,7 @@ class TestCalculateDelayJitter:
 
     @pytest.fixture
     def retry_jitter(self, mock_llm_client, jitter_config):
-        from llm.retry import RetryPolicy
-        return RetryPolicy(llm_client=mock_llm_client, config=jitter_config)
+        return RetryableLLMClient(llm_client=mock_llm_client, config=jitter_config)
 
     def test_delay_is_at_least_base(self, retry_jitter, jitter_config):
         """JITTER delay must be >= delay_between_retries (lower bound of uniform)."""
