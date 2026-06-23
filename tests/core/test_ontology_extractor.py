@@ -11,6 +11,7 @@ Contract covered here:
 
 import pytest
 from types import SimpleNamespace
+from core.extractor import OntologyExtractor
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -80,8 +81,6 @@ class TestExtractIndividuals:
         mock_get_ontology = mocker.patch("core.extractor.get_ontology")
         mock_get_ontology.return_value.load.return_value = onto
 
-        from core.extractor import OntologyExtractor
-
         records = OntologyExtractor.extract("case.owl")
 
         assert records == []
@@ -101,7 +100,7 @@ class TestExtractIndividuals:
         mock_get_ontology = mocker.patch("core.extractor.get_ontology")
         mock_get_ontology.return_value.load.return_value = onto
 
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("/tmp/case.owl")
 
@@ -124,7 +123,7 @@ class TestExtractIndividuals:
         mock_get_ontology = mocker.patch("core.extractor.get_ontology")
         mock_get_ontology.return_value.load.return_value = onto
 
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("case.owl")
 
@@ -134,7 +133,7 @@ class TestExtractIndividuals:
         mock_get_ontology = mocker.patch("core.extractor.get_ontology")
         mock_get_ontology.return_value.load.side_effect = FileNotFoundError("missing")
 
-        from core.extractor import OntologyExtractor
+        
 
         with pytest.raises(FileNotFoundError):
             OntologyExtractor.extract("missing.owl")
@@ -154,7 +153,7 @@ class TestRealOntologyIntegration:
         """
         Verify the real ontology can be loaded and produces extraction records.
         """
-        from core.extractor import OntologyExtractor
+        
         from pathlib import Path
 
         ontology_path = Path("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
@@ -169,7 +168,7 @@ class TestRealOntologyIntegration:
         """
         Verify CaseID is set to filename only, not full path.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -181,7 +180,7 @@ class TestRealOntologyIntegration:
         """
         Verify that extracted records have the correct structure and format.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -203,7 +202,7 @@ class TestRealOntologyIntegration:
         """
         Verify that ontology classes are correctly extracted.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -220,7 +219,7 @@ class TestRealOntologyIntegration:
         """
         Test extraction of a known individual with expected properties.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -239,7 +238,7 @@ class TestRealOntologyIntegration:
         """
         Verify that data properties are correctly normalized to lists.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -256,7 +255,7 @@ class TestRealOntologyIntegration:
         """
         Verify that individual extraction order is consistent.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records1 = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         records2 = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
@@ -270,7 +269,7 @@ class TestRealOntologyIntegration:
         """
         Test extraction of individuals with minimal properties (like BTD_Disease_Profound).
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -294,7 +293,7 @@ class TestRealOntologyIntegration:
         Test extraction of individuals with NO properties at all.
         Examples: DI_Factor, DI_MeanDifference
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -319,7 +318,7 @@ class TestRealOntologyIntegration:
         Test extraction handles empty property values correctly.
         Example: BTD_Disease.hasDisutilityCombinationMethod is empty list
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -339,7 +338,7 @@ class TestRealOntologyIntegration:
         Test extraction of individuals with multiple class inheritance.
         Example: Constant_Incidence1 inherits from ['DeterministicParameter', 'EpidemiologicalParameter']
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -361,7 +360,7 @@ class TestRealOntologyIntegration:
         Test that object properties correctly resolve entity references.
         Example: hasFollowUpStrategy, hasEpidemiologicalParameter
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -386,7 +385,7 @@ class TestRealOntologyIntegration:
         Test extraction handles mixed data types correctly.
         Examples: strings, numbers (floats, ints), etc.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -404,7 +403,7 @@ class TestRealOntologyIntegration:
         Test extraction of properties with multiple values.
         Example: hasExpectedValue or hasSource with 2+ items
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -448,7 +447,7 @@ class TestObjectProperties:
         """
         Verify that object properties are correctly identified and extracted.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -464,7 +463,7 @@ class TestObjectProperties:
         Test extraction of hasDataItemType relationships.
         This maps constants to their data item types (e.g., Incidence, Prevalence).
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -497,7 +496,7 @@ class TestObjectProperties:
         This links diseases to their epidemiological parameters.
         Example: BTD_Disease -> BTD_Incidence
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -523,7 +522,7 @@ class TestObjectProperties:
         This links diseases to their follow-up strategies.
         Example: BTD_Disease -> BTD_FollowUp_AnnualMonitoring
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -546,7 +545,7 @@ class TestObjectProperties:
         Test extraction of hasTreatmentCost relationships.
         This links interventions to their cost data items.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -571,7 +570,7 @@ class TestObjectProperties:
         These are inverse relationships (bidirectional) representing interventions
         that modify disease manifestations.
         """
-        from core.extractor import OntologyExtractor
+        
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -602,7 +601,6 @@ class TestObjectProperties:
         Test extraction of hasSubpopulation relationships.
         This links populations to their subpopulations.
         """
-        from core.extractor import OntologyExtractor
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -625,7 +623,6 @@ class TestObjectProperties:
         Verify that when an object property is included, it always has values.
         Empty lists in ObjectProperties should not exist.
         """
-        from core.extractor import OntologyExtractor
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
         
@@ -642,22 +639,14 @@ class TestObjectProperties:
         Test that bidirectional relationships (modifies <-> isModifiedBy) are consistent.
         If A modifies B, then B should be isModifiedBy A.
         """
-        from core.extractor import OntologyExtractor
 
         records = OntologyExtractor.extract("tests/ontologies/osdi_CU1_P1_S1_M1.owx")
-        
-        # Create lookup by individual name
         by_name = {r.Individual: r for r in records}
-        
-        # Check bidirectional relationships
         for record in records:
             if "modifies" in record.ObjectProperties:
-                # A modifies B
                 for target_name in record.ObjectProperties["modifies"]:
-                    # B should exist
                     target_record = by_name.get(target_name)
                     if target_record:
-                        # B isModifiedBy A
                         if "isModifiedBy" in target_record.ObjectProperties:
                             assert record.Individual in target_record.ObjectProperties["isModifiedBy"], \
                                 f"Bidirectional relationship broken: {record.Individual} modifies {target_name} but reverse not found"

@@ -5,19 +5,17 @@ Unit tests for ValidationOrchestrator
 Architecture under test (as agreed in this conversation — no external
 assumptions beyond what was explicitly confirmed):
 
-  ExtractedEntity (Pydantic BaseModel):
-    - individual_id: str
-    - classes: list[str]
-    - data_properties: dict[str, Any]
-    - to_llm_context() -> str
+    ExtractedEntity-like double:
+        - individual_id: str
+        - to_llm_context() -> str
 
-  ValidationStrategy (ABC):
+    ValidationStrategy (ABC):
     - async def evaluate(self, owl_entity: str) -> ExecutionSummary
 
   ValidationNotifier (ABC):
     - def notify_critical_failure(self, individual_id: str, error: Exception) -> None
 
-  ValidationOrchestrator:
+    ValidationOrchestrator:
     - __init__(self, strategy: ValidationStrategy, notifier: ValidationNotifier)
     - async def process(self, individuals: list[ExtractedEntity]) -> list[ExecutionSummary]
         · Validates entities in PARALLEL via asyncio.gather
@@ -53,10 +51,10 @@ Covers:
     data, never propagated as exceptions out of process()
 
 Testing strategy:
-  strategy and notifier are fully mocked (AsyncMock / MagicMock) so no real
-  LLM calls or file I/O occur. ExtractedEntity instances are built directly
-  with the confirmed fields; to_llm_context() is mocked per-entity to return
-  a predictable string so we can assert exactly what was passed to evaluate().
+    strategy and notifier are fully mocked (AsyncMock / MagicMock) so no real
+    LLM calls or file I/O occur. Entity doubles are built directly with the
+    confirmed fields; to_llm_context() is mocked per-entity to return a
+    predictable string so we can assert exactly what was passed to evaluate().
 """
 
 import asyncio
@@ -85,7 +83,7 @@ def mock_notifier():
 
 @pytest.fixture
 def orchestrator(mock_strategy, mock_notifier):
-    from validation.orchestrator import ValidationOrchestrator
+    from core.orchestrator import ValidationOrchestrator
     return ValidationOrchestrator(strategy=mock_strategy, notifier=mock_notifier)
 
 
@@ -105,12 +103,12 @@ def make_entity(individual_id: str, llm_context: str = None):
 
 def make_execution_summary(individual_id: str):
     """Minimal valid ExecutionSummary double returned by a successful strategy.evaluate()."""
-    from validation.models import ExecutionSummary, ExcecutionMetrics
+    from core.models import ExecutionSummary, ExecutionMetrics 
     return ExecutionSummary(
         individual_id=individual_id,
         timestamp="2024-01-01T00:00:00+00:00",
         results=[],
-        total_metrics=ExcecutionMetrics(duration_ms=10, cost=0.001, tokens_consumed=5),
+        total_metrics=ExecutionMetrics(duration_ms=10, cost=0.001, tokens_consumed=5),
         system_summary="ok",
     )
 
@@ -307,7 +305,7 @@ class TestProcessSingleFailure:
     @pytest.mark.asyncio
     async def test_failure_task_status_is_failure(self, orchestrator, mock_strategy):
         """The single TaskOutcome on failure must have status=TaskStatus.FAILURE."""
-        from validation.models import TaskStatus
+        from core.models import TaskStatus
         entity = make_entity("ind_fail")
         mock_strategy.evaluate.side_effect = TimeoutError("LLM timed out")
 
