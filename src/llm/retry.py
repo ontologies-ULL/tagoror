@@ -12,7 +12,7 @@ class RetryableLLMClient(BaseLLMClient):
     resilience (retries) to any underlying LLM client.
     """
     
-    def __init__(self, llm_client: BaseLLMClient, config: RetryPolicyConfig = RetryPolicyConfig()):
+    def __init__(self, llm_client: BaseLLMClient, config: RetryPolicyConfig = RetryPolicyConfig):
         """
         Initializes the retryable client proxy.
 
