@@ -13,7 +13,7 @@ class OntologyExtractor:
   Converts ontology individuals into OntologyExtractionRecord instances.
   """
 
-  _base_ontology_path: Path = Path(__file__).parent / "base_ontology.ttl"
+  _base_ontology_path: Path = Path(__file__).parent.parent / "ontologies" / "base_ontology.rdf"
   _base_ontology = None
 
   @classmethod
@@ -22,9 +22,9 @@ class OntologyExtractor:
     Extract only ontology individuals.
     """
     if cls._base_ontology is None:
-      cls._base_ontology = cls._load_ontology(cls._base_ontology_path)
+      cls._base_ontology = cls._load_ontology(cls._base_ontology_path.resolve().as_uri())
 
-    ontology = OntologyExtractor._load_ontology(file_path)
+    ontology = OntologyExtractor._load_ontology(Path(file_path).resolve().as_uri())
     return [individual for individual in ontology.individuals() if individual not in OntologyExtractor._base_ontology.individuals()]
 
   @staticmethod
