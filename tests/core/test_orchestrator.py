@@ -12,11 +12,8 @@ assumptions beyond what was explicitly confirmed):
     ValidationStrategy (ABC):
     - async def evaluate(self, owl_entity: str) -> ExecutionSummary
 
-  ValidationNotifier (ABC):
-    - def notify_critical_failure(self, individual_id: str, error: Exception) -> None
-
     ValidationOrchestrator:
-    - __init__(self, strategy: ValidationStrategy, notifier: ValidationNotifier)
+    - __init__(self, strategy: ValidationStrategy) 
     - async def process(self, individuals: list[ExtractedEntity]) -> list[ExecutionSummary]
         · Validates entities in PARALLEL via asyncio.gather
         · Each entity call is wrapped individually (try/except) BEFORE gather,
@@ -24,7 +21,7 @@ assumptions beyond what was explicitly confirmed):
           other entities' results
         · On failure: builds an ExecutionSummary with a single TaskOutcome
           (task_id="orchestration_error", status=TaskStatus.FAILURE,
-          findings=[str(error)]), and calls notifier.notify_critical_failure()
+          findings=[str(error)]), 
 
 Covers:
   - process() happy path: returns one ExecutionSummary per entity, in order
@@ -73,19 +70,11 @@ def mock_strategy():
     strategy.evaluate = AsyncMock()
     return strategy
 
-
+    
 @pytest.fixture
-def mock_notifier():
-    """ValidationNotifier double — notify_critical_failure() is sync."""
-    notifier = MagicMock()
-    return notifier
-
-
-@pytest.fixture
-def orchestrator(mock_strategy, mock_notifier):
+def orchestrator(mock_strategy):
     from core.orchestrator import ValidationOrchestrator
-    return ValidationOrchestrator(strategy=mock_strategy, notifier=mock_notifier)
-
+    return ValidationOrchestrator(strategy=mock_strategy)
 
 def make_entity(individual_id: str, llm_context: str = None):
     """
@@ -247,12 +236,6 @@ class TestProcessEmptyInput:
         await orchestrator.process([])
         mock_strategy.evaluate.assert_not_called()
 
-    @pytest.mark.asyncio
-    async def test_empty_list_never_calls_notifier(self, orchestrator, mock_notifier):
-        """With no entities, notifier.notify_critical_failure() must never be called."""
-        await orchestrator.process([])
-        mock_notifier.notify_critical_failure.assert_not_called()
-
 
 # ---------------------------------------------------------------------------
 # Tests: process() — single entity failure
@@ -324,17 +307,6 @@ class TestProcessSingleFailure:
         assert "LLM timed out after 30s" in results[0].results[0].findings
 
     @pytest.mark.asyncio
-    async def test_notifier_called_once_with_individual_id_and_error(self, orchestrator, mock_strategy, mock_notifier):
-        """notify_critical_failure must be called once with (individual_id, error)."""
-        entity = make_entity("ind_fail")
-        original_error = TimeoutError("LLM timed out")
-        mock_strategy.evaluate.side_effect = original_error
-
-        await orchestrator.process([entity])
-
-        mock_notifier.notify_critical_failure.assert_called_once_with("ind_fail", original_error)
-
-    @pytest.mark.asyncio
     async def test_works_with_any_exception_type(self, orchestrator, mock_strategy):
         """
         The failure-handling path must work for any Exception subtype,
@@ -391,22 +363,9 @@ class TestProcessMixedOutcomes:
         assert results[1].results[0].task_id == "orchestration_error"
         assert results[2] is ok_summary_3
 
-    @pytest.mark.asyncio
-    async def test_notifier_called_once_per_failure_only(self, orchestrator, mock_strategy, mock_notifier):
-        """notify_critical_failure must be called exactly once per failing entity, never for successes."""
-        entities = [make_entity("ind_1"), make_entity("ind_2"), make_entity("ind_3")]
-        mock_strategy.evaluate.side_effect = [
-            make_execution_summary("ind_1"),
-            RuntimeError("fail 2"),
-            RuntimeError("fail 3"),
-        ]
-
-        await orchestrator.process(entities)
-
-        assert mock_notifier.notify_critical_failure.call_count == 2
 
     @pytest.mark.asyncio
-    async def test_multiple_failures_are_independent(self, orchestrator, mock_strategy, mock_notifier):
+    async def test_multiple_failures_are_independent(self, orchestrator, mock_strategy, ):
         """Each failing entity must produce its own distinct failure summary and notifier call."""
         entities = [make_entity("ind_a"), make_entity("ind_b")]
         error_a = ValueError("error A")
@@ -417,8 +376,6 @@ class TestProcessMixedOutcomes:
 
         assert "error A" in results[0].results[0].findings
         assert "error B" in results[1].results[0].findings
-        mock_notifier.notify_critical_failure.assert_any_call("ind_a", error_a)
-        mock_notifier.notify_critical_failure.assert_any_call("ind_b", error_b)
 
 
 # ---------------------------------------------------------------------------
