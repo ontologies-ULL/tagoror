@@ -65,13 +65,14 @@ class RetryableLLMClient(BaseLLMClient):
         """
         base_delay = self.config.delay_between_retries
         strategy = self.config.backoff_strategy
+        exponential_base = self.config.exponential_base
 
         if strategy == BackoffStrategy.FIXED:
             return float(base_delay)
         elif strategy == BackoffStrategy.EXPONENTIAL:
-            return float(base_delay * (2 ** current_attempt))
+            return float(base_delay * (exponential_base ** current_attempt))
         elif strategy == BackoffStrategy.JITTER:
-            max_delay = base_delay * (2 ** current_attempt)
+            max_delay = base_delay * (exponential_base ** current_attempt)
             return random.uniform(base_delay, max_delay)
             
         return float(base_delay)

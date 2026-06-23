@@ -17,4 +17,5 @@ class RetryPolicyConfig:
     """
     max_retries: int
     delay_between_retries: int  # in seconds
-    backoff_strategy: BackoffStrategy 
+    backoff_strategy: BackoffStrategy
+    exponential_base: float = 2.0
