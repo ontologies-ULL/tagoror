@@ -9,7 +9,7 @@ from opentelemetry.trace import Status, StatusCode
 from core.models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
 from llm.base_llm_client import BaseLLMClient 
 
-class ValidationOrchestrator:
+class EntityOrchestrator:
   """
   Orchestrates the parallel validation of extracted ontology entities.
   Delegates validation to a ValidationStrategy and critical errors to a ValidationNotifier.
