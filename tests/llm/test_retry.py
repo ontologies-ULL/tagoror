@@ -42,16 +42,6 @@ from llm.retry import RetryableLLMClient
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
-def TransientNetworkException():
-    return TransientNetworkException
-
-
-@pytest.fixture
-def LLMParseException():
-    return LLMParseException
-
-
-@pytest.fixture
 def mock_llm_client():
     client = MagicMock()
     client.query = AsyncMock()
