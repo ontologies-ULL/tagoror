@@ -52,7 +52,7 @@ class GeminiClient(BaseLLMClient):
         )
 
 
-    async def _query(self, payload: LLMPayload) -> LLMResponse:
+    async def query(self, payload: LLMPayload) -> LLMResponse:
         """main orchestrator — one otel span wraps the full request lifecycle."""
         with self._tracer.start_as_current_span("gemini.query") as span:
             span.set_attribute("llm.model", payload.model_name)
