@@ -2,7 +2,12 @@ import asyncio
 from datetime import datetime, timezone
 from typing import Any
 
+import traceback
+from opentelemetry import trace
+from opentelemetry.trace import Status, StatusCode
+
 from core.models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
+from llm.base_llm_client import BaseLLMClient 
 
 class ValidationOrchestrator:
   """
@@ -10,9 +15,9 @@ class ValidationOrchestrator:
   Delegates validation to a ValidationStrategy and critical errors to a ValidationNotifier.
   """
 
-  def __init__(self, strategy: Any, notifier: Any):
+  def __init__(self, strategy: BaseLLMClient) -> None:
     self.strategy = strategy
-    self.notifier = notifier
+    self._tracer = trace.get_tracer(__name__)
 
   async def process(self, individuals: list[Any]) -> list[ExecutionSummary]:
     """
@@ -27,30 +32,34 @@ class ValidationOrchestrator:
 
   async def _process_single(self, entity: Any) -> ExecutionSummary:
     """
-    Aisla la ejecución de un solo individuo. Si la estrategia falla, 
-    captura la excepción, notifica y devuelve un sumario de error.
+    isolates the validation of a single entity, capturing any exceptions 
+    and returning a fallback ExecutionSummary if needed. 
     """
-    try:
-      context = entity.to_llm_context()
-      return await self.strategy.evaluate(context)
+    with self._tracer.start_as_current_span("validation_orchestrator.process_single") as span:
+      span.set_attribute("entity.individual_id", entity.individual_id)
+      try:
+        return await self.strategy.evaluate(entity)
+
+      except Exception as error:
+        error_msg = f"Critical failure processing {entity.individual_id}: {str(error)}"
+        span.set_status(Status(StatusCode.ERROR, error_msg))
+        span.record_exception(error)
+        span.set_attribute("error.stacktrace", traceback.format_exc()) 
         
-    except Exception as error:
-      self.notifier.notify_critical_failure(entity.individual_id, error)
-      
-      return ExecutionSummary(
-        individual_id=entity.individual_id,
-        timestamp=datetime.now(timezone.utc).isoformat(),
-        results=[
-          TaskOutcome(
-            task_id="orchestration_error",
-            status=TaskStatus.FAILURE,
-            findings=[str(error)]
-          )
-        ],
-        total_metrics=ExecutionMetrics(
-          duration_ms=0,
-          cost=0.0,
-          tokens_consumed=0
-        ),
-        system_summary="Validation failed during orchestration."
-      )
+        return ExecutionSummary(
+          individual_id=entity.individual_id,
+          timestamp=datetime.now(timezone.utc).isoformat(),
+          results=[
+            TaskOutcome(
+              task_id="orchestration_error",
+              status=TaskStatus.FAILURE,
+              findings=[str(error)]
+            )
+          ],
+          total_metrics=ExecutionMetrics(
+            duration_ms=0,
+            cost=0.0,
+            tokens_consumed=0
+          ),
+          system_summary="Validation failed during orchestration."
+        )
