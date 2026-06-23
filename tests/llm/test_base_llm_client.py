@@ -124,10 +124,8 @@ class TestQuery:
         """query() must propagate errors when retry is not configured."""
         client = make_stub()
         client.query = AsyncMock(side_effect=ValueError("boom"))
-        mock_sleep = mocker.patch("llm.base_llm_client.sleep", new=AsyncMock())
 
         with pytest.raises(ValueError, match="boom"):
             await client.query(mock_payload)
 
-        mock_sleep.assert_not_called()
         client.query.assert_called_once_with(mock_payload)

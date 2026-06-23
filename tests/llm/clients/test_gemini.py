@@ -344,7 +344,7 @@ class TestEmitLog:
     def test_known_bug_info_lowercase_emits_error_severity(self, client, mocker):
         """
         BUG (line 62): _emit_log is called with "info" (lowercase) at the
-        start of _query(). Because _emit_log compares with "INFO" (uppercase),
+        start of query(). Because _emit_log compares with "INFO" (uppercase),
         lowercase "info" falls through to the else branch and emits ERROR
         severity instead of INFO.
         Fix: change line 62 in gemini.py to _emit_log("INFO", ...).
@@ -509,7 +509,7 @@ class TestQuery:
         """Full flow must return a valid LLMResponse with the correct content."""
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
         mocker.patch.object(client, "_execute_network_call", new=AsyncMock(return_value=raw_response))
-        result = await client._query(payload)
+        result = await client.query(payload)
         assert result is not None
         assert result.raw_content == raw_response.text
 
@@ -518,7 +518,7 @@ class TestQuery:
         """A span named 'gemini.query' must be started for every request."""
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
         mocker.patch.object(client, "_execute_network_call", new=AsyncMock(return_value=raw_response))
-        await client._query(payload)
+        await client.query(payload)
         patch_all.tracer.start_as_current_span.assert_called_once_with("gemini.query")
 
     @pytest.mark.asyncio
@@ -526,7 +526,7 @@ class TestQuery:
         """llm.model and llm.json_mode must be set as span attributes at the start."""
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
         mocker.patch.object(client, "_execute_network_call", new=AsyncMock(return_value=raw_response))
-        await client._query(payload)
+        await client.query(payload)
         keys = [c.args[0] for c in patch_all.span.set_attribute.call_args_list]
         assert "llm.model"     in keys
         assert "llm.json_mode" in keys
@@ -536,7 +536,7 @@ class TestQuery:
         """The request counter must be incremented exactly once per call."""
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
         mocker.patch.object(client, "_execute_network_call", new=AsyncMock(return_value=raw_response))
-        await client._query(payload)
+        await client.query(payload)
         patch_all.counter.add.assert_called()
 
     @pytest.mark.asyncio
@@ -547,7 +547,7 @@ class TestQuery:
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
         mocker.patch.object(client, "_execute_network_call", new=AsyncMock(side_effect=err))
         with pytest.raises(errors.APIError):
-            await client._query(payload)
+            await client.query(payload)
 
     @pytest.mark.asyncio
     async def test_network_failure_propagates_with_original_type(self, client, payload, mocker):
@@ -556,7 +556,7 @@ class TestQuery:
         mocker.patch.object(client, "_execute_network_call",
             new=AsyncMock(side_effect=ConnectionError("DNS failure")))
         with pytest.raises(ConnectionError, match="DNS failure"):
-            await client._query(payload)
+            await client.query(payload)
 
     @pytest.mark.asyncio
     async def test_known_bug_start_log_emitted_as_error(self, client, payload, raw_response, mocker):
@@ -580,6 +580,6 @@ class TestQuery:
         mocker.patch("llm.clients.gemini.LogRecord", side_effect=capture_record)
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
         mocker.patch.object(client, "_execute_network_call", new=AsyncMock(return_value=raw_response))
-        await client._query(payload)
+        await client.query(payload)
         # First LogRecord corresponds to the start log (line 62)
         assert captured[0].severity_number == SeverityNumber.ERROR  # bug: should be INFO
