@@ -1,42 +1,67 @@
-"""
-Define the policy for retrying LLM calls in case of failures, including the number of retries and the delay between retries.
-"""
-
 import random
+from asyncio import sleep
 
 from .base_llm_client import BaseLLMClient
 from .config import RetryPolicyConfig, BackoffStrategy
-from exceptions import TransientNetworkException, LLMParseException
 from .models import LLMPayload, LLMResponse
+from exceptions import TransientNetworkException, LLMParseException
 
-from asyncio import sleep
-
-class RetryPolicy:
+class RetryableLLMClient(BaseLLMClient):
     """
-    A class that defines the policy for retrying LLM calls in case of failures, 
-    including the number of retries and the delay between retries.
+    Proxy class that implements the BaseLLMClient interface and adds transparent
+    resilience (retries) to any underlying LLM client.
     """
+    
     def __init__(self, llm_client: BaseLLMClient, config: RetryPolicyConfig):
+        """
+        Initializes the retryable client proxy.
+
+        Args:
+            llm_client (BaseLLMClient): The concrete LLM client instance to wrap.
+            config (RetryPolicyConfig): The configuration defining the retry policy.
+        """
         self.llm_client = llm_client
         self.config = config
 
     async def query(self, payload: LLMPayload) -> LLMResponse:
         """
-        Execute an LLM call with the defined retry policy.
+        Executes an LLM call using the defined retry policy.
+        Propagates the specific domain exception if the maximum number of attempts is reached.
+
+        Args:
+            payload (LLMPayload): The payload to send to the LLM provider.
+
+        Returns:
+            LLMResponse: The successful response from the underlying LLM client.
+
+        Raises:
+            TransientNetworkException: If a network error persists after all retries are exhausted.
+            LLMParseException: If the response parsing fails after all retries are exhausted.
+            RuntimeError: If the retry loop terminates unexpectedly.
         """
-        for attempt in range(1, self.config.max_retries + 1):
+        max_attempts = self.config.max_retries
+        
+        for attempt in range(1, max_attempts + 1):
             try:
                 return await self.llm_client.query(payload)
             except (TransientNetworkException, LLMParseException) as error:
-                if attempt == self.config.max_retries:
+                if attempt == max_attempts:
                     raise error
+                
                 delay = self._calculate_delay(attempt)
                 await sleep(delay)
+                
+        raise RuntimeError("The retry loop terminated unexpectedly.")
 
     def _calculate_delay(self, current_attempt: int) -> float:
         """
-        Calcula el tiempo de espera (sleep) basado en la estrategia configurada.
-        current_attempt: El número de intento que acaba de fallar (1, 2, 3...)
+        Calculates the wait time (sleep) based on the configured backoff strategy.
+
+        Args:
+            current_attempt (int): The current failed attempt number (e.g., 1, 2, 3).
+
+        Returns:
+            float: The calculated delay in seconds before the next retry.
         """
         base_delay = self.config.delay_between_retries
         strategy = self.config.backoff_strategy
