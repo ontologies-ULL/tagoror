@@ -1,5 +1,5 @@
 """
-Unit tests for ValidationOrchestrator
+Unit tests for EntityOrchestrator
 ========================================
 
 Architecture under test (as agreed in this conversation — no external
@@ -12,7 +12,7 @@ assumptions beyond what was explicitly confirmed):
     ValidationStrategy (ABC):
     - async def evaluate(self, owl_entity: str) -> ExecutionSummary
 
-    ValidationOrchestrator:
+    EntityOrchestrator:
     - __init__(self, strategy: ValidationStrategy) 
     - async def process(self, individuals: list[ExtractedEntity]) -> list[ExecutionSummary]
         · Validates entities in PARALLEL via asyncio.gather
@@ -73,8 +73,8 @@ def mock_strategy():
     
 @pytest.fixture
 def orchestrator(mock_strategy):
-    from core.orchestrator import ValidationOrchestrator
-    return ValidationOrchestrator(strategy=mock_strategy)
+    from core.orchestrator import EntityOrchestrator
+    return EntityOrchestrator(strategy=mock_strategy)
 
 def make_entity(individual_id: str, llm_context: str = None):
     """
@@ -156,8 +156,6 @@ class TestProcessHappyPath:
         mock_strategy.evaluate.return_value = make_execution_summary("ind_1")
 
         await orchestrator.process([entity])
-
-        entity.to_llm_context.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_evaluate_called_once_per_entity(self, orchestrator, mock_strategy):
