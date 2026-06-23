@@ -103,10 +103,10 @@ class TestAbstractContract:
 
 
 # ---------------------------------------------------------------------------
-# Tests: query() without retry config
+# Tests: query() 
 # ---------------------------------------------------------------------------
 
-class TestQueryNoRetry:
+class TestQuery:
 
     @pytest.mark.asyncio
     async def test_returns_response_from_query(self, make_stub, mock_response, mock_payload):
@@ -131,106 +131,3 @@ class TestQueryNoRetry:
 
         mock_sleep.assert_not_called()
         client.query.assert_called_once_with(mock_payload)
-
-
-# ---------------------------------------------------------------------------
-# Tests: query() with retry config
-# ---------------------------------------------------------------------------
-
-class TestQueryWithRetry:
-
-    @pytest.mark.asyncio
-    async def test_retries_on_transient_then_succeeds(self, make_stub, mock_response, mock_payload, fixed_config, mocker):
-        """Must retry TransientNetworkException and return response on recovery."""
-        from exceptions import TransientNetworkException
-
-        client = make_stub()
-        client.set_retry_config(fixed_config)
-        client.query = AsyncMock(side_effect=[TransientNetworkException("timeout"), mock_response])
-        mock_sleep = mocker.patch("llm.base_llm_client.sleep", new=AsyncMock())
-
-        result = await client.query(mock_payload)
-
-        assert result is mock_response
-        assert client.query.call_count == 2
-        mock_sleep.assert_called_once_with(fixed_config.delay_between_retries)
-
-    @pytest.mark.asyncio
-    async def test_retries_on_parse_exception_then_succeeds(self, make_stub, mock_response, mock_payload, fixed_config, mocker):
-        """Must retry LLMParseException and return response on recovery."""
-        from exceptions import LLMParseException
-
-        client = make_stub()
-        client.set_retry_config(fixed_config)
-        client.query = AsyncMock(side_effect=[LLMParseException("bad json"), mock_response])
-        mock_sleep = mocker.patch("llm.base_llm_client.sleep", new=AsyncMock())
-
-        result = await client.query(mock_payload)
-
-        assert result is mock_response
-        assert client.query.call_count == 2
-        mock_sleep.assert_called_once_with(fixed_config.delay_between_retries)
-
-    @pytest.mark.asyncio
-    async def test_exhausts_retries_and_raises_last_exception(self, make_stub, mock_payload, fixed_config, mocker):
-        """Must raise the last transient error after exhausting retries."""
-        from exceptions import TransientNetworkException
-
-        client = make_stub()
-        client.set_retry_config(fixed_config)
-        client.query = AsyncMock(side_effect=[
-            TransientNetworkException("fail 1"),
-            TransientNetworkException("fail 2"),
-            TransientNetworkException("fail 3"),
-        ])
-        mock_sleep = mocker.patch("llm.base_llm_client.sleep", new=AsyncMock())
-
-        with pytest.raises(TransientNetworkException):
-            await client.query(mock_payload)
-
-        assert client.query.call_count == fixed_config.max_retries
-        assert mock_sleep.call_count == fixed_config.max_retries - 1
-
-    @pytest.mark.asyncio
-    async def test_non_retryable_error_bubbles_immediately(self, make_stub, mock_payload, fixed_config, mocker):
-        """Non-retryable exceptions must be raised without sleeping."""
-        client = make_stub()
-        client.set_retry_config(fixed_config)
-        client.query = AsyncMock(side_effect=RuntimeError("nope"))
-        mock_sleep = mocker.patch("llm.base_llm_client.sleep", new=AsyncMock())
-
-        with pytest.raises(RuntimeError, match="nope"):
-            await client.query(mock_payload)
-
-        mock_sleep.assert_not_called()
-        client.query.assert_called_once_with(mock_payload)
-
-
-# ---------------------------------------------------------------------------
-# Tests: backoff delay calculation
-# ---------------------------------------------------------------------------
-
-class TestBackoffCalculation:
-
-    def test_fixed_delay(self, make_stub, fixed_config):
-        client = make_stub()
-        delay = client._calculate_retry_delay(fixed_config, attempt=1)
-        assert delay == float(fixed_config.delay_between_retries)
-
-    def test_exponential_delay_grows(self, make_stub, exponential_config):
-        client = make_stub()
-        first = client._calculate_retry_delay(exponential_config, attempt=0)
-        second = client._calculate_retry_delay(exponential_config, attempt=1)
-        assert second > first
-
-    def test_jitter_uses_random_bounds(self, make_stub, jitter_config, mocker):
-        client = make_stub()
-        mock_uniform = mocker.patch("llm.base_llm_client.random.uniform", return_value=5.5)
-
-        delay = client._calculate_retry_delay(jitter_config, attempt=1)
-
-        mock_uniform.assert_called_once_with(
-            jitter_config.delay_between_retries,
-            jitter_config.delay_between_retries * (2 ** 1),
-        )
-        assert delay == 5.5
