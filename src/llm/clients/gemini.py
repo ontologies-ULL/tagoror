@@ -1,5 +1,6 @@
 """
-
+Concrete adapter for the Google Gemini API.
+Implements the Facade pattern to hide the complexity of the Google SDK.
 """
 
 import time
@@ -10,6 +11,7 @@ from opentelemetry import trace, metrics
 from opentelemetry.trace import Status, StatusCode
 from opentelemetry._logs import get_logger
 from opentelemetry._logs._internal import LogRecord, SeverityNumber
+from pydantic import ValidationError
 
 from llm.base_llm_client import BaseLLMClient
 from llm.models import LLMPayload, LLMResponse
@@ -67,10 +69,12 @@ class GeminiClient(BaseLLMClient):
                 raw    = await self._execute_network_call(payload.model_name, payload.user_prompt, config)
                 return self._map_to_domain_response(raw, start_time, span, payload.model_name)
  
-            except errors.APIError as e:
-                self._handle_api_error(e, span)
-            except Exception as e:
-                self._handle_network_failure(e, span)
+            except errors.APIError as error:
+                self._handle_error(error, span, "Gemini API error")
+            except ValidationError as error:
+                self._handle_error(error, span, "Response validation error")
+            except Exception as error:
+                self._handle_error(error, span, "Unexpected error")
 
     # --- setup methods ---
     
@@ -135,25 +139,16 @@ class GeminiClient(BaseLLMClient):
 
     # --- Error Handling Methods ---
 
-    def _handle_api_error(self, error: errors.APIError, span):
+    def _handle_error(self, error: Exception, span, error_msg: str):
         """
-        Handles errors raised by the Gemini API (e.g. safety blocks, quota exceeded).
-        errors.APIError exposes .code (HTTP status) and .message.
+        Handles generic errors.
         """
-        msg = f"Gemini API error (code={error.code}): {error.message}"
+        msg = f"{error_msg} (code={getattr(error, 'code', 'N/A')}): {str(error)}"
         self._emit_log("ERROR", msg)
         span.set_status(Status(StatusCode.ERROR, msg))
         span.record_exception(error)
         raise error
  
-    def _handle_network_failure(self, error: Exception, span):
-        """Handles generic I/O and transport-level failures."""
-        msg = "Critical communication failure with Gemini API"
-        self._emit_log("ERROR", msg)
-        span.set_status(Status(StatusCode.ERROR, msg))
-        span.record_exception(error)
-        raise error
-
     # --- Logging Helper ---
 
     def _emit_log(self, level: str, message: str):
