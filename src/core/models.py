@@ -42,7 +42,8 @@ class TaskOutcome(BaseModel):
 
 class ExecutionSummary(BaseModel):
     """
-    Represents the overall summary of a validation execution, including the individual ID, timestamp, results of all tasks, total metrics, and a system summary.
+    Represents the overall summary of a validation execution, including the individual ID, 
+    timestamp, results of all tasks, total metrics, and a system summary.
     """
     individual_id: str
     timestamp: str
