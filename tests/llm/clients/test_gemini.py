@@ -32,7 +32,7 @@ Patching strategy:
 import pytest
 import time
 from unittest.mock import AsyncMock, MagicMock, call
-from llm.models import LLMPayload, LLMResponse
+from llm.models import LLMPayload
 
 
 # ---------------------------------------------------------------------------
@@ -581,5 +581,4 @@ class TestQuery:
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
         mocker.patch.object(client, "_execute_network_call", new=AsyncMock(return_value=raw_response))
         await client.query(payload)
-        # First LogRecord corresponds to the start log (line 62)
         assert captured[0].severity_number == SeverityNumber.ERROR  # bug: should be INFO

@@ -73,7 +73,7 @@ def mock_strategy():
     
 @pytest.fixture
 def orchestrator(mock_strategy):
-    from pipeline.orchestrator import EntityOrchestrator
+    from core.pipeline.orchestrator import EntityOrchestrator
     return EntityOrchestrator(strategy=mock_strategy)
 
 def make_entity(individual_id: str, llm_context: str = None):

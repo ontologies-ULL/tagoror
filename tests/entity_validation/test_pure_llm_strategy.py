@@ -107,13 +107,13 @@ class TestValidationStrategyAbstractContract:
 
     def test_cannot_instantiate_directly(self):
         """Instantiating ValidationStrategy without evaluate() must raise TypeError."""
-        from entity_validation.base_entity_validation import ValidationStrategy
+        from execution.base_entity_validation import ValidationStrategy
         with pytest.raises(TypeError):
             ValidationStrategy()
 
     def test_subclass_without_evaluate_raises_type_error(self):
         """A subclass that omits evaluate() must raise TypeError on instantiation."""
-        from entity_validation.base_entity_validation import ValidationStrategy
+        from execution.base_entity_validation import ValidationStrategy
 
         class IncompleteStrategy(ValidationStrategy):
             pass
@@ -123,7 +123,7 @@ class TestValidationStrategyAbstractContract:
 
     def test_valid_subclass_instantiates_correctly(self):
         """A subclass that implements evaluate() must instantiate without errors."""
-        from entity_validation.base_entity_validation import ValidationStrategy
+        from execution.base_entity_validation import ValidationStrategy
 
         class MinimalStrategy(ValidationStrategy):
             async def evaluate(self, owl_entity: str):
@@ -134,7 +134,7 @@ class TestValidationStrategyAbstractContract:
     def test_evaluate_is_async(self):
         """evaluate must be declared as a coroutine function."""
         import inspect
-        from entity_validation.base_entity_validation import ValidationStrategy
+        from execution.base_entity_validation import ValidationStrategy
         assert inspect.iscoroutinefunction(ValidationStrategy.evaluate)
 
 
@@ -145,18 +145,18 @@ class TestValidationStrategyAbstractContract:
 class TestPureLLMStrategyInit:
 
     def test_llm_client_stored(self, mock_llm_client, single_prompt_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         s = PureLLMStrategy(llm_client=mock_llm_client, context=single_prompt_registry)
         assert s._llm_client is mock_llm_client
 
     def test_context_stored(self, mock_llm_client, single_prompt_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         s = PureLLMStrategy(llm_client=mock_llm_client, context=single_prompt_registry)
         assert s._context is single_prompt_registry
 
     def test_inherits_from_validation_strategy(self, mock_llm_client, single_prompt_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
-        from entity_validation.base_entity_validation import ValidationStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.base_entity_validation import ValidationStrategy
         s = PureLLMStrategy(llm_client=mock_llm_client, context=single_prompt_registry)
         assert isinstance(s, ValidationStrategy)
 
@@ -169,7 +169,7 @@ class TestEvaluateSinglePrompt:
 
     @pytest.fixture
     def strategy(self, mock_llm_client, single_prompt_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         return PureLLMStrategy(llm_client=mock_llm_client, context=single_prompt_registry)
 
     @pytest.mark.asyncio
@@ -277,7 +277,7 @@ class TestEvaluateMultiplePrompts:
 
     @pytest.fixture
     def strategy(self, mock_llm_client, multi_prompt_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         return PureLLMStrategy(llm_client=mock_llm_client, context=multi_prompt_registry)
 
     @pytest.mark.asyncio
@@ -354,7 +354,7 @@ class TestEvaluateEmptyRegistry:
 
     @pytest.fixture
     def strategy(self, mock_llm_client, empty_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         return PureLLMStrategy(llm_client=mock_llm_client, context=empty_registry)
 
     @pytest.mark.asyncio
@@ -393,7 +393,7 @@ class TestEvaluateErrorPropagation:
     @pytest.mark.asyncio
     async def test_propagates_llm_client_exception(self, mock_llm_client, single_prompt_registry):
         """Any exception from llm_client.query must propagate unchanged."""
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         mock_llm_client.query.side_effect = ConnectionError("LLM unreachable")
         s = PureLLMStrategy(llm_client=mock_llm_client, context=single_prompt_registry)
         with pytest.raises(ConnectionError, match="LLM unreachable"):
@@ -405,7 +405,7 @@ class TestEvaluateErrorPropagation:
         If the first LLM call fails, no subsequent calls must be made.
         evaluate() does not implement partial recovery by design.
         """
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         mock_llm_client.query.side_effect = RuntimeError("fatal")
         s = PureLLMStrategy(llm_client=mock_llm_client, context=multi_prompt_registry)
         with pytest.raises(RuntimeError):
@@ -498,7 +498,7 @@ class TestBuildPayload:
 
     @pytest.fixture
     def strategy(self, mock_llm_client, single_prompt_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         return PureLLMStrategy(llm_client=mock_llm_client, context=single_prompt_registry)
 
     def test_system_prompt_equals_prompt_template(self, strategy):
@@ -523,7 +523,7 @@ class TestParseResponse:
 
     @pytest.fixture
     def strategy(self, mock_llm_client, single_prompt_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         return PureLLMStrategy(llm_client=mock_llm_client, context=single_prompt_registry)
 
     def test_task_id_stored_correctly(self, strategy):
@@ -566,7 +566,7 @@ class TestBuildSummary:
 
     @pytest.fixture
     def strategy(self, mock_llm_client, single_prompt_registry):
-        from entity_validation.strategies.pure_llm_strategy import PureLLMStrategy
+        from execution.strategies.pure_llm_strategy import PureLLMStrategy
         return PureLLMStrategy(llm_client=mock_llm_client, context=single_prompt_registry)
 
     def test_mentions_task_count(self, strategy):

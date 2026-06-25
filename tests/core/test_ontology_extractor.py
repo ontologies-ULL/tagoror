@@ -15,7 +15,7 @@ import owlready2 as _owl
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
-from core.extractor import OntologyExtractor
+from core.pipeline.extractor import OntologyExtractor
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
