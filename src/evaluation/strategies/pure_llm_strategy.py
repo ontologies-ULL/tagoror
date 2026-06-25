@@ -6,7 +6,7 @@ TaskOutcome per call. Metrics are aggregated across all calls.
 
 from datetime import datetime, timezone
 
-from entity_validation.base_entity_validation import ValidationStrategy
+from evaluation.entity_validation import ValidationStrategy
 from core.models import (
     ExecutionSummary,
     ExecutionMetrics,

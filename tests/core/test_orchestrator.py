@@ -73,7 +73,7 @@ def mock_strategy():
     
 @pytest.fixture
 def orchestrator(mock_strategy):
-    from core.orchestrator import EntityOrchestrator
+    from pipeline.orchestrator import EntityOrchestrator
     return EntityOrchestrator(strategy=mock_strategy)
 
 def make_entity(individual_id: str, llm_context: str = None):
@@ -247,9 +247,8 @@ class TestProcessSingleFailure:
         entity = make_entity("ind_fail")
         mock_strategy.evaluate.side_effect = TimeoutError("LLM timed out")
 
-        # No pytest.raises: process() must swallow the error and return data.
         results = await orchestrator.process([entity])
-
+        
         assert results is not None
 
     @pytest.mark.asyncio
