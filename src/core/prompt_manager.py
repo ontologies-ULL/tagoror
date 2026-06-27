@@ -3,7 +3,7 @@ from pathlib import Path
 
 class PromptManager:
     _BASE_PROMPT_KEY = "base_generic"
-    _TASK_CHAINS_KEY = "task_chains"
+    _TASK_SUITES_KEY = "evaluation_suites"
     _DEFAULT_PROMPT_FILE: Path = Path(__file__).parent.parent / "prompts.yaml" 
   
     def __init__(self, file_path: str = None):
@@ -30,24 +30,22 @@ class PromptManager:
             prompt_parts.append(formatted_section)
 
         return "\n\n".join(prompt_parts)
-  
-    def get_task_chain(self, chain_name: str) -> list:
+ 
+    def get_evaluation_suite(self, suite_name: str = "owl_validations") -> dict:
         """
-        Return the task chain for the given chain name.
+        Retrieve the evaluation suite by name from the prompts file.
         """
-        task_chain = self._get_task_chains().get(chain_name)
-        if not task_chain:
-            raise KeyError(f"Missing task chain: {chain_name}")
-
-        return task_chain
-  
+        suites_block = self._prompts.get(self._TASK_SUITES_KEY) or {}
+        suite = suites_block.get(suite_name)
+        if not suite:
+            raise KeyError(f"Missing evaluation suite: {suite_name}")
+        return suite
+    
     def _get_base_sections(self) -> dict:
         """
-        Returns the base sections, falling back to legacy 'base_generica' if needed.
+        Retrieve the base prompt sections from the prompts file.
         """
-        return self._prompts.get(self._BASE_PROMPT_KEY) or {}
-
-    def _get_task_chains(self) -> dict:
-        return self._prompts.get(
-            self._TASK_CHAINS_KEY,
-        ) or {}
+        base_block = self._prompts.get(self._BASE_PROMPT_KEY) or {}
+        if not base_block:
+            raise KeyError("Missing base prompt block in prompts file.")
+        return base_block
