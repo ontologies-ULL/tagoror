@@ -7,7 +7,7 @@ from opentelemetry import trace
 from opentelemetry.trace import Status, StatusCode
 
 from core.models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
-from evaluation.entity_evaluator import EntityEvaluator
+from evaluation.entity_auditor import EntityAuditor 
 
 class EntityOrchestrator:
     """
@@ -15,7 +15,7 @@ class EntityOrchestrator:
     Delegates validation to a ValidationStrategy and critical errors to a ValidationNotifier.
     """
 
-    def __init__(self, strategy: EntityEvaluator) -> None:
+    def __init__(self, strategy: EntityAuditor) -> None:
         self.strategy = strategy
         self._tracer = trace.get_tracer(__name__)
 
