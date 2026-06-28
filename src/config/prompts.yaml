@@ -13,7 +13,7 @@ base_generic:
     {base_ontology}
 
   constraints: |
-    Do not invent information. If context is missing, say so.
+    Do not make up information. If context is missing, say so.
 
 preprocessing:
   entity_extraction:
@@ -26,7 +26,7 @@ preprocessing:
       Example output: ["Patient_A", "Metformin_500mg", "Type2_Diabetes"]
       
       Text to analyze:
-      {ai_response}
+      {ai_entity}
 
 evaluation_suites:
   owl_validations:
