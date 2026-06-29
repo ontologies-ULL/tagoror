@@ -83,6 +83,7 @@ class GeminiClient(BaseLLMClient):
         return types.GenerateContentConfig(
             temperature=payload.temperature,
             response_mime_type="application/json" if payload.json_mode else "text/plain",
+            system_instruction=payload.system_prompt
         )
 
     # --- execution & mapping methods ---
