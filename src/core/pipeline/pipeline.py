@@ -18,13 +18,18 @@ class Pipeline:
             
             try:
                 individuals = OntologyExtractor.extract(file_path)
+                base_ontology = OntologyExtractor.get_base_ontology()
                 span.set_attribute("ontology.individuals_extracted", len(individuals))
-                
+                span.set_attribute("ontology.base_ontology", base_ontology)
+
                 if not individuals:
                     span.set_status(Status(StatusCode.OK, "No individuals found to process"))
                     return []
+                if not base_ontology:
+                    span.set_status(Status(StatusCode.OK, "No base ontology found to process"))
+                    return []
 
-                results = await self._orchestrator.process(individuals)
+                results = await self._orchestrator.process(individuals, base_ontology)
                 
                 span.set_status(Status(StatusCode.OK))
                 return results
