@@ -16,11 +16,13 @@ class LLMEntityAuditor(EntityAuditor):
     def __init__(self, model: BaseLLMClient, 
                  prompt_manager: PromptManager, 
                  suite_name: str = "owl_validations", 
-                 model_name: str = "gemini-1.5-pro") -> None:
+                 model_name: str = "gemini-1.5-pro",
+                 serializator) -> None:
         self.model = model
         self.prompt_manager = prompt_manager
         self.suite_name = suite_name
         self.model_name = model_name
+        self.serializator = serializator
 
     async def run(self, individual: Thing, base_ontology: Any) -> ExecutionSummary:
         """
@@ -55,7 +57,8 @@ class LLMEntityAuditor(EntityAuditor):
             total_metrics.duration_ms += getattr(response, 'duration_ms', 0)
             total_metrics.cost += getattr(response, 'cost', 0.0)
             total_metrics.tokens_consumed += getattr(response, 'tokens_consumed', 0)
-            
+
+            # TODO: Fix this 
             output = self._parse_single_task_response(response, task_id)
             output.append(output)
 
