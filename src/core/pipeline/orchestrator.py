@@ -20,7 +20,7 @@ class EntityOrchestrator:
         self.strategy = strategy
         self._tracer = trace.get_tracer(__name__)
 
-    async def process(self, individuals: list[Thing], base_ontology: list[Thing]) -> list[ExecutionSummary]:
+    async def process(self, individuals: list[Thing], base_ontology: Any) -> list[ExecutionSummary]:
         """
         Validates a list of entities concurrently.
         Failures are encapsulated into fallback ExecutionSummaries; exceptions are never raised.
@@ -31,7 +31,7 @@ class EntityOrchestrator:
         tasks = [self._process_single(entity, base_ontology) for entity in individuals]
         return await asyncio.gather(*tasks)
 
-    async def _process_single(self, entity: Thing, base_ontology: list[Thing]) -> ExecutionSummary:
+    async def _process_single(self, entity: Thing, base_ontology: Any) -> ExecutionSummary:
         """
         isolates the validation of a single entity, capturing any exceptions 
         and returning a fallback ExecutionSummary if needed. 

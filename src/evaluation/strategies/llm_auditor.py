@@ -22,7 +22,7 @@ class LLMEntityAuditor(EntityAuditor):
         self.suite_name = suite_name
         self.model_name = model_name
 
-    async def run(self, individual: Thing, base_ontology: list[Thing]) -> ExecutionSummary:
+    async def run(self, individual: Thing, base_ontology: Any) -> ExecutionSummary:
         """
         Evaluates an OWL individual using a language model and returns an execution summary.
 
@@ -38,7 +38,7 @@ class LLMEntityAuditor(EntityAuditor):
         total_metrics = ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0)
         context_data = {
             "individual_response": individual.to_llm_context(),
-            "base_ontology": [entity.to_llm_context() for entity in base_ontology] 
+            "base_ontology":  
 
         }
 
