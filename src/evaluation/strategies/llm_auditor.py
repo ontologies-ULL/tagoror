@@ -81,16 +81,12 @@ class LLMEntityAuditor(EntityAuditor):
             system_summary=f"Evaluated {individual.name}. Total tasks: {len(evaluation_suite)}."        )
     
     async def _run_task_with_consensus(self, task_id: str, task_config: dict, context_data: dict, developer_prompt: str) -> tuple:
-        """
-        Executes a single task across multiple temperatures concurrently, 
-        applies majority voting, and aggregates the network metrics.
-        """
         raw_prompt = task_config.get("prompt", "")
         if not raw_prompt:
-            raise ValueError(f"Task {task_id} is missing a 'prompt' configuration.")
+            raise ValueError(f"Task {task_id} is missing a 'prompt'.")
             
         user_prompt = self._safe_format(raw_prompt, context_data)
-        temperatures = task_config.get("temperatures", [0.0])
+        temperatures = task_config.get("temperatures", [0.0]) 
         allow_web = task_config.get("allow_web_search", False)
 
         async def _run_temperature_branch(temp: float):
@@ -100,22 +96,31 @@ class LLMEntityAuditor(EntityAuditor):
                 user_prompt=user_prompt,
                 json_mode=True,
                 allow_web_search=allow_web,
-                temperature=temp
+                temperature=temp 
             )
             response = await self.model.query(payload)
             outcome = self._parse_single_task_response(response, task_id)
-            return outcome, response
+            return outcome, temp, response
 
         branch_coroutines = [_run_temperature_branch(temp) for temp in temperatures]
         branch_results = await asyncio.gather(*branch_coroutines)
-        outcomes = [res[0] for res in branch_results]
-        network_responses = [res[1] for res in branch_results]
 
-        final_outcome = self.consensus_resolver.resolve(task_id, outcomes)
+        outcomes_with_temps = [(res[0], res[1]) for res in branch_results]
+        network_responses = [res[2] for res in branch_results]
+        
+        final_outcome = self.consensus_resolver.resolve(task_id, outcomes_with_temps)
+
+        if final_outcome is None:
+            fallback_outcome, _, fallback_response = await _run_temperature_branch(0.0)
+            
+            fallback_outcome.findings.insert(0, "[CONSENSUS FAILURE: Resolved by fallback execution at temp 0.0]")
+            final_outcome = fallback_outcome
+            
+            network_responses.append(fallback_response)
 
         total_cost = sum(getattr(resp, 'cost', 0.0) for resp in network_responses)
         total_tokens = sum(getattr(resp, 'tokens_consumed', 0) for resp in network_responses)
-        max_duration = max((getattr(resp, 'duration_ms', 0) for resp in network_responses), default=0)
+        max_duration = sum(getattr(resp, 'duration_ms', 0) for resp in network_responses)
 
         return final_outcome, total_cost, total_tokens, max_duration
 
