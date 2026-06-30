@@ -13,7 +13,7 @@ class OntologyExtractor:
     Converts ontology individuals into OntologyExtractionRecord instances.
     """
 
-    _base_ontology_path: Path = Path(__file__).parent.parent / "ontologies" / "base_ontology.rdf"
+    _base_ontology_path: Path = Path(__file__).parent.parent.parent / "ontologies" / "base_ontology.rdf"
     _base_ontology = None
 
     @classmethod
