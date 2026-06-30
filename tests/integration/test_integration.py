@@ -16,7 +16,9 @@ RetryableLLMClient is treated as the correct place for retry/backoff resilience
 (decorator over BaseLLMClient) and is exercised both in isolation and as part of
 the full Orchestrator -> Auditor -> RetryableLLMClient -> transport chain.
 """
+import asyncio
 import json
+import trace
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -34,9 +36,10 @@ from core.pipeline import extractor as extractor_module
 from llm.retry import RetryableLLMClient
 from llm.config import RetryPolicyConfig, BackoffStrategy
 from llm.clients.gemini import GeminiClient
-from llm.models import LLMPayload
+from llm.models import LLMPayload, LLMResponse
 
 from exceptions import TransientNetworkException, LLMParseException
+from serialization.serializers.turtle_serializer import TurtleSerializer
 
 from .fakes import (
     FakeIndividual,
