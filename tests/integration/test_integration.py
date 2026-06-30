@@ -134,15 +134,23 @@ def serializer(tracer):
 
 class ScriptedLLMClient:
     """
-    A controllable LLM client designed to simulate sequential LLM responses or network exceptions.
-    Ensures integration tests do not make actual calls to Google Gemini API during offline test execution.
+    A controllable LLM client designed to simulate sequential LLM responses, 
+    network exceptions, or payload-based routing.
     """
-    def __init__(self, responses: list):
+    def __init__(self, responses: list = None, router=None):
         self.responses = responses
+        self.router = router
         self.call_history = []
 
     async def query(self, payload: LLMPayload) -> LLMResponse:
         self.call_history.append(payload)
+        
+        if self.router:
+            resp = self.router(payload)
+            if isinstance(resp, Exception):
+                raise resp
+            return resp
+            
         if not self.responses:
             raise RuntimeError("ScriptedLLMClient has run out of predefined responses/exceptions.")
         
@@ -150,6 +158,7 @@ class ScriptedLLMClient:
         if isinstance(next_resp, Exception):
             raise next_resp
         return next_resp
+
 
 
 def make_success_response(findings: list[str], status: str = "success") -> LLMResponse:
@@ -185,19 +194,15 @@ async def test_successful_pipeline_execution_flow(monkeypatch, real_ontology, pr
     monkeypatch.setattr(extractor_module.OntologyExtractor, "extract", staticmethod(lambda path: target_individuals))
     monkeypatch.setattr(extractor_module.OntologyExtractor, "get_base_ontology", staticmethod(lambda: real_ontology))
 
-    responses = [
-        make_success_response(["No structural issues at 0.2"], "success"),
-        make_success_response(["Clean structure at 0.4"], "success"),
-        make_success_response(["Semantic constraints OK"], "success"),
-        make_success_response(["Semantic constraints OK"], "success"),
-        
-        make_success_response(["Missing mandatory relation 'has_provider'"], "failure"),
-        make_success_response(["Missing mandatory relation 'has_provider'"], "failure"),
-        make_success_response(["Contextually consistent"], "success"),
-        make_success_response(["Contextually consistent"], "success"),
-    ]
+    def router(payload: LLMPayload):
+        prompt_text = (payload.system_prompt or "") + " " + payload.user_prompt
+        if ind2_name in prompt_text:
+            if "Evaluate structure" in prompt_text:
+                return make_success_response(["Missing mandatory relation 'has_provider'"], "failure")
+            return make_success_response(["Contextually consistent"], "success")
+        return make_success_response(["Clean structure"], "success")
 
-    base_client = ScriptedLLMClient(responses)
+    base_client = ScriptedLLMClient(router=router)
     retry_config = RetryPolicyConfig(max_retries=1, delay_between_retries=0, backoff_strategy=BackoffStrategy.FIXED)
     retryable_client = RetryableLLMClient(base_client, config=retry_config)
     
@@ -214,14 +219,16 @@ async def test_successful_pipeline_execution_flow(monkeypatch, real_ontology, pr
     pipeline = Pipeline(orchestrator=orchestrator)
 
     summaries = await pipeline.execute("fake_ontology_path.rdf")
+
     assert len(summaries) == 2
+    
     summary_ind1 = next(s for s in summaries if s.individual_id == ind1_name)
     summary_ind2 = next(s for s in summaries if s.individual_id == ind2_name)
     
-    assert summary_ind1.is_successful() is True  # both tasks succeeded
+    assert summary_ind1.is_successful() is True
     assert len(summary_ind1.results) == 2
-    assert summary_ind2.is_successful() is False  # structural task failed
     
+    assert summary_ind2.is_successful() is False
     structural_result = next(r for r in summary_ind2.results if r.task_id == "structural_evaluation")
     assert structural_result.status == TaskStatus.FAILURE
     assert "Missing mandatory relation 'has_provider'" in structural_result.findings
@@ -233,6 +240,7 @@ async def test_transient_error_recovery_on_last_attempt(real_ontology, prompt_ma
     Verifies that RetryableLLMClient transparently recovers from temporary network issues.
     """
     individual = list(real_ontology.individuals())[0]
+
     responses = [
         TransientNetworkException("Timeout communicating with Gemini gateway"),
         TransientNetworkException("Service Unavailable (503)"),
@@ -244,8 +252,10 @@ async def test_transient_error_recovery_on_last_attempt(real_ontology, prompt_ma
     retryable_client = RetryableLLMClient(base_client, config=retry_config)
     
     consensus_resolver = ConsensusResolver()
-    prompt_manager._prompts["evaluation_suites"]["owl_validations"]["configurations"]["temperatures"] = [0.2]
-    
+    prompt_manager._prompts["evaluation_suites"]["owl_validations"] = {
+        "structural_evaluation": {"prompt": "Check {individual_response}", "temperatures": [0.2]}
+    }
+
     auditor = LLMEntityAuditor(
         model=retryable_client,
         prompt_manager=prompt_manager,
@@ -255,7 +265,6 @@ async def test_transient_error_recovery_on_last_attempt(real_ontology, prompt_ma
     )
 
     summary = await auditor.run(individual, real_ontology)
-    
     assert len(base_client.call_history) == 3
     assert summary.is_successful() is True
     assert summary.results[0].status == TaskStatus.SUCCESS
@@ -279,8 +288,10 @@ async def test_transient_error_exhaustion_propagates_exception(real_ontology, pr
     retryable_client = RetryableLLMClient(base_client, config=retry_config)
     
     consensus_resolver = ConsensusResolver()
-    prompt_manager._prompts["evaluation_suites"]["owl_validations"]["configurations"]["temperatures"] = [0.2]
-    
+    prompt_manager._prompts["evaluation_suites"]["owl_validations"] = {
+        "configurations": {"temperatures": [0.2], "allow_web_search": False},
+        "structural_evaluation": {"prompt": "Check {individual_response}"}
+    }    
     auditor = LLMEntityAuditor(
         model=retryable_client,
         prompt_manager=prompt_manager,
@@ -301,6 +312,7 @@ async def test_auditor_handles_json_decode_error_gracefully(real_ontology, promp
     Verifies that malformed JSON responses are gracefully degraded to a FAILURE status.
     """
     individual = list(real_ontology.individuals())[0]
+
     corrupted_response = LLMResponse(
         raw_content="Sure! Here is the validation. Actually everything looks super nice, but I refuse to use JSON.",
         tokens_consumed=80,
@@ -326,6 +338,7 @@ async def test_auditor_handles_json_decode_error_gracefully(real_ontology, promp
         consensus_resolver=consensus_resolver,
         suite_name="owl_validations"
     )
+
     summary = await auditor.run(individual, real_ontology)
     
     assert summary.is_successful() is False
@@ -340,20 +353,30 @@ async def test_consensus_resolver_tie_fallback_assigned_properly(real_ontology, 
     Verifies proper handling of a voting tie in the ConsensusResolver.
     """
     individual = list(real_ontology.individuals())[0]
-    responses = [
-        make_success_response([], "success"),
-        make_success_response(["Incorrect property domain"], "failure")
-    ]
-    
-    base_client = ScriptedLLMClient(responses)
+    call_counts = {
+        "temp_0.2": 0,
+        "temp_0.4": 0,
+        "fallback_0.0": 0
+    }
+
+    def router(payload: LLMPayload):
+        if "Evaluate structure" in payload.user_prompt:
+            if payload.temperature == 0.2:
+                call_counts["temp_0.2"] += 1
+                return make_success_response([], "success")
+            elif payload.temperature == 0.4:
+                call_counts["temp_0.4"] += 1
+                return make_success_response(["Property domain is incorrect"], "failure")
+            elif payload.temperature == 0.0:
+                call_counts["fallback_0.0"] += 1
+                return make_success_response(["Tie broken: fallback default"], "failure")
+        return make_success_response(["OK"], "success")
+
+    base_client = ScriptedLLMClient(router=router)
     retry_config = RetryPolicyConfig(max_retries=1, delay_between_retries=0, backoff_strategy=BackoffStrategy.FIXED)
     retryable_client = RetryableLLMClient(base_client, config=retry_config)
     
     consensus_resolver = ConsensusResolver()
-    prompt_manager._prompts["evaluation_suites"]["owl_validations"] = {
-        "configurations": {"temperatures": [0.2, 0.4], "allow_web_search": False},
-        "structural_evaluation": {"prompt": "Check {individual_response}"}
-    }
     auditor = LLMEntityAuditor(
         model=retryable_client,
         prompt_manager=prompt_manager,
@@ -363,10 +386,15 @@ async def test_consensus_resolver_tie_fallback_assigned_properly(real_ontology, 
     )
 
     summary = await auditor.run(individual, real_ontology)
-    assert len(summary.results) == 1
-    tied_result = summary.results[0]
-    assert tied_result.status == TaskStatus.FAILURE
-    assert "Consensus could not be reached" in tied_result.findings[0]
+    
+    structural_result = next(r for r in summary.results if r.task_id == "structural_evaluation")
+    assert structural_result.status == TaskStatus.FAILURE
+    assert "CONSENSUS FAILURE" in structural_result.findings[0]
+    
+    assert call_counts["temp_0.2"] == 1
+    assert call_counts["temp_0.4"] == 1
+    assert call_counts["fallback_0.0"] == 1
+
 
 
 @pytest.mark.asyncio
@@ -483,11 +511,11 @@ async def test_pipeline_empty_individuals_short_circuit(monkeypatch, real_ontolo
 
 
 @pytest.mark.asyncio
-async def test_extreme_concurrency_simulates_massive_load(monkeypatch, prompt_manager, serializer):
+async def test_extreme_concurrency_simulates_massive_load(monkeypatch, real_ontology, prompt_manager, serializer):
     """
     PROVES/WARNING: The Orchestrator's `asyncio.gather(*tasks)` design is unbounded.
     """
-    MASSIVE_AMOUNT = 200
+    MASSIVE_AMOUNT = 200 
     
     class SimpleFakeThing:
         def __init__(self, name):
@@ -501,13 +529,9 @@ async def test_extreme_concurrency_simulates_massive_load(monkeypatch, prompt_ma
     individuals = [SimpleFakeThing(f"Entity_{i}") for i in range(MASSIVE_AMOUNT)]
     
     monkeypatch.setattr(extractor_module.OntologyExtractor, "extract", staticmethod(lambda x: individuals))
-    monkeypatch.setattr(extractor_module.OntologyExtractor, "get_base_ontology", staticmethod(lambda: None))
-
-    responses = []
-    for _ in range(MASSIVE_AMOUNT * 2 * 2):
-        responses.append(make_success_response(["ok"]))
+    monkeypatch.setattr(extractor_module.OntologyExtractor, "get_base_ontology", staticmethod(lambda: real_ontology))
         
-    client = ScriptedLLMClient(responses)
+    client = ScriptedLLMClient(router=lambda p: make_success_response(["ok"]))
     retry_config = RetryPolicyConfig(max_retries=1, delay_between_retries=0, backoff_strategy=BackoffStrategy.FIXED)
     retryable_client = RetryableLLMClient(client, config=retry_config)
     
