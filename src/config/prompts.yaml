@@ -30,6 +30,9 @@ preprocessing:
 
 evaluation_suites:
   owl_validations:
+    configurations:
+      temperatures: [0.2, 0.4, 0.6, 0.8]
+      allow_web_search: false
     structural_evaluation:
       prompt: |
         TYPE: Structural Hallucination.
@@ -70,6 +73,7 @@ evaluation_suites:
         Does the response fail to address the specific context requested?
 
     factuality_evaluation:
+      allow_web_search: true
       prompt: |
         TYPE: Evidence-based (Factuality) Hallucination.
         Evaluate if the literals, numerical values, or citations 
