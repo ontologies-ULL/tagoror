@@ -6,6 +6,7 @@ from core.models import ExecutionMetrics, TaskOutcome, TaskStatus
 from llm.models import LLMPayload
 from serialization.base_serializer import BaseSerializer 
 from .majority_vote import ConsensusResolver
+from .ontology_cache import OntologyCache
 
 from owlready2 import Thing, Ontology
 from datetime import datetime, timezone
@@ -33,6 +34,8 @@ class LLMEntityAuditor(EntityAuditor):
         self.serializer = serializer
         self.user_input = user_input
         self.consensus_resolver = consensus_resolver
+        self.temperatures = [0.0]
+        self.allow_web_search = False
 
     async def run(self, individual: Thing, base_ontology: Ontology) -> ExecutionSummary:
         """
@@ -46,17 +49,22 @@ class LLMEntityAuditor(EntityAuditor):
             ExecutionSummary with results and aggregated real metrics.
         """
         developer_prompt = self.prompt_manager.get_assembled_system_prompt()
-        evaluation_suite = self.prompt_manager.get_evaluation_suite(self.suite_name)
+        evaluation_suite = self.prompt_manager.get_evaluation_suite(self.suite_name).copy()
+
+        suite_config = evaluation_suite.pop("configurations", {})
+        self.temperatures = suite_config.get("temperatures", self.temperatures)
+        self.allow_web_search = suite_config.get("allow_web_search", self.allow_web_search)
+        
         output = []
         total_metrics = ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0)
         
-        individual_response, base_ontology = await asyncio.gather(
-            asyncio.to_thread(self.serializer.process_individual, individual),
-            asyncio.to_thread(self.serializer.process_ontology, base_ontology)
+        individual_response = await asyncio.to_thread(
+            self.serializer.process_individual, individual
         )
+        serialized_base_ontology = await OntologyCache.get_serialized(base_ontology, self.serializer)
         context_data = {
             "individual_response": individual_response, 
-            "base_ontology": base_ontology,
+            "base_ontology": serialized_base_ontology,
             "user_input": self.user_input,
         }
         task_coroutines = [
@@ -80,14 +88,14 @@ class LLMEntityAuditor(EntityAuditor):
             total_metrics=total_metrics,
             system_summary=f"Evaluated {individual.name}. Total tasks: {len(evaluation_suite)}."        )
     
-    async def _run_task_with_consensus(self, task_id: str, task_config: dict, context_data: dict, developer_prompt: str) -> tuple:
+    async def _run_task_with_consensus(self, task_id: str, task_config: dict, context_data: dict, developer_prompt: str, suite_config: dict = None) -> tuple:
         raw_prompt = task_config.get("prompt", "")
         if not raw_prompt:
             raise ValueError(f"Task {task_id} is missing a 'prompt'.")
             
         user_prompt = self._safe_format(raw_prompt, context_data)
-        temperatures = task_config.get("temperatures", [0.0]) 
-        allow_web = task_config.get("allow_web_search", False)
+        temperatures = task_config.get("temperatures", self.temperatures) 
+        allow_web = task_config.get("allow_web_search", self.allow_web_search)
 
         async def _run_temperature_branch(temp: float):
             payload = LLMPayload(
@@ -131,7 +139,7 @@ class LLMEntityAuditor(EntityAuditor):
         class SafeDict(dict):
             def __missing__(self, key):
                 return "{" + key + "}"
-        return string.Template(template).safe_substitute(SafeDict(context))
+        return template.format_map(SafeDict(context))
 
     def _parse_single_task_response(self, response, task_id: str) -> TaskOutcome:
         """
