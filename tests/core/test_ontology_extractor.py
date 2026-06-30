@@ -99,7 +99,7 @@ class TestExtractIndividuals:
     def test_returns_empty_list_for_empty_ontology(self, mocker):
         base_onto = make_fake_ontology()
         target_onto = make_fake_ontology()
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.side_effect = [base_onto, target_onto]
 
         assert OntologyExtractor.extract("case.owl") == []
@@ -109,7 +109,7 @@ class TestExtractIndividuals:
         only_target = make_fake_individual("target_only")
         base_onto = make_fake_ontology(individuals=[shared])
         target_onto = make_fake_ontology(individuals=[shared, only_target])
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.side_effect = [base_onto, target_onto]
 
         result = OntologyExtractor.extract("case.owl")
@@ -121,7 +121,7 @@ class TestExtractIndividuals:
         extra_inds = [make_fake_individual(f"extra_{i}") for i in range(3)]
         base_onto = make_fake_ontology(individuals=base_inds)
         target_onto = make_fake_ontology(individuals=base_inds + extra_inds)
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.side_effect = [base_onto, target_onto]
 
         assert OntologyExtractor.extract("case.owl") == extra_inds
@@ -130,7 +130,7 @@ class TestExtractIndividuals:
         inds = [make_fake_individual(n) for n in ["ind_A", "ind_B", "ind_C"]]
         base_onto = make_fake_ontology()
         target_onto = make_fake_ontology(individuals=inds)
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.side_effect = [base_onto, target_onto]
 
         result = OntologyExtractor.extract("case.owl")
@@ -139,14 +139,14 @@ class TestExtractIndividuals:
 
     def test_missing_file_raises_file_not_found(self, mocker):
         base_onto = make_fake_ontology()
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.side_effect = [base_onto, FileNotFoundError("missing")]
 
         with pytest.raises(FileNotFoundError):
             OntologyExtractor.extract("missing.owl")
 
     def test_missing_base_file_also_raises(self, mocker):
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.side_effect = FileNotFoundError("no base")
 
         with pytest.raises(FileNotFoundError):
@@ -162,7 +162,7 @@ class TestBaseOntologyCaching:
     def test_base_ontology_loaded_only_once_across_calls(self, mocker):
         base_onto = make_fake_ontology()
         target_onto = make_fake_ontology()
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.side_effect = [base_onto, target_onto, target_onto]
 
         OntologyExtractor.extract("case.owl")
@@ -173,7 +173,7 @@ class TestBaseOntologyCaching:
     def test_base_ontology_cached_on_class(self, mocker):
         base_onto = make_fake_ontology()
         target_onto = make_fake_ontology()
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.side_effect = [base_onto, target_onto]
 
         assert OntologyExtractor._base_ontology is None
@@ -189,7 +189,7 @@ class TestLoadOntology:
 
     def test_uses_get_ontology_by_default(self, mocker):
         fake_onto = make_fake_ontology()
-        mock = mocker.patch("core.extractor.get_ontology")
+        mock = mocker.patch("core.pipeline.extractor.get_ontology")
         mock.return_value.load.return_value = fake_onto
 
         result = OntologyExtractor._load_ontology("some/path.ttl")
