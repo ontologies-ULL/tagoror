@@ -35,5 +35,5 @@ omit = [
 
 [tool.coverage.report]
 show_missing = true
-skip_covered = true
+# skip_covered = true
 precision = 2
