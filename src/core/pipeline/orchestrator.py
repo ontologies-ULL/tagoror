@@ -7,7 +7,7 @@ from owlready2 import Thing, Ontology
 from datetime import datetime, timezone
 
 from core.models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
-from evaluation.entity_auditor import EntityAuditor 
+from core.pipeline.evaluation.entity_auditor import EntityAuditor 
 
 class EntityOrchestrator:
     """

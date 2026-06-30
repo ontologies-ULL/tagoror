@@ -1,4 +1,4 @@
-from evaluation.entity_auditor import EntityAuditor
+from core.pipeline.evaluation.entity_auditor import EntityAuditor
 from llm.base_llm_client import BaseLLMClient
 from core.prompt_manager import PromptManager 
 from core.models import ExecutionSummary
