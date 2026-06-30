@@ -17,7 +17,8 @@ class LLMEntityAuditor(EntityAuditor):
 
     def __init__(self, model: BaseLLMClient, 
                  prompt_manager: PromptManager,
-                 serializer: BaseSerializer, 
+                 serializer: BaseSerializer,
+                 user_input: str = "",
                  suite_name: str = "owl_validations", 
                  model_name: str = "gemini-1.5-pro",
                  ) -> None:
@@ -26,6 +27,7 @@ class LLMEntityAuditor(EntityAuditor):
         self.suite_name = suite_name
         self.model_name = model_name
         self.serializer = serializer
+        self.user_input = user_input
 
     async def run(self, individual: Thing, base_ontology: Ontology) -> ExecutionSummary:
         """
@@ -42,28 +44,18 @@ class LLMEntityAuditor(EntityAuditor):
         output = []
         total_metrics = ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0)
         context_data = {
-            "individual_response": individual.to_llm_context(),
-            "base_ontology": self.serializer.process_ontology(base_ontology)
+            "individual_response": self.serializer.process_individual(individual), 
+            "base_ontology": self.serializer.process_ontology(base_ontology),
+            "user_input": self.user_input,
         }
 
         for task_id, task_config in evaluation_suite.items():
-            raw_prompt = task_config.get("prompt", "")
-            user_prompt = self._safe_format(raw_prompt, context_data)
-            payload = LLMPayload(
-                model_name=self.model_name,
-                system_prompt=developer_prompt,
-                user_prompt=user_prompt,
-                json_mode=True
-            )
-            response = await self._llm_client.query(payload)
-            total_metrics.duration_ms += getattr(response, 'duration_ms', 0)
-            total_metrics.cost += getattr(response, 'cost', 0.0)
-            total_metrics.tokens_consumed += getattr(response, 'tokens_consumed', 0)
-
-            # TODO: Fix this 
-            output = self._parse_single_task_response(response, task_id)
-            output.append(output)
-
+            task_outcome = await self._run_single_task(task_id, task_config, context_data)
+            output.append(task_outcome)
+            total_metrics.duration_ms += task_outcome.duration_ms
+            total_metrics.cost += task_outcome.cost
+            total_metrics.tokens_consumed += task_outcome.tokens_consumed
+            
         return ExecutionSummary(
             individual_id=individual.individual_id,
             timestamp=datetime.now(timezone.utc).isoformat(),
@@ -71,6 +63,26 @@ class LLMEntityAuditor(EntityAuditor):
             total_metrics=total_metrics,
             system_summary=f"Evaluated individual {individual.individual_id} using model {self.model_name} with suite {self.suite_name}. Total tasks: {len(suite_tasks)}."
         )
+    
+    async def _run_single_task(self, task_id: str, task_config: dict, context_data: dict) -> TaskOutcome:
+        """
+        Runs a single evaluation task using the language model and returns the outcome.
+
+        Args:
+            task_id: The unique identifier for the evaluation task.
+            task_config: The configuration for the evaluation task.
+            context_data: The context data to format the prompt.
+        """
+        raw_prompt = task_config.get("prompt", "")
+        user_prompt = self._safe_format(raw_prompt, context_data)
+        payload = LLMPayload(
+            model_name=self.model_name,
+            system_prompt=self.prompt_manager.get_assembled_system_prompt(),
+            user_prompt=user_prompt,
+            json_mode=True
+        )
+        response = await self._llm_client.query(payload)
+        return self._parse_single_task_response(response, task_id)
 
     def _safe_format(self, template_str: str, data: dict) -> str:
         """
