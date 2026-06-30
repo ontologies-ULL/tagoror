@@ -74,10 +74,7 @@ evaluation_suites:
         TYPE: Evidence-based (Factuality) Hallucination.
         Evaluate if the literals, numerical values, or citations 
         produced in the response are unsupported or factually incorrect 
-        according to clinical evidence.
-        
-        Clinical Evidence / Support Literature:
-        {clinical_evidence}
+        according to evidence.
         
         Response to evaluate:
         {individual_response}
