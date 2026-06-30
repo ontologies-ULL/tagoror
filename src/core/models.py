@@ -23,8 +23,6 @@ class ExecutionMetrics(BaseModel):
     cost: float
     tokens_consumed: int
 
-    model_config = ConfigDict(frozen=True)
-
 
 class TaskOutcome(BaseModel):
     """
