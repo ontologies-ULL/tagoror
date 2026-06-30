@@ -1,5 +1,5 @@
 from core.pipeline.evaluation.entity_auditor import EntityAuditor
-from llm.base_llm_client import BaseLLMClient
+from llm.retry import RetryableLLMClient
 from core.prompt_manager import PromptManager 
 from core.models import ExecutionSummary
 from core.models import ExecutionMetrics, TaskOutcome, TaskStatus
@@ -18,7 +18,7 @@ class LLMEntityAuditor(EntityAuditor):
     Concrete implementation of EntityAuditor that evaluates OWL individuals using a language model.
     """
 
-    def __init__(self, model: BaseLLMClient, 
+    def __init__(self, model: RetryableLLMClient, 
                  prompt_manager: PromptManager,
                  serializer: BaseSerializer,
                  consensus_resolver: ConsensusResolver,
