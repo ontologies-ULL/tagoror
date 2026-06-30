@@ -40,7 +40,7 @@ class PromptManager:
         if not suite:
             raise KeyError(f"Missing evaluation suite: {suite_name}")
         return suite
-    
+
     def _get_base_sections(self) -> dict:
         """
         Retrieve the base prompt sections from the prompts file.
