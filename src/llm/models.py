@@ -7,6 +7,7 @@ class LLMPayload(BaseModel):
     model_name: str = "gemini-2.5-flash"
     temperature: float = 0.0
     json_mode: bool = True
+    allow_web_search: bool = False
 
 class LLMResponse(BaseModel):
     raw_content: str
