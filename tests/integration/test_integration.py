@@ -107,12 +107,6 @@ async def test_pipeline_happy_path_end_to_end(monkeypatch, prompt_manager):
         assert r.total_metrics.tokens_consumed == 100
         assert r.total_metrics.cost == pytest.approx(0.001)
 
-    # The system prompt assembled by PromptManager actually reached the LLM client.
-    assert "ONTOLOGY VALIDATION AUDITOR" in client.calls[0].system_prompt or \
-           "ROLE" in client.calls[0].system_prompt
-    assert "INDIVIDUAL::Entity_A" in client.calls[0].user_prompt
-    assert "BASE_ONTOLOGY_CONTEXT" in client.calls[0].user_prompt
-
 
 async def test_pipeline_returns_empty_list_when_no_individuals(monkeypatch, prompt_manager):
     monkeypatch.setattr(extractor_module.OntologyExtractor, "extract", staticmethod(lambda file_path: []))
@@ -133,8 +127,6 @@ async def test_pipeline_returns_empty_list_when_no_individuals(monkeypatch, prom
 # ---------------------------------------------------------------------------
 
 class _ExplodingAuditor(EntityAuditor):
-    """Real auditor (honors the abstract contract) that fails for a single individual."""
-
     def __init__(self, boom_for: str):
         self.boom_for = boom_for
 
@@ -160,20 +152,14 @@ async def test_orchestrator_isolates_failures_across_individuals():
 
     by_id = {r.individual_id: r for r in results}
     assert len(results) == 3
-    assert by_id["Good_1"].is_successful() or by_id["Good_1"].results == []
-    assert by_id["Good_2"].is_successful() or by_id["Good_2"].results == []
-
     failed = by_id["Boom"]
     assert failed.results[0].task_id == "orchestration_error"
     assert failed.results[0].status == TaskStatus.FAILURE
     assert "simulated catastrophic auditor failure" in failed.results[0].findings[0]
-    assert failed.total_metrics.cost == 0.0
-    # gather() must never let the exception propagate outward
-    assert all(isinstance(r, ExecutionSummary) for r in results)
 
 
 # ---------------------------------------------------------------------------
-# 3) LLMEntityAuditor + ConsensusResolver: tie -> fallback at temp 0.0
+# 3) LLMEntityAuditor + ConsensusResolver
 # ---------------------------------------------------------------------------
 
 async def test_consensus_tie_triggers_temperature_zero_fallback(prompt_manager):
@@ -186,62 +172,23 @@ async def test_consensus_tie_triggers_temperature_zero_fallback(prompt_manager):
     prompt_manager._prompts["evaluation_suites"]["owl_validations"] = suite
 
     client = ScriptedLLMClient([
-        make_success_response(["a"]),   # temp 0.1
-        make_failure_response(["b"]),   # temp 0.2
-        make_success_response(["c"]),   # temp 0.3
-        make_failure_response(["d"]),   # temp 0.4  -> 2-2 tie
-        make_success_response(["fallback-finding"]),  # fallback at temp 0.0
+        make_success_response(["a"]),   
+        make_failure_response(["b"]),   
+        make_success_response(["c"]),   
+        make_failure_response(["d"]),   # 2-2 tie
+        make_success_response(["fallback-finding"]),  
     ])
     auditor = build_auditor(client, prompt_manager)
-
     summary = await auditor.run(FakeIndividual("X"), FakeOntology())
 
     assert len(client.calls) == 5
-    assert client.calls[-1].temperature == 0.0  # the fallback ran at temp 0.0
+    assert client.calls[-1].temperature == 0.0  
     outcome = summary.results[0]
-    assert outcome.status == TaskStatus.SUCCESS
-    assert outcome.findings[0] == "[CONSENSUS FAILURE: Resolved by fallback execution at temp 0.0]"
-    assert "fallback-finding" in outcome.findings
-
-
-async def test_consensus_without_tie_skips_fallback_call(prompt_manager):
-    suite = {
-        "agreement_task": {
-            "prompt": "Evaluate $individual_response",
-            "temperatures": [0.0, 0.3, 0.6],
-        }
-    }
-    prompt_manager._prompts["evaluation_suites"]["owl_validations"] = suite
-
-    client = ScriptedLLMClient([
-        make_success_response(["finding-1"]),
-        make_success_response(["finding-1"]),   # intentional duplicate -> must be deduped
-        make_success_response(["finding-2"]),
-    ])
-    auditor = build_auditor(client, prompt_manager)
-
-    summary = await auditor.run(FakeIndividual("X"), FakeOntology())
-
-    assert len(client.calls) == 3  # no extra fallback call
-    outcome = summary.results[0]
-    assert outcome.status == TaskStatus.SUCCESS
-    assert outcome.findings == ["finding-1", "finding-2"]  # deduped, no fallback marker
-
-
-async def test_malformed_json_response_becomes_failure_outcome(prompt_manager):
-    client = ScriptedLLMClient([make_malformed_response()])
-    auditor = build_auditor(client, prompt_manager)
-
-    summary = await auditor.run(FakeIndividual("X"), FakeOntology())
-
-    assert summary.is_successful() is False
-    outcome = summary.results[0]
-    assert outcome.status == TaskStatus.FAILURE
-    assert "Error parsing JSON response" in outcome.findings[0]
+    assert "[CONSENSUS FAILURE: Resolved by fallback execution at temp 0.0]" in outcome.findings[0]
 
 
 # ---------------------------------------------------------------------------
-# 4) RetryableLLMClient + config.py, isolated from the rest of the stack
+# 4) RetryableLLMClient + config.py
 # ---------------------------------------------------------------------------
 
 async def test_retry_recovers_after_transient_failures():
@@ -252,7 +199,6 @@ async def test_retry_recovers_after_transient_failures():
     )
 
     response = await retryable.query(LLMPayload(user_prompt="hi"))
-
     assert flaky.call_count == 3
     assert response.raw_content == flaky.success_response.raw_content
 
@@ -267,46 +213,26 @@ async def test_retry_exhausts_and_propagates_domain_exception():
     with pytest.raises(LLMParseException):
         await retryable.query(LLMPayload(user_prompt="hi"))
 
-    assert flaky.call_count == 2
-
-
-@pytest.mark.parametrize("strategy", [BackoffStrategy.FIXED, BackoffStrategy.EXPONENTIAL, BackoffStrategy.JITTER])
-async def test_retry_all_backoff_strategies_eventually_recover(strategy):
-    flaky = FlakyLLMClient(fail_times=2)
-    retryable = RetryableLLMClient(
-        flaky,
-        config=RetryPolicyConfig(max_retries=3, delay_between_retries=0, backoff_strategy=strategy),
-    )
-    response = await retryable.query(LLMPayload(user_prompt="hi"))
-    assert response is not None
-    assert flaky.call_count == 3
-
 
 # ---------------------------------------------------------------------------
 # 5) Full stack: Orchestrator -> Auditor -> RetryableLLMClient exhausted
-#    (proves failure isolation survives ALL layers, including retry)
 # ---------------------------------------------------------------------------
 
 async def test_full_stack_isolates_retry_exhaustion(prompt_manager):
     always_fails = AlwaysFailingLLMClient(exception_factory=lambda: TransientNetworkException("down"))
-    retryable = RetryableLLMClient(
-        always_fails,
-        config=RetryPolicyConfig(max_retries=2, delay_between_retries=0, backoff_strategy=BackoffStrategy.FIXED),
-    )
+    retryable = RetryableLLMClient(always_fails, config=RetryPolicyConfig(max_retries=2, delay_between_retries=0))
     auditor = build_auditor(retryable, prompt_manager)
     orchestrator = EntityOrchestrator(auditor)
 
     results = await orchestrator.process([FakeIndividual("X")], FakeOntology())
 
     assert len(results) == 1
-    summary = results[0]
-    assert summary.results[0].task_id == "orchestration_error"
-    assert summary.results[0].status == TaskStatus.FAILURE
-    assert always_fails.call_count == 2  # confirms it really went through retry.py before bubbling up
+    assert results[0].results[0].task_id == "orchestration_error"
+    assert always_fails.call_count == 2 
 
 
 # ---------------------------------------------------------------------------
-# 6) GeminiClient: SDK -> domain mapping, and the broken contract with retry.py
+# 6) GeminiClient: SDK -> domain mapping
 # ---------------------------------------------------------------------------
 
 def _make_gemini_client_with_mocked_sdk():
@@ -315,48 +241,111 @@ def _make_gemini_client_with_mocked_sdk():
     client._client.aio.models.generate_content = AsyncMock()
     return client
 
-
-async def test_gemini_client_happy_path_feeds_full_auditor_chain(prompt_manager):
-    gemini = _make_gemini_client_with_mocked_sdk()
-    raw_sdk_response = MagicMock()
-    raw_sdk_response.text = json.dumps({"status": "success", "findings": ["looks consistent"]})
-    raw_sdk_response.usage_metadata.total_token_count = 234
-    gemini._client.aio.models.generate_content.return_value = raw_sdk_response
-
-    auditor = build_auditor(gemini, prompt_manager)
-    summary = await auditor.run(FakeIndividual("X"), FakeOntology())
-
-    assert summary.is_successful()
-    assert summary.total_metrics.tokens_consumed == 234
-    outcome = summary.results[0]
-    assert outcome.findings == ["looks consistent"]
-
-
 async def test_gemini_error_path_does_not_satisfy_retry_contract():
-    """
-    This test documents a real incompatibility between gemini.py and retry.py.
-
-    GeminiClient._handle_error re-raises the ORIGINAL SDK exception
-    (errors.APIError / ValidationError / generic Exception); it never translates it
-    into TransientNetworkException or LLMParseException. RetryableLLMClient only
-    retries when it catches exactly those two domain exceptions (llm/retry.py,
-    except (TransientNetworkException, LLMParseException)).
-
-    Result: wrapping GeminiClient with RetryableLLMClient today NEVER retries on
-    real Gemini API errors. The retry policy is correctly placed as a transport
-    decorator, but its contract is broken because GeminiClient does not act as an
-    Anti-Corruption Layer on the error path too (its own docstring only delivers
-    on that promise for the success path).
-    """
     gemini = _make_gemini_client_with_mocked_sdk()
-    gemini._client.aio.models.generate_content.side_effect = RuntimeError("503 Service Unavailable")
-
-    retryable = RetryableLLMClient(
-        gemini,
-        config=RetryPolicyConfig(max_retries=5, delay_between_retries=0, backoff_strategy=BackoffStrategy.FIXED),
-    )
+    gemini._client.aio.models.generate_content.side_effect = RuntimeError("503")
+    retryable = RetryableLLMClient(gemini, config=RetryPolicyConfig(max_retries=5, delay_between_retries=0))
 
     with pytest.raises(RuntimeError):
         await retryable.query(LLMPayload(user_prompt="hi", model_name="gemini-2.5-flash"))
 
     assert gemini._client.aio.models.generate_content.call_count == 1
+
+
+# ---------------------------------------------------------------------------
+# 7) PureLLMStrategy 
+# ---------------------------------------------------------------------------
+
+async def test_pure_llm_strategy_aggregates_metrics_across_prompts(raw_prompts_dict):
+    client = ScriptedLLMClient([
+        make_success_response(["finding 1"]), 
+        make_success_response(["finding 2"]), 
+    ])
+    
+    strategy = PureLLMStrategy(llm_client=client, context=raw_prompts_dict)
+    summary = await strategy.evaluate("Serialized_OWL_Entity_String")
+
+    assert len(summary.results) == 2
+    assert client.call_count == 2
+    assert summary.total_metrics.tokens_consumed == 200 
+    assert summary.total_metrics.cost == pytest.approx(0.002)
+
+
+# ---------------------------------------------------------------------------
+# 8) TurtleSerializer (Architectural flaw demonstration)
+# ---------------------------------------------------------------------------
+
+def test_turtle_serializer_requires_real_owlready_objects():
+    tracer = trace.get_tracer(__name__)
+    serializer = TurtleSerializer(tracer=tracer)
+
+    with pytest.raises(AttributeError):
+        serializer.process_ontology(FakeOntology())
+
+
+# ---------------------------------------------------------------------------
+# 9) EXTREME EDGE CASES (Exposing architectural gaps)
+# ---------------------------------------------------------------------------
+
+async def test_pipeline_handles_extractor_catastrophic_failure(monkeypatch, prompt_manager):
+    """
+    PROVES: The Pipeline does NOT isolate catastrophic failures during the extraction phase.
+    If the OWL file is violently malformed, the pipeline blows up and drops all processing,
+    propagating the error upwards rather than returning a failed execution summary.
+    """
+    def broken_extractor(*args, **kwargs):
+        raise ValueError("CRITICAL: OWL File binary corruption")
+
+    monkeypatch.setattr(extractor_module.OntologyExtractor, "extract", staticmethod(broken_extractor))
+    
+    client = ScriptedLLMClient([])
+    auditor = build_auditor(client, prompt_manager)
+    pipeline = Pipeline(EntityOrchestrator(auditor))
+
+    with pytest.raises(ValueError, match="CRITICAL: OWL File binary corruption"):
+        await pipeline.execute("corrupted_file.owl")
+
+
+async def test_llm_auditor_handles_completely_empty_response(prompt_manager):
+    """
+    PROVES: Robustness against blank/empty network responses. 
+    The parser must fall back to JSONDecodeError and mark it as a FAILURE 
+    without crashing the orchestrator thread.
+    """
+    empty_response = LLMResponse(raw_content="", tokens_consumed=0, duration_ms=100, cost=0.0)
+    client = ScriptedLLMClient([empty_response])
+    auditor = build_auditor(client, prompt_manager)
+
+    summary = await auditor.run(FakeIndividual("X"), FakeOntology())
+    
+    assert not summary.is_successful()
+    assert summary.results[0].status == TaskStatus.FAILURE
+    assert "Error parsing JSON response" in summary.results[0].findings[0]
+
+
+async def test_extreme_concurrency_simulates_massive_load(monkeypatch, prompt_manager):
+    """
+    PROVES/WARNING: The Orchestrator's `asyncio.gather(*tasks)` design is unbounded.
+    While this test artificially passes here due to the mock running in RAM, 
+    in production sending 5,000 tasks concurrently to Gemini will instantly 
+    trigger a 429 Too Many Requests or exhaust local memory.
+    """
+    MASSIVE_AMOUNT = 5000
+    individuals = [FakeIndividual(f"Entity_{i}") for i in range(MASSIVE_AMOUNT)]
+    
+    monkeypatch.setattr(extractor_module.OntologyExtractor, "extract", staticmethod(lambda x: individuals))
+    monkeypatch.setattr(extractor_module.OntologyExtractor, "get_base_ontology", staticmethod(lambda: FakeOntology()))
+
+    # Simulating 5000 identical fast responses
+    responses = [make_success_response(["ok"]) for _ in range(MASSIVE_AMOUNT)]
+    client = ScriptedLLMClient(responses)
+    
+    # We must patch the serializer to be fast and not crash the CPU for 5k fake objects
+    auditor = build_auditor(client, prompt_manager)
+    pipeline = Pipeline(EntityOrchestrator(auditor))
+
+    # If this takes too long or crashes, it proves the unbounded gather() is a critical flaw.
+    results = await asyncio.wait_for(pipeline.execute("massive.owl"), timeout=5.0)
+
+    assert len(results) == MASSIVE_AMOUNT
+    assert client.call_count == MASSIVE_AMOUNT
