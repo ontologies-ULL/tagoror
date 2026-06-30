@@ -4,7 +4,9 @@ from core.prompt_manager import PromptManager
 from core.models import ExecutionSummary
 from core.models import ExecutionMetrics, TaskOutcome, TaskStatus
 from llm.models import LLMPayload
-from owlready2 import Thing
+from serialization.base_serializer import BaseSerializer 
+
+from owlready2 import Thing, Ontology
 from datetime import datetime, timezone
 import json
 
@@ -14,17 +16,18 @@ class LLMEntityAuditor(EntityAuditor):
     """
 
     def __init__(self, model: BaseLLMClient, 
-                 prompt_manager: PromptManager, 
+                 prompt_manager: PromptManager,
+                 serializer: BaseSerializer, 
                  suite_name: str = "owl_validations", 
                  model_name: str = "gemini-1.5-pro",
-                 serializator) -> None:
+                 ) -> None:
         self.model = model
         self.prompt_manager = prompt_manager
         self.suite_name = suite_name
         self.model_name = model_name
-        self.serializator = serializator
+        self.serializer = serializer
 
-    async def run(self, individual: Thing, base_ontology: Any) -> ExecutionSummary:
+    async def run(self, individual: Thing, base_ontology: Ontology) -> ExecutionSummary:
         """
         Evaluates an OWL individual using a language model and returns an execution summary.
 
@@ -40,8 +43,7 @@ class LLMEntityAuditor(EntityAuditor):
         total_metrics = ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0)
         context_data = {
             "individual_response": individual.to_llm_context(),
-            "base_ontology":  
-
+            "base_ontology": self.serializer.process_ontology(base_ontology)
         }
 
         for task_id, task_config in evaluation_suite.items():
