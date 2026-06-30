@@ -1,11 +1,10 @@
 import asyncio
-from datetime import datetime, timezone
-from typing import Any
-
-from owlready2 import Thing
 import traceback
+
 from opentelemetry import trace
 from opentelemetry.trace import Status, StatusCode
+from owlready2 import Thing, Ontology
+from datetime import datetime, timezone
 
 from core.models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
 from evaluation.entity_auditor import EntityAuditor 
@@ -20,7 +19,7 @@ class EntityOrchestrator:
         self.strategy = strategy
         self._tracer = trace.get_tracer(__name__)
 
-    async def process(self, individuals: list[Thing], base_ontology: Any) -> list[ExecutionSummary]:
+    async def process(self, individuals: list[Thing], base_ontology: Ontology) -> list[ExecutionSummary]:
         """
         Validates a list of entities concurrently.
         Failures are encapsulated into fallback ExecutionSummaries; exceptions are never raised.
@@ -31,7 +30,7 @@ class EntityOrchestrator:
         tasks = [self._process_single(entity, base_ontology) for entity in individuals]
         return await asyncio.gather(*tasks)
 
-    async def _process_single(self, entity: Thing, base_ontology: Any) -> ExecutionSummary:
+    async def _process_single(self, entity: Thing, base_ontology: Ontology) -> ExecutionSummary:
         """
         isolates the validation of a single entity, capturing any exceptions 
         and returning a fallback ExecutionSummary if needed. 
