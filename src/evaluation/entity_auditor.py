@@ -3,7 +3,7 @@ from typing import Any
 
 from core.models import ExecutionSummary
 
-from owlready2 import Thing
+from owlready2 import Thing, Ontology
 
 class EntityAuditor(ABC):
     """
@@ -11,7 +11,7 @@ class EntityAuditor(ABC):
     """
 
     @abstractmethod
-    async def run(self, individual: Thing) -> ExecutionSummary:
+    async def run(self, individual: Thing, base_ontology: Ontology) -> ExecutionSummary:
         """
         Evaluates an OWL individual and returns an execution summary.
 
