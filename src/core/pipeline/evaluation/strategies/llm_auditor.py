@@ -159,13 +159,33 @@ class LLMEntityAuditor(EntityAuditor):
 
         try:
             parsed_data = json.loads(raw_text)
+            status_str = str(parsed_data.get("status", "failure")).lower().strip()
+            
+            if status_str in ["success", "compliant", "passed", "pass", "ok", "true"]:
+                status_val = TaskStatus.SUCCESS
+            elif status_str in ["failure", "failed", "non-compliant", "non_compliant", "error", "false"]:
+                status_val = TaskStatus.FAILURE
+            else:
+                try:
+                    status_val = TaskStatus(status_str)
+                except ValueError:
+                    status_val = TaskStatus.FAILURE
+                    findings = parsed_data.get("findings", [])
+                    findings.insert(0, f"[SYSTEM WARNING: Unrecognized status '{status_str}' returned by LLM, mapped to FAILURE]")
+                    return TaskOutcome(
+                        task_id=task_id,
+                        status=status_val,
+                        findings=findings
+                    )
+
             return TaskOutcome(
                 task_id=task_id,
-                status=TaskStatus(parsed_data.get("status", "failure").lower()),
+                status=status_val,
                 findings=parsed_data.get("findings", [])
             )
         except json.JSONDecodeError as error:
             return TaskOutcome(
                 task_id=task_id,
                 status=TaskStatus.FAILURE,
-                findings=[f"Error parsing JSON response: {str(error)}"])
+                findings=[f"Error parsing JSON response: {str(error)}", f"Raw: {raw_text}"]
+            )
