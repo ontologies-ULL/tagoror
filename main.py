@@ -13,6 +13,7 @@ import asyncio
 import os
 import sys
 import json
+import time
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent
@@ -44,6 +45,7 @@ from llm.config import RetryPolicyConfig, BackoffStrategy
 from owlready2 import Thing, World
 
 from aiolimiter import AsyncLimiter
+
 
 def human_readable_formatter(span: ReadableSpan) -> str:
     """
@@ -96,6 +98,30 @@ def setup_telemetry(readable_log_path: str, detailed_json_path: str):
     trace.set_tracer_provider(provider)
 
 
+async def show_spinner(task: asyncio.Task, filename: str):
+    """
+    Displays a visual spinner and elapsed time in the console while an async task is running.
+    This prevents the user from thinking the script has frozen during long API waits.
+    """
+    start_time = time.time()
+    spinner_chars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+    i = 0
+    
+    while not task.done():
+        elapsed = time.time() - start_time
+        # Use '\r' (carriage return) to overwrite the current line continuously
+        sys.stdout.write(f"\r   {spinner_chars[i % len(spinner_chars)]} Processing '{filename}'... [{elapsed:.1f}s elapsed]")
+        sys.stdout.flush()
+        i += 1
+        try:
+            await asyncio.sleep(0.1)
+        except asyncio.CancelledError:
+            break
+            
+    # Clear the spinner line completely once the task finishes
+    sys.stdout.write("\r" + " " * 80 + "\r")
+    sys.stdout.flush()
+
 
 async def main():
     # 2. Setup Telemetry File Output
@@ -125,7 +151,7 @@ async def main():
     try:
         requests_per_minute = float(os.environ.get("RATE_LIMIT_RPM", 15.0))
     except ValueError:
-        requests_per_minute = 15.0
+        requests_per_minute = 10.0
 
     # 4. Command Line Arguments Handling
     # -------------------------------------------------------------------------
@@ -199,7 +225,10 @@ async def main():
     for rdf_file in rdf_files:
         print(f"\n⏳ Processing file: {rdf_file.name}...")
         try:
-            execution_summaries = await pipeline.execute(str(rdf_file))
+            pipeline_task = asyncio.create_task(pipeline.execute(str(rdf_file)))
+            spinner_task = asyncio.create_task(show_spinner(pipeline_task, rdf_file.name))
+            execution_summaries = await pipeline_task
+            await spinner_task
             
             file_results_dump = [summary.model_dump(mode='json') for summary in execution_summaries]
             aggregated_results[rdf_file.name] = file_results_dump
