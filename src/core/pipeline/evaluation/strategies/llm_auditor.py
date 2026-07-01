@@ -1,3 +1,6 @@
+import json
+import asyncio
+
 from core.pipeline.evaluation.entity_auditor import EntityAuditor
 from llm.retry import RetryableLLMClient
 from core.prompt_manager import PromptManager 
@@ -10,9 +13,7 @@ from .ontology_cache import OntologyCache
 
 from owlready2 import Thing, Ontology
 from datetime import datetime, timezone
-import json
-import string
-import asyncio
+from aiolimiter import AsyncLimiter
 
 class LLMEntityAuditor(EntityAuditor):
     """
@@ -23,6 +24,7 @@ class LLMEntityAuditor(EntityAuditor):
                  prompt_manager: PromptManager,
                  serializer: BaseSerializer,
                  consensus_resolver: ConsensusResolver,
+                 rate_limiter: AsyncLimiter,
                  user_input: str = "",
                  suite_name: str = "owl_validations", 
                  model_name: str = "gemini-1.5-pro",
@@ -34,6 +36,7 @@ class LLMEntityAuditor(EntityAuditor):
         self.serializer = serializer
         self.user_input = user_input
         self.consensus_resolver = consensus_resolver
+        self.rate_limiter = rate_limiter
         self.temperatures = [0.0]
         self.allow_web_search = False
 
@@ -106,7 +109,12 @@ class LLMEntityAuditor(EntityAuditor):
                 allow_web_search=allow_web,
                 temperature=temp 
             )
-            response = await self.model.query(payload)
+            if self.rate_limiter:
+                async with self.rate_limiter:
+                    response = await self.model.query(payload)
+            else:
+                response = await self.model.query(payload)
+            
             outcome = self._parse_single_task_response(response, task_id)
             return outcome, temp, response
 
