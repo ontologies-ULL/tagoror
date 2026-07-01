@@ -1,10 +1,11 @@
 [project]
 name = "tagoror"
-version = "0.1.0"
+version = "0.3.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "aiolimiter>=1.2.1",
     "dotenv>=0.9.9",
     "google-genai>=2.4.0",
     "opentelemetry-distro>=0.62b1",
