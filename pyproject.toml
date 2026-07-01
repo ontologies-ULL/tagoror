@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "dotenv>=0.9.9",
     "google-genai>=2.4.0",
     "opentelemetry-distro>=0.62b1",
     "opentelemetry-exporter-otlp>=1.41.1",
