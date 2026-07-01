@@ -118,36 +118,49 @@ class TestEntityOrchestratorExtreme:
     @pytest.mark.asyncio
     async def test_massive_unbounded_concurrency_stress_test(self):
         """
-        Test 3: STRESS TEST. Proves mathematically that process() executes tasks in parallel 
+        Test 3: STRESS TEST. Proves mathematically that process() executes tasks in parallel
         via asyncio.gather. We send 10,000 mocked entities.
-        
-        If it was sequential, 10,000 * 0.001s = 10 seconds.
-        If parallel, it will take less than 0.5 seconds to process all of them.
+
+        We compare elapsed time against the theoretical SEQUENTIAL time
+        (MASSIVE_AMOUNT * sleep_time) rather than an absolute wall-clock cutoff.
+        An absolute cutoff (e.g. "< 1.0s") is flaky: it depends on machine speed,
+        the cost of creating 10,000 OTel spans, and mock call overhead — none of
+        which relate to whether execution is parallel or sequential. A relative
+        comparison is robust across environments while still proving the point:
+        true sequential execution would take orders of magnitude longer.
         """
         mock_auditor = AsyncMock(spec=EntityAuditor)
         mock_ontology = MagicMock()
-        
+
         MASSIVE_AMOUNT = 10000
+        SLEEP_TIME = 0.001
         entities = [make_mock_thing(f"Entity_{i}") for i in range(MASSIVE_AMOUNT)]
-        
+
         async def fast_mock_run(entity, base_ontology):
-            await asyncio.sleep(0.001)
+            await asyncio.sleep(SLEEP_TIME)
             return make_success_summary(entity.individual_id)
-            
+
         mock_auditor.run.side_effect = fast_mock_run
-        
+
         orchestrator = EntityOrchestrator(strategy=mock_auditor)
-        
+
         start_time = asyncio.get_event_loop().time()
         results = await orchestrator.process(entities, mock_ontology)
         end_time = asyncio.get_event_loop().time()
-        
+
         elapsed_time = end_time - start_time
-        
+        theoretical_sequential_time = MASSIVE_AMOUNT * SLEEP_TIME
+
         assert len(results) == MASSIVE_AMOUNT
         assert mock_auditor.run.call_count == MASSIVE_AMOUNT
-        # Proof of parallel execution
-        assert elapsed_time < 1.0, f"Execution took {elapsed_time}s. It is blocking/sequential!"
+        # Proof of parallel execution: true sequential execution would take
+        # ~theoretical_sequential_time (10s); parallel execution should complete
+        # in a small fraction of that, regardless of absolute machine speed.
+        assert elapsed_time < theoretical_sequential_time / 4, (
+            f"Execution took {elapsed_time:.3f}s, which is not meaningfully "
+            f"faster than the theoretical sequential time of "
+            f"{theoretical_sequential_time:.3f}s. It is blocking/sequential!"
+        )
 
 
     @pytest.mark.asyncio

@@ -5,20 +5,22 @@ Based on: gemini.py (google-genai SDK + OpenTelemetry)
 
 Covers:
   - __init__: genai.Client created with api_key, OTel primitives created,
-              4 metric instruments registered
-  - _build_generation_config: text/plain vs application/json
+              3 counters (request/token/cost) + 1 histogram (duration) registered
+  - _build_generation_config: text/plain vs application/json,
+                               always includes system_instruction=payload.system_prompt
   - _execute_network_call: delegates to client.aio.models.generate_content
   - _extract_token_usage: metadata present vs None
   - _calculate_cost: formula, zero tokens, 1M tokens
   - _map_to_domain_response: all LLMResponse fields, span attributes, metrics
-  - _handle_api_error: error re-raised, span ERROR, record_exception, log
-  - _handle_network_failure: original exception re-raised, span ERROR, log
+  - _handle_error: original exception re-raised, span ERROR, record_exception,
+                    log, description contains error_msg/code/message
   - _emit_log: INFO severity for "INFO", ERROR for anything else, body content
   - _emit_log BUG: "info" (lowercase) produces ERROR — documented as known bug
-  - _query happy path: LLMResponse returned, span name, span attributes,
+  - query happy path: LLMResponse returned, span name, span attributes,
                        request counter incremented
-  - _query API error: errors.APIError propagates unchanged
-  - _query network failure: original exception propagates unchanged
+  - query errors.APIError: propagates unchanged via _handle_error
+  - query ValidationError: propagates unchanged via _handle_error
+  - query generic Exception: propagates unchanged via _handle_error
 
 Patching strategy:
   - genai.Client is patched via mocker.patch("google.genai.Client")
@@ -27,11 +29,17 @@ Patching strategy:
     it was called, avoiding the get_logger reference resolution problem.
   - For tests that inspect the LogRecord directly, LogRecord is patched at its
     construction site inside gemini.py.
+
+Note: the class only exposes a single error handler, _handle_error(error, span,
+error_msg) — there is no separate _handle_api_error / _handle_network_failure.
+query() calls it with "Gemini API error", "Response validation error" or
+"Unexpected error" depending on the exception type, then re-raises the
+original exception unchanged.
 """
 
 import pytest
 import time
-from unittest.mock import AsyncMock, MagicMock, call
+from unittest.mock import AsyncMock, MagicMock
 from llm.models import LLMPayload
 
 
@@ -63,7 +71,7 @@ def patch_all(mocker):
 
     # OTel logger — patched at the entry point AND at the module level
     mock_otel_logger = MagicMock()
-    mocker.patch("opentelemetry._logs.get_logger",  return_value=mock_otel_logger)
+    mocker.patch("opentelemetry._logs.get_logger", return_value=mock_otel_logger)
 
     # google-genai Client
     mock_aio_models = MagicMock()
@@ -103,6 +111,7 @@ def client(patch_all):
 def payload():
     return LLMPayload(
         user_prompt="Hello",
+        system_prompt="You are a helpful assistant.",
         model_name="gemini-2.0-flash",
         temperature=0.7,
         json_mode=False,
@@ -113,6 +122,7 @@ def payload():
 def payload_json():
     return LLMPayload(
         user_prompt="Hello",
+        system_prompt="You are a helpful assistant.",
         model_name="gemini-2.0-flash",
         temperature=0.7,
         json_mode=True,
@@ -135,9 +145,8 @@ def raw_response():
 def make_api_error(code: int, message: str):
     """
     errors.APIError requires response_json in __init__ so we cannot instantiate
-    it directly. We create a plain Exception subclass that satisfies
-    isinstance(..., errors.APIError) via spec — but for raising we use a
-    real subclass instead.
+    it directly. We create a plain subclass that bypasses the parent __init__
+    while still satisfying isinstance(..., errors.APIError).
     """
     from google.genai import errors
 
@@ -197,21 +206,25 @@ class TestInit:
 class TestBuildGenerationConfig:
 
     def test_text_plain_when_json_mode_false(self, client, payload, mocker):
-        """MIME type must be text/plain when json_mode is False."""
+        """MIME type must be text/plain when json_mode is False, and
+        system_instruction must always be forwarded from the payload."""
         mock_cls = mocker.patch("google.genai.types.GenerateContentConfig")
         client._build_generation_config(payload)
         mock_cls.assert_called_once_with(
             temperature=payload.temperature,
             response_mime_type="text/plain",
+            system_instruction=payload.system_prompt,
         )
 
     def test_application_json_when_json_mode_true(self, client, payload_json, mocker):
-        """MIME type must be application/json when json_mode is True."""
+        """MIME type must be application/json when json_mode is True, and
+        system_instruction must always be forwarded from the payload."""
         mock_cls = mocker.patch("google.genai.types.GenerateContentConfig")
         client._build_generation_config(payload_json)
         mock_cls.assert_called_once_with(
             temperature=payload_json.temperature,
             response_mime_type="application/json",
+            system_instruction=payload_json.system_prompt,
         )
 
 
@@ -343,11 +356,11 @@ class TestEmitLog:
 
     def test_known_bug_info_lowercase_emits_error_severity(self, client, mocker):
         """
-        BUG (line 62): _emit_log is called with "info" (lowercase) at the
-        start of query(). Because _emit_log compares with "INFO" (uppercase),
+        BUG: query() calls _emit_log with "info" (lowercase) at the start of
+        the request. Because _emit_log compares with "INFO" (uppercase),
         lowercase "info" falls through to the else branch and emits ERROR
         severity instead of INFO.
-        Fix: change line 62 in gemini.py to _emit_log("INFO", ...).
+        Fix: change the call in gemini.py to _emit_log("INFO", ...).
         """
         from opentelemetry._logs._internal import SeverityNumber
         captured = []
@@ -417,41 +430,57 @@ class TestMapToDomainResponse:
 
 
 # ---------------------------------------------------------------------------
-# Tests: _handle_api_error
+# Tests: _handle_error
+# The class exposes a single generic handler used for API errors, validation
+# errors, and unexpected errors alike, distinguished only by the error_msg
+# argument passed in by query().
 # ---------------------------------------------------------------------------
 
-class TestHandleApiError:
+class TestHandleError:
 
-    def test_reraises_api_error(self, client, patch_all):
-        """errors.APIError must be re-raised as-is."""
-        from google.genai import errors
+    def test_reraises_original_error(self, client, patch_all):
+        """The original exception must be re-raised unchanged."""
         err = make_api_error(429, "quota exceeded")
-        with pytest.raises(errors.APIError):
-            client._handle_api_error(err, patch_all.span)
+        with pytest.raises(type(err)):
+            client._handle_error(err, patch_all.span, "Gemini API error")
+
+    def test_reraises_generic_exception_with_original_type(self, client, patch_all):
+        """A generic exception must propagate with its original type and message."""
+        with pytest.raises(ConnectionError, match="DNS failure"):
+            client._handle_error(ConnectionError("DNS failure"), patch_all.span, "Unexpected error")
 
     def test_span_status_set_to_error(self, client, patch_all):
-        """Span status must be ERROR after an API error."""
+        """Span status must be ERROR after handling any error."""
         from opentelemetry.trace import StatusCode
         err = make_api_error(500, "internal error")
         with pytest.raises(Exception):
-            client._handle_api_error(err, patch_all.span)
+            client._handle_error(err, patch_all.span, "Gemini API error")
         status_arg = patch_all.span.set_status.call_args[0][0]
         assert status_arg.status_code == StatusCode.ERROR
 
-    def test_error_message_contains_code_and_message(self, client, patch_all):
-        """The span status description must include both the HTTP code and message."""
+    def test_error_description_contains_error_msg_code_and_message(self, client, patch_all):
+        """The span status description must include error_msg, the error code
+        and the error message."""
         err = make_api_error(403, "forbidden")
         with pytest.raises(Exception):
-            client._handle_api_error(err, patch_all.span)
+            client._handle_error(err, patch_all.span, "Gemini API error")
         status_arg = patch_all.span.set_status.call_args[0][0]
-        assert "403"       in status_arg.description
-        assert "forbidden" in status_arg.description
+        assert "Gemini API error" in status_arg.description
+        assert "403"              in status_arg.description
+        assert "forbidden"        in status_arg.description
+
+    def test_description_uses_na_when_error_has_no_code(self, client, patch_all):
+        """When the exception has no 'code' attribute, description must use 'N/A'."""
+        with pytest.raises(Exception):
+            client._handle_error(RuntimeError("timeout"), patch_all.span, "Unexpected error")
+        status_arg = patch_all.span.set_status.call_args[0][0]
+        assert "N/A" in status_arg.description
 
     def test_span_records_exception(self, client, patch_all):
         """span.record_exception must be called with the original error."""
         err = make_api_error(400, "bad request")
         with pytest.raises(Exception):
-            client._handle_api_error(err, patch_all.span)
+            client._handle_error(err, patch_all.span, "Gemini API error")
         patch_all.span.record_exception.assert_called_once_with(err)
 
     def test_error_log_emitted(self, client, patch_all, mocker):
@@ -459,47 +488,12 @@ class TestHandleApiError:
         mock_emit = mocker.patch.object(client, "_emit_log")
         err = make_api_error(503, "unavailable")
         with pytest.raises(Exception):
-            client._handle_api_error(err, patch_all.span)
-        mock_emit.assert_called_once_with("ERROR", pytest.approx(mock_emit.call_args[0][1], abs=0))
+            client._handle_error(err, patch_all.span, "Gemini API error")
         assert mock_emit.call_args[0][0] == "ERROR"
 
 
 # ---------------------------------------------------------------------------
-# Tests: _handle_network_failure
-# ---------------------------------------------------------------------------
-
-class TestHandleNetworkFailure:
-
-    def test_reraises_original_exception_type(self, client, patch_all):
-        """The original exception type must be preserved when re-raising."""
-        with pytest.raises(ConnectionError, match="DNS failure"):
-            client._handle_network_failure(ConnectionError("DNS failure"), patch_all.span)
-
-    def test_span_status_set_to_error(self, client, patch_all):
-        """Span status must be ERROR after a network failure."""
-        from opentelemetry.trace import StatusCode
-        with pytest.raises(Exception):
-            client._handle_network_failure(Exception("boom"), patch_all.span)
-        status_arg = patch_all.span.set_status.call_args[0][0]
-        assert status_arg.status_code == StatusCode.ERROR
-
-    def test_span_records_exception(self, client, patch_all):
-        """span.record_exception must be called with the original error."""
-        original = RuntimeError("timeout")
-        with pytest.raises(RuntimeError):
-            client._handle_network_failure(original, patch_all.span)
-        patch_all.span.record_exception.assert_called_once_with(original)
-
-    def test_error_log_emitted(self, client, patch_all, mocker):
-        """_emit_log must be called with ERROR level before re-raising."""
-        mock_emit = mocker.patch.object(client, "_emit_log")
-        with pytest.raises(Exception):
-            client._handle_network_failure(Exception("boom"), patch_all.span)
-        assert mock_emit.call_args[0][0] == "ERROR"
-
-
-# ---------------------------------------------------------------------------
-# Tests: _query (full flow)
+# Tests: query (full flow)
 # ---------------------------------------------------------------------------
 
 class TestQuery:
@@ -541,7 +535,8 @@ class TestQuery:
 
     @pytest.mark.asyncio
     async def test_api_error_propagates_unchanged(self, client, payload, mocker):
-        """errors.APIError raised during the call must propagate unchanged."""
+        """errors.APIError raised during the call must propagate unchanged
+        via _handle_error(..., "Gemini API error")."""
         from google.genai import errors
         err = make_api_error(429, "rate limit")
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
@@ -550,8 +545,20 @@ class TestQuery:
             await client.query(payload)
 
     @pytest.mark.asyncio
-    async def test_network_failure_propagates_with_original_type(self, client, payload, mocker):
-        """A generic network error must propagate with its original type and message."""
+    async def test_validation_error_propagates_unchanged(self, client, payload, mocker):
+        """pydantic ValidationError raised during mapping must propagate
+        unchanged via _handle_error(..., "Response validation error")."""
+        from pydantic import ValidationError
+        mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
+        mocker.patch.object(client, "_execute_network_call", new=AsyncMock(return_value=MagicMock()))
+        mocker.patch.object(client, "_map_to_domain_response", side_effect=ValidationError.from_exception_data("LLMResponse", []))
+        with pytest.raises(ValidationError):
+            await client.query(payload)
+
+    @pytest.mark.asyncio
+    async def test_generic_exception_propagates_with_original_type(self, client, payload, mocker):
+        """A generic/network error must propagate with its original type and
+        message via _handle_error(..., "Unexpected error")."""
         mocker.patch.object(client, "_build_generation_config", return_value=MagicMock())
         mocker.patch.object(client, "_execute_network_call",
             new=AsyncMock(side_effect=ConnectionError("DNS failure")))
@@ -561,10 +568,10 @@ class TestQuery:
     @pytest.mark.asyncio
     async def test_known_bug_start_log_emitted_as_error(self, client, payload, raw_response, mocker):
         """
-        BUG (line 62 of gemini.py): _emit_log is called with "info" (lowercase)
-        which causes ERROR severity instead of INFO.
-        This test documents the current broken behaviour.
-        Fix: change _emit_log("info", ...) to _emit_log("INFO", ...).
+        BUG: query() calls _emit_log with "info" (lowercase) which causes
+        ERROR severity instead of INFO. This test documents the current
+        broken behaviour.
+        Fix: change _emit_log("info", ...) to _emit_log("INFO", ...) in gemini.py.
         """
         from opentelemetry._logs._internal import SeverityNumber
         captured = []

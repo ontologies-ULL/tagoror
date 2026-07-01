@@ -21,6 +21,7 @@ from datetime import datetime
 from unittest.mock import MagicMock
 from opentelemetry import trace
 from owlready2 import get_ontology, Thing, Ontology, World
+from aiolimiter import AsyncLimiter
 
 # ============================================================================
 # Global Integration Patching for Owlready2 Compatibility
@@ -128,6 +129,16 @@ def serializer(tracer):
     return TurtleSerializer(tracer=tracer)
 
 
+@pytest.fixture(scope="function")
+def rate_limiter():
+    """
+    Real AsyncLimiter instance (not mocked) so integration tests preserve the
+    actual runtime wiring. The rate is set high enough that it never
+    meaningfully throttles these tests, including the massive-concurrency one.
+    """
+    return AsyncLimiter(max_rate=1000, time_period=1)
+
+
 # ============================================================================
 # Scripted / Mocked LLM Transport Clients
 # ============================================================================
@@ -180,7 +191,7 @@ def make_success_response(findings: list[str], status: str = "success") -> LLMRe
 # ============================================================================
 
 @pytest.mark.asyncio
-async def test_successful_pipeline_execution_flow(monkeypatch, real_ontology, prompt_manager, serializer):
+async def test_successful_pipeline_execution_flow(monkeypatch, real_ontology, prompt_manager, serializer, rate_limiter):
     """
     Verifies the happy path of the entire integration chain using real OWL individuals.
     """
@@ -212,6 +223,7 @@ async def test_successful_pipeline_execution_flow(monkeypatch, real_ontology, pr
         prompt_manager=prompt_manager,
         serializer=serializer,
         consensus_resolver=consensus_resolver,
+        rate_limiter=rate_limiter,
         suite_name="owl_validations"
     )
     
@@ -235,7 +247,7 @@ async def test_successful_pipeline_execution_flow(monkeypatch, real_ontology, pr
 
 
 @pytest.mark.asyncio
-async def test_transient_error_recovery_on_last_attempt(real_ontology, prompt_manager, serializer):
+async def test_transient_error_recovery_on_last_attempt(real_ontology, prompt_manager, serializer, rate_limiter):
     """
     Verifies that RetryableLLMClient transparently recovers from temporary network issues.
     """
@@ -261,6 +273,7 @@ async def test_transient_error_recovery_on_last_attempt(real_ontology, prompt_ma
         prompt_manager=prompt_manager,
         serializer=serializer,
         consensus_resolver=consensus_resolver,
+        rate_limiter=rate_limiter,
         suite_name="owl_validations"
     )
 
@@ -271,7 +284,7 @@ async def test_transient_error_recovery_on_last_attempt(real_ontology, prompt_ma
 
 
 @pytest.mark.asyncio
-async def test_transient_error_exhaustion_propagates_exception(real_ontology, prompt_manager, serializer):
+async def test_transient_error_exhaustion_propagates_exception(real_ontology, prompt_manager, serializer, rate_limiter):
     """
     Verifies exception propagation when retries are exhausted.
     """
@@ -297,6 +310,7 @@ async def test_transient_error_exhaustion_propagates_exception(real_ontology, pr
         prompt_manager=prompt_manager,
         serializer=serializer,
         consensus_resolver=consensus_resolver,
+        rate_limiter=rate_limiter,
         suite_name="owl_validations"
     )
 
@@ -307,7 +321,7 @@ async def test_transient_error_exhaustion_propagates_exception(real_ontology, pr
 
 
 @pytest.mark.asyncio
-async def test_auditor_handles_json_decode_error_gracefully(real_ontology, prompt_manager, serializer):
+async def test_auditor_handles_json_decode_error_gracefully(real_ontology, prompt_manager, serializer, rate_limiter):
     """
     Verifies that malformed JSON responses are gracefully degraded to a FAILURE status.
     """
@@ -336,6 +350,7 @@ async def test_auditor_handles_json_decode_error_gracefully(real_ontology, promp
         prompt_manager=prompt_manager,
         serializer=serializer,
         consensus_resolver=consensus_resolver,
+        rate_limiter=rate_limiter,
         suite_name="owl_validations"
     )
 
@@ -348,7 +363,7 @@ async def test_auditor_handles_json_decode_error_gracefully(real_ontology, promp
 
 
 @pytest.mark.asyncio
-async def test_consensus_resolver_tie_fallback_assigned_properly(real_ontology, prompt_manager, serializer):
+async def test_consensus_resolver_tie_fallback_assigned_properly(real_ontology, prompt_manager, serializer, rate_limiter):
     """
     Verifies proper handling of a voting tie in the ConsensusResolver.
     """
@@ -382,6 +397,7 @@ async def test_consensus_resolver_tie_fallback_assigned_properly(real_ontology, 
         prompt_manager=prompt_manager,
         serializer=serializer,
         consensus_resolver=consensus_resolver,
+        rate_limiter=rate_limiter,
         suite_name="owl_validations"
     )
 
@@ -398,7 +414,7 @@ async def test_consensus_resolver_tie_fallback_assigned_properly(real_ontology, 
 
 
 @pytest.mark.asyncio
-async def test_consensus_discards_minority_findings(real_ontology, prompt_manager, serializer):
+async def test_consensus_discards_minority_findings(real_ontology, prompt_manager, serializer, rate_limiter):
     """
     Verifies that minority branch findings are discarded from the final TaskOutcome.
     """
@@ -425,6 +441,7 @@ async def test_consensus_discards_minority_findings(real_ontology, prompt_manage
         prompt_manager=prompt_manager,
         serializer=serializer,
         consensus_resolver=consensus_resolver,
+        rate_limiter=rate_limiter,
         suite_name="owl_validations"
     )
 
@@ -440,7 +457,7 @@ async def test_consensus_discards_minority_findings(real_ontology, prompt_manage
 
 
 @pytest.mark.asyncio
-async def test_orchestrator_catastrophic_auditor_failure_fallback(monkeypatch, real_ontology, prompt_manager, serializer):
+async def test_orchestrator_catastrophic_auditor_failure_fallback(monkeypatch, real_ontology, prompt_manager, serializer, rate_limiter):
     """
     Verifies that a catastrophic crash on a single individual is contained by the orchestrator.
     """
@@ -473,6 +490,7 @@ async def test_orchestrator_catastrophic_auditor_failure_fallback(monkeypatch, r
         prompt_manager=prompt_manager,
         serializer=serializer,
         consensus_resolver=consensus_resolver,
+        rate_limiter=rate_limiter,
         suite_name="owl_validations"
     )
     
@@ -511,7 +529,7 @@ async def test_pipeline_empty_individuals_short_circuit(monkeypatch, real_ontolo
 
 
 @pytest.mark.asyncio
-async def test_extreme_concurrency_simulates_massive_load(monkeypatch, real_ontology, prompt_manager, serializer):
+async def test_extreme_concurrency_simulates_massive_load(monkeypatch, real_ontology, prompt_manager, serializer, rate_limiter):
     """
     PROVES/WARNING: The Orchestrator's `asyncio.gather(*tasks)` design is unbounded.
     """
@@ -543,6 +561,7 @@ async def test_extreme_concurrency_simulates_massive_load(monkeypatch, real_onto
         prompt_manager=prompt_manager,
         serializer=serializer,
         consensus_resolver=consensus_resolver,
+        rate_limiter=rate_limiter,
         suite_name="owl_validations"
     )
     

@@ -3,14 +3,14 @@ Unit tests for PromptManager
 ==============================
 Located at: src/core.
 
-YAML structure (from the real prompts file):
+YAML structure (matches the real class attributes):
 
   base_generic:
     role: |
       You are an expert ontology validator...
     constraints: |
       Do not invent information...
-  task_chains:
+  evaluation_suites:
     basic_validation:
       - id: check_class
         prompt: |
@@ -25,39 +25,46 @@ YAML structure (from the real prompts file):
       - id: suggest_improvements
         prompt: |
           Suggest OWL modeling improvements.
+    owl_validations:
+      - id: default_check
+        prompt: |
+          Default suite used when no name is provided.
 
-Covers:
+Covers (matches PromptManager in prompt_manager.py):
   - _load_from_disk: reads a valid YAML file correctly
   - _load_from_disk: returns empty dict for an empty file
   - _load_from_disk: raises FileNotFoundError for a missing file
   - _load_from_disk: loaded content matches YAML exactly
-  - get_assembled_system_prompt: joins role + constraints with double newline
+  - __init__: falls back to _DEFAULT_PROMPT_FILE when file_path is None
+  - get_assembled_system_prompt: joins sections as "### TITLE\ncontent",
+                                  separated by a blank line
   - get_assembled_system_prompt: role content present in result
   - get_assembled_system_prompt: constraints content present in result
   - get_assembled_system_prompt: single section returns value without separator
   - get_assembled_system_prompt: raises KeyError when base_generic missing
   - get_assembled_system_prompt: raises KeyError for empty YAML
-  - get_assembled_system_prompt: falls back to 'base_generica' (legacy key)
   - get_assembled_system_prompt: returns a string
-  - get_task_chain: returns list for known chain
-  - get_task_chain: correct number of tasks per chain
-  - get_task_chain: each task has 'id' and 'prompt' keys
-  - get_task_chain: task ids match YAML content exactly
-  - get_task_chain: task prompts match YAML content exactly
-  - get_task_chain: different chains return different tasks
-  - get_task_chain: raises KeyError for unknown chain name
-  - get_task_chain: raises KeyError when task_chains section is absent
+  - get_evaluation_suite: returns list for known suite
+  - get_evaluation_suite: correct number of tasks per suite
+  - get_evaluation_suite: each task has 'id' and 'prompt' keys
+  - get_evaluation_suite: task ids/prompts match YAML content exactly
+  - get_evaluation_suite: different suites return different tasks
+  - get_evaluation_suite: default suite name is 'owl_validations'
+  - get_evaluation_suite: raises KeyError for unknown suite name
+  - get_evaluation_suite: raises KeyError when evaluation_suites section is absent
   - _get_base_sections: returns base_generic dict when present
-  - _get_base_sections: falls back to base_generica when base_generic absent
-  - _get_base_sections: returns empty dict when neither key exists
-  - _get_task_chains: returns task_chains dict when present
-  - _get_task_chains: returns empty dict when task_chains absent
+  - _get_base_sections: raises KeyError when base_generic is absent or empty
 
 Testing strategy:
   _load_from_disk opens a real file, so we use tmp_path (pytest built-in)
   to create temporary YAML files on disk. This validates real YAML parsing
   without mocking the filesystem, and does not depend on any file in
   src/core. being present at test time.
+
+Note: the class exposes get_evaluation_suite() (not get_task_chain), reads
+the "evaluation_suites" YAML key (not "task_chains"), has no legacy
+"base_generica" fallback, and _get_base_sections() raises KeyError instead
+of returning {} when the block is missing/empty.
 """
 
 import pytest
@@ -79,20 +86,23 @@ REAL_YAML_CONTENT = {
             "Do not invent information. If context is missing, say so."
         ),
     },
-    "task_chains": {
+    "evaluation_suites": {
         "basic_validation": [
-            {"id": "check_class",       "prompt": "Verify whether the entity is a valid OWL class."},
-            {"id": "check_properties",  "prompt": "List relevant properties and check their consistency."},
+            {"id": "check_class",      "prompt": "Verify whether the entity is a valid OWL class."},
+            {"id": "check_properties", "prompt": "List relevant properties and check their consistency."},
         ],
         "extended_validation": [
             {"id": "detect_inconsistencies", "prompt": "Point out logical inconsistencies if they exist."},
             {"id": "suggest_improvements",   "prompt": "Suggest OWL modeling improvements."},
         ],
+        "owl_validations": [
+            {"id": "default_check", "prompt": "Default suite used when no name is provided."},
+        ],
     },
 }
 
 
-def write_yaml(tmp_path: Path, content: dict, filename: str = "prompts.yaml") -> Path:
+def write_yaml(tmp_path: Path, content: dict, filename: str = "prompts.yaml") -> str:
     """Write a dict as YAML to a temp file and return its path as string."""
     path = tmp_path / filename
     path.write_text(yaml.dump(content, allow_unicode=True), encoding="utf-8")
@@ -107,7 +117,7 @@ def write_raw(tmp_path: Path, content: str, filename: str = "prompts.yaml") -> s
 
 
 # ---------------------------------------------------------------------------
-# Tests: _load_from_disk
+# Tests: _load_from_disk / __init__
 # ---------------------------------------------------------------------------
 
 class TestLoadFromDisk:
@@ -147,6 +157,15 @@ class TestLoadFromDisk:
         with pytest.raises(FileNotFoundError):
             PromptManager(str(tmp_path / "nonexistent.yaml"))
 
+    def test_default_file_path_used_when_none_given(self, mocker):
+        """When file_path is None, __init__ must fall back to _DEFAULT_PROMPT_FILE."""
+        from core.prompt_manager import PromptManager
+        mock_load = mocker.patch.object(
+            PromptManager, "_load_from_disk", return_value={"base_generic": {"role": "x"}}
+        )
+        PromptManager()
+        mock_load.assert_called_once_with(str(PromptManager._DEFAULT_PROMPT_FILE))
+
 
 # ---------------------------------------------------------------------------
 # Tests: get_assembled_system_prompt
@@ -169,7 +188,7 @@ class TestGetAssembledSystemPrompt:
         assert REAL_YAML_CONTENT["base_generic"]["constraints"] in result
 
     def test_sections_joined_with_double_newline(self, tmp_path):
-        """Role and constraints must be joined with '\\n\\n' as separator."""
+        """Sections must render as '### TITLE\\ncontent' joined by '\\n\\n'."""
         content = {
             "base_generic": {
                 "role":        "ROLE_CONTENT",
@@ -202,10 +221,10 @@ class TestGetAssembledSystemPrompt:
 
     def test_raises_key_error_when_base_generic_missing(self, tmp_path):
         """Must raise KeyError with a descriptive message when base_generic is absent."""
-        content = {"task_chains": {}}
+        content = {"evaluation_suites": {}}
         path = write_yaml(tmp_path, content)
         from core.prompt_manager import PromptManager
-        with pytest.raises(KeyError, match="Missing base prompt sections"):
+        with pytest.raises(KeyError, match="Missing base prompt"):
             PromptManager(path).get_assembled_system_prompt()
 
     def test_raises_key_error_for_empty_yaml(self, tmp_path):
@@ -215,93 +234,101 @@ class TestGetAssembledSystemPrompt:
         with pytest.raises(KeyError):
             PromptManager(path).get_assembled_system_prompt()
 
+
 # ---------------------------------------------------------------------------
-# Tests: get_task_chain
+# Tests: get_evaluation_suite
 # ---------------------------------------------------------------------------
 
-class TestGetTaskChain:
+class TestGetEvaluationSuite:
 
     def test_returns_list_for_basic_validation(self, tmp_path):
-        """get_task_chain('basic_validation') must return a list."""
+        """get_evaluation_suite('basic_validation') must return a list."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        chain = PromptManager(path).get_task_chain("basic_validation")
-        assert isinstance(chain, list)
+        suite = PromptManager(path).get_evaluation_suite("basic_validation")
+        assert isinstance(suite, list)
 
     def test_basic_validation_has_two_tasks(self, tmp_path):
         """basic_validation must contain exactly 2 tasks."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        chain = PromptManager(path).get_task_chain("basic_validation")
-        assert len(chain) == 2
+        suite = PromptManager(path).get_evaluation_suite("basic_validation")
+        assert len(suite) == 2
 
     def test_extended_validation_has_two_tasks(self, tmp_path):
         """extended_validation must contain exactly 2 tasks."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        chain = PromptManager(path).get_task_chain("extended_validation")
-        assert len(chain) == 2
+        suite = PromptManager(path).get_evaluation_suite("extended_validation")
+        assert len(suite) == 2
 
     def test_each_task_has_id_key(self, tmp_path):
         """Every task dict must have an 'id' key."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        chain = PromptManager(path).get_task_chain("basic_validation")
-        for task in chain:
+        suite = PromptManager(path).get_evaluation_suite("basic_validation")
+        for task in suite:
             assert "id" in task
 
     def test_each_task_has_prompt_key(self, tmp_path):
         """Every task dict must have a 'prompt' key."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        chain = PromptManager(path).get_task_chain("basic_validation")
-        for task in chain:
+        suite = PromptManager(path).get_evaluation_suite("basic_validation")
+        for task in suite:
             assert "prompt" in task
 
     def test_basic_validation_task_ids_match_yaml(self, tmp_path):
         """basic_validation task ids must match exactly: check_class, check_properties."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        chain = PromptManager(path).get_task_chain("basic_validation")
-        assert [t["id"] for t in chain] == ["check_class", "check_properties"]
+        suite = PromptManager(path).get_evaluation_suite("basic_validation")
+        assert [t["id"] for t in suite] == ["check_class", "check_properties"]
 
     def test_extended_validation_task_ids_match_yaml(self, tmp_path):
         """extended_validation task ids must match: detect_inconsistencies, suggest_improvements."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        chain = PromptManager(path).get_task_chain("extended_validation")
-        assert [t["id"] for t in chain] == ["detect_inconsistencies", "suggest_improvements"]
+        suite = PromptManager(path).get_evaluation_suite("extended_validation")
+        assert [t["id"] for t in suite] == ["detect_inconsistencies", "suggest_improvements"]
 
     def test_first_task_prompt_matches_yaml(self, tmp_path):
         """The first task prompt must match the YAML value exactly."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        chain = PromptManager(path).get_task_chain("basic_validation")
-        assert chain[0]["prompt"] == "Verify whether the entity is a valid OWL class."
+        suite = PromptManager(path).get_evaluation_suite("basic_validation")
+        assert suite[0]["prompt"] == "Verify whether the entity is a valid OWL class."
 
-    def test_chains_are_independent(self, tmp_path):
+    def test_suites_are_independent(self, tmp_path):
         """basic_validation and extended_validation must return different task lists."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        pm     = PromptManager(path)
-        basic  = [t["id"] for t in pm.get_task_chain("basic_validation")]
-        extended = [t["id"] for t in pm.get_task_chain("extended_validation")]
+        pm = PromptManager(path)
+        basic    = [t["id"] for t in pm.get_evaluation_suite("basic_validation")]
+        extended = [t["id"] for t in pm.get_evaluation_suite("extended_validation")]
         assert basic != extended
 
-    def test_raises_key_error_for_unknown_chain(self, tmp_path):
-        """Must raise KeyError containing the unknown chain name."""
+    def test_default_suite_name_is_owl_validations(self, tmp_path):
+        """Calling with no argument must default to the 'owl_validations' suite."""
         path = write_yaml(tmp_path, REAL_YAML_CONTENT)
         from core.prompt_manager import PromptManager
-        with pytest.raises(KeyError, match="nonexistent_chain"):
-            PromptManager(path).get_task_chain("nonexistent_chain")
+        suite = PromptManager(path).get_evaluation_suite()
+        assert [t["id"] for t in suite] == ["default_check"]
 
-    def test_raises_key_error_when_task_chains_section_missing(self, tmp_path):
-        """Must raise KeyError when the task_chains section is absent entirely."""
-        content = {"base_generic": {"role": "Only base, no chains."}}
+    def test_raises_key_error_for_unknown_suite(self, tmp_path):
+        """Must raise KeyError containing the unknown suite name."""
+        path = write_yaml(tmp_path, REAL_YAML_CONTENT)
+        from core.prompt_manager import PromptManager
+        with pytest.raises(KeyError, match="nonexistent_suite"):
+            PromptManager(path).get_evaluation_suite("nonexistent_suite")
+
+    def test_raises_key_error_when_evaluation_suites_section_missing(self, tmp_path):
+        """Must raise KeyError when the evaluation_suites section is absent entirely."""
+        content = {"base_generic": {"role": "Only base, no suites."}}
         path = write_yaml(tmp_path, content)
         from core.prompt_manager import PromptManager
         with pytest.raises(KeyError):
-            PromptManager(path).get_task_chain("basic_validation")
+            PromptManager(path).get_evaluation_suite("basic_validation")
 
 
 # ---------------------------------------------------------------------------
@@ -325,30 +352,16 @@ class TestGetBaseSections:
         assert "role"        in sections
         assert "constraints" in sections
 
-    def test_returns_empty_dict_when_neither_key_exists(self, tmp_path):
-        """Must return an empty dict when neither base_generic nor base_generica exist."""
-        path = write_yaml(tmp_path, {"task_chains": {}})
+    def test_raises_key_error_when_base_generic_key_missing(self, tmp_path):
+        """Must raise KeyError when base_generic is not present at all."""
+        path = write_yaml(tmp_path, {"evaluation_suites": {}})
         from core.prompt_manager import PromptManager
-        assert PromptManager(path)._get_base_sections() == {}
+        with pytest.raises(KeyError, match="Missing base prompt block"):
+            PromptManager(path)._get_base_sections()
 
-
-# ---------------------------------------------------------------------------
-# Tests: _get_task_chains
-# ---------------------------------------------------------------------------
-
-class TestGetTaskChains:
-
-    def test_returns_task_chains_dict(self, tmp_path):
-        """Must return the full task_chains dict when the section is present."""
-        path = write_yaml(tmp_path, REAL_YAML_CONTENT)
+    def test_raises_key_error_when_base_generic_is_empty(self, tmp_path):
+        """Must raise KeyError when base_generic is present but empty."""
+        path = write_yaml(tmp_path, {"base_generic": {}})
         from core.prompt_manager import PromptManager
-        chains = PromptManager(path)._get_task_chains()
-        assert "basic_validation"    in chains
-        assert "extended_validation" in chains
-
-    def test_returns_empty_dict_when_section_missing(self, tmp_path):
-        """Must return an empty dict when the task_chains section is absent."""
-        content = {"base_generic": {"role": "Only base."}}
-        path = write_yaml(tmp_path, content)
-        from core.prompt_manager import PromptManager
-        assert PromptManager(path)._get_task_chains() == {}
+        with pytest.raises(KeyError, match="Missing base prompt block"):
+            PromptManager(path)._get_base_sections()
