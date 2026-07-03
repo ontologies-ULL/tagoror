@@ -28,10 +28,10 @@ class Pipeline:
                 if not base_ontology:
                     span.set_status(Status(StatusCode.OK, "No base ontology found to process"))
                     return []
+                extracted_names = [str(ind.name) for ind in individuals]
+                span.set_attribute("ontology.extracted_individual_names", extracted_names)
 
-                individuals = [entity for entity in individuals if entity not in base_ontology.individuals()]
                 results = await self._orchestrator.process(individuals, base_ontology)
-                
                 span.set_status(Status(StatusCode.OK))
                 return results
 
