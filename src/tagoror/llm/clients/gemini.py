@@ -80,11 +80,35 @@ class GeminiClient(BaseLLMClient):
     
     def _build_generation_config(self, payload: LLMPayload) -> types.GenerateContentConfig:
         """builds the sdk config object from our domain payload."""
-        return types.GenerateContentConfig(
-            temperature=payload.temperature,
-            response_mime_type="application/json" if payload.json_mode else "text/plain",
-            system_instruction=payload.system_prompt
-        )
+        config_args = {
+            "temperature": payload.temperature,
+            "system_instruction": payload.system_prompt
+        }
+        
+        if payload.json_mode:
+            config_args["response_mime_type"] = "application/json"
+            config_args["response_schema"] = {
+                "type": "OBJECT",
+                "properties": {
+                    "reasoning": {"type": "STRING", "description": "Step-by-step explanation of the validation. Look for possible hallucinations."},
+                    "status": {
+                        "type": "STRING", 
+                        "enum": ["SUCCESS", "FAILURE"],
+                        "description": "The final verdict. Must be strictly SUCCESS or FAILURE."
+                    },
+                    "findings": {
+                        "type": "ARRAY", 
+                        "items": {"type": "STRING"},
+                        "description": "List of specific errors found."
+                    }
+                },
+                "required": ["reasoning", "status", "findings"]
+            }
+        else:
+            config_args["response_mime_type"] = "text/plain"
+            
+        return types.GenerateContentConfig(**config_args)
+
 
     # --- execution & mapping methods ---
 

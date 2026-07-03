@@ -1,199 +1,191 @@
-"""
-Main entry point for the Ontology Validation application.
-
-Provides interactive and CLI modes for ontology validation with
-hallucination detection using multiple LLM models.
-
-Usage:
-    uv run main.py              # Interactive mode (recommended)
-    uv run main.py --help       # Show help
-"""
-
+import os
+import sys
+import json
 import asyncio
 import argparse
-import sys
 from pathlib import Path
+from datetime import datetime
 
-PROJECT_ROOT = Path(__file__).parent
-SRC_DIR = PROJECT_ROOT / "src"
-sys.path.insert(0, str(SRC_DIR))
-
+# Carga de variables de entorno
 try:
-    from dotenv import load_dotenv as _load_dotenv
+    from dotenv import load_dotenv
+    load_dotenv()
 except ImportError:
-    print("[ERROR] Missing 'python-dotenv' library.")
+    print("[ERROR] Falta la librería 'python-dotenv'.")
     sys.exit(1)
 
-from storage import TelemetryManager, ResultsManager
-from ui.ui_manager import UIManager
-from cli.interactive_cli import InteractiveCLI
-from pipeline import (
-    PipelineConfigurator,
-    PipelineExecutor,
-    ResultsWriter,
-    EnvironmentManager,
-)
+# Dependencias de OpenTelemetry
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider, ReadableSpan
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+
+# Dependencias de Dominio (Asegúrate de que tu entorno 'uv' está bien instalado)
+from core.pipeline.pipeline import Pipeline
+from core.pipeline.orchestrator import EntityOrchestrator
+from core.pipeline.evaluation.strategies.llm_auditor import LLMEntityAuditor
+from core.pipeline.evaluation.strategies.majority_vote import ConsensusResolver
+from core.prompt_manager import PromptManager
+from serialization.serializers.turtle_serializer import TurtleSerializer
+from llm.clients.gemini import GeminiClient 
+from llm.retry import RetryableLLMClient
+from llm.config import RetryPolicyConfig, BackoffStrategy
+from aiolimiter import AsyncLimiter
 
 
-async def execute_pipeline(
-    target_dir: Path,
-    rate_limit: float,
-    model_name: str,
-    prompts_path: Path,
-    user_input: str,
-    verbose: bool = True,
-) -> None:
-    """
-    Execute the ontology validation pipeline with given configuration.
+def patch_owlready2():
+    """Aplica parches de compatibilidad a owlready2 de forma aislada y controlada."""
+    from owlready2 import Thing, World
+    if not hasattr(Thing, "individual_id"):
+        type.__setattr__(Thing, "individual_id", property(lambda self: self.name))
+    if not hasattr(World.as_rdflib_graph, "_is_patched"):
+        original_as_rdflib_graph = World.as_rdflib_graph
+        def patched_as_rdflib_graph(self, *args, **kwargs):
+            return original_as_rdflib_graph(self)
+        patched_as_rdflib_graph._is_patched = True
+        World.as_rdflib_graph = patched_as_rdflib_graph
+
+
+def setup_telemetry(logs_dir: Path):
+    """Configura OpenTelemetry centralizado en una sola función pura."""
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     
-    Delegates to specialized components for environment validation,
-    pipeline configuration, and execution.
-    """
-    # Initialize managers
-    telemetry_mgr = TelemetryManager(PROJECT_ROOT)
-    telemetry_mgr.setup()
+    provider = TracerProvider()
     
-    ui = UIManager(verbose=verbose)
-    env_mgr = EnvironmentManager(ui)
-    results_mgr = ResultsManager(PROJECT_ROOT)
-    results_writer = ResultsWriter(ui, PROJECT_ROOT)
+    # Exportador JSON detallado
+    detailed_file = open(logs_dir / f"telemetry_detailed_{ts}.json", "w", encoding="utf-8")
+    provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter(out=detailed_file)))
     
-    try:
-        # Validate environment
-        env_mgr.load_env()
-        api_key = env_mgr.validate_api_key()
-        env_mgr.validate_target_dir(target_dir)
-        env_mgr.validate_prompts_file(prompts_path)
-        env_mgr.setup_owlready2()
+    # Exportador humano
+    def _human_formatter(span: ReadableSpan) -> str:
+        dur = ((span.end_time or 0) - (span.start_time or 0)) / 1e6
+        status = "🛑" if span.status.status_code.name == "ERROR" else "✅"
+        return f"[{span.status.status_code.name}] {status} Span: '{span.name}' | Duración: {dur:.2f}ms\n"
         
-        rdf_files = env_mgr.validate_target_dir(target_dir)
+    readable_file = open(logs_dir / f"telemetry_readable_{ts}.log", "w", encoding="utf-8")
+    provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter(out=readable_file, formatter=_human_formatter)))
+    
+    trace.set_tracer_provider(provider)
 
-        # Show startup info
-        ui.info("🚀 Starting Batch Ontology Validation Pipeline...")
-        ui.info(f"📂 Found {len(rdf_files)} .rdf file(s)")
-        ui.info(f"🚦 Rate Limit: {rate_limit} requests/minute")
-        ui.info(f"🤖 Model: {model_name}")
-        ui.info(f"💭 Custom Input: {user_input[:50]}...")
-        ui.info("-" * 70)
 
-        # Configure pipeline
-        configurator = PipelineConfigurator(api_key)
-        llm = configurator.build_llm()
-        pipeline, status_reporter = configurator.build_pipeline(
-            llm_client=llm,
-            prompts_path=prompts_path,
-            rate_limit=rate_limit,
-            model_name=model_name,
-            user_input=user_input,
-        )
+def save_results(ontology_name: str, model_name: str, results: list, out_dir: Path):
+    """Escribe los resultados en disco sin necesidad de instanciar clases inútiles."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_model = model_name.replace(" ", "_").replace("/", "_")
+    
+    file_path = out_dir / f"{ontology_name}_{safe_model}_{ts}.json"
+    payload = {
+        "ontology": ontology_name,
+        "model": model_name,
+        "executed_at": datetime.now().isoformat(),
+        "results": results,
+    }
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=4, ensure_ascii=False)
+    
+    return file_path
 
-        # Execute pipeline
-        executor = PipelineExecutor(
-            ui=ui,
-            results_mgr=results_mgr,
-            pipeline=pipeline,
-            status_reporter=status_reporter,
-            model_name=model_name,
-        )
+
+async def run_batch(target_dir: Path, prompts_path: Path, model_name: str, rate_limit: float, user_input: str):
+    """Bucle principal de ejecución asíncrona (Sustituye al PipelineExecutor)."""
+    
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("❌ ERROR: La variable GEMINI_API_KEY no está definida en tu .env")
+        sys.exit(1)
+
+    if not target_dir.exists():
+        print(f"❌ ERROR: El directorio objetivo '{target_dir}' no existe.")
+        sys.exit(1)
+
+    rdf_files = list(target_dir.glob("*.rdf"))
+    if not rdf_files:
+        print(f"⚠️  No se encontraron archivos .rdf en {target_dir}")
+        sys.exit(0)
+
+    # 1. Inyección de Dependencias Lineal y Limpia
+    print("Iniciando dependencias...")
+    base_llm = GeminiClient(api_key=api_key)
+    retry_config = RetryPolicyConfig(max_retries=3, delay_between_retries=1.0, backoff_strategy=BackoffStrategy.EXPONENTIAL)
+    llm_client = RetryableLLMClient(llm_client=base_llm, config=retry_config)
+    
+    prompt_manager = PromptManager(file_path=str(prompts_path))
+    tracer = trace.get_tracer(__name__)
+    serializer = TurtleSerializer(tracer)
+    
+    auditor = LLMEntityAuditor(
+        model=llm_client,
+        prompt_manager=prompt_manager,
+        serializer=serializer,
+        consensus_resolver=ConsensusResolver(),
+        rate_limiter=AsyncLimiter(max_rate=rate_limit, time_period=60),
+        user_input=user_input,
+        suite_name="owl_validations",
+        model_name=model_name
+    )
+    
+    pipeline = Pipeline(orchestrator=EntityOrchestrator(strategy=auditor))
+    results_dir = Path("results")
+    aggregated_results = {}
+
+    # 2. Bucle de ejecución
+    print(f"\n🚀 Iniciando validación por lotes de {len(rdf_files)} ontologías...")
+    print("-" * 60)
+    
+    for idx, rdf_file in enumerate(rdf_files, 1):
+        print(f"⏳ [{idx}/{len(rdf_files)}] Procesando: {rdf_file.name}...")
         
-        aggregated_results = await executor.process_files(rdf_files)
-        
-        # Write results and show summary
-        results_writer.write_aggregated_results(aggregated_results)
-        executor.print_summary()
-        ui.show_completion_message(PROJECT_ROOT / "results")
-        
-    finally:
         try:
-            telemetry_mgr.close()
-        except Exception:
-            pass
+            # Ejecución pura, sin acoplamiento a Spinners de consola
+            execution_summaries = await pipeline.execute(str(rdf_file))
+            
+            file_results_dump = [s.model_dump(mode='json') for s in execution_summaries]
+            aggregated_results[rdf_file.name] = file_results_dump
+            
+            saved_path = save_results(rdf_file.stem, model_name, file_results_dump, results_dir)
+            
+            exitos = sum(1 for s in execution_summaries if s.is_successful())
+            fallos = len(execution_summaries) - exitos
+            print(f"   ✅ Éxitos: {exitos} | ❌ Fallos: {fallos} -> Guardado en: {saved_path.name}")
+            
+        except Exception as e:
+            print(f"   🔥 ERROR CRÍTICO procesando {rdf_file.name}: {str(e)}")
+            aggregated_results[rdf_file.name] = {"error": str(e)}
 
+    # Guardado final aglomerado
+    with open("validation_results.json", "w", encoding="utf-8") as f:
+        json.dump(aggregated_results, f, indent=4, ensure_ascii=False)
+    
+    print("\n✅ Ejecución finalizada. Revisa la carpeta 'results/'.")
 
 
 def main():
-    """
-    Main entry point with CLI argument parsing and mode selection.
-    Delegates to interactive or CLI execution path.
-    """
-    parser = argparse.ArgumentParser(
-        description="Ontology Validation Pipeline with Hallucination Detection",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  uv run main.py                              # Interactive mode
-  uv run main.py --user-input "Custom prompt" # CLI mode
-  uv run main.py --help                       # Show this help
-        """
-    )
+    parser = argparse.ArgumentParser(description="Validación de Ontologías mediante LLM-as-a-Judge")
+    parser.add_argument("--target-dir", default="target_ontologies", help="Directorio con archivos .rdf")
+    parser.add_argument("--rate-limit", type=float, default=15.0, help="Límite de peticiones por minuto")
+    parser.add_argument("--model", default="gemini-2.5-flash", help="Modelo LLM a utilizar")
+    parser.add_argument("--prompts", default="src/config/prompts.yaml", help="Ruta al archivo prompts.yaml")
+    parser.add_argument("--user-input", default="Validate this healthcare ontology strictly.", help="Contexto de usuario")
     
-    parser.add_argument("--target-dir", dest="target_dir", help="Directory with .rdf files")
-    parser.add_argument("--rate-limit", dest="rate_limit", type=float, help="Requests/min")
-    parser.add_argument("--model", dest="model_name", help="LLM model name")
-    parser.add_argument("--prompts", dest="prompts_path", help="Path to prompts.yaml")
-    parser.add_argument("--user-input", dest="user_input", help="Custom hallucination prompt")
-    parser.add_argument("--quiet", action="store_true", help="Minimal output")
-    parser.add_argument("--interactive", action="store_true", help="Force interactive mode")
-
     args = parser.parse_args()
+
+    project_root = Path(__file__).parent
     
-    # Determine execution mode
-    use_interactive = args.interactive or (
-        not args.target_dir and not args.rate_limit and 
-        not args.model_name and not args.user_input
-    )
+    patch_owlready2()
+    setup_telemetry(project_root / "logs")
     
     try:
-        if use_interactive:
-            _run_interactive_mode(args.quiet)
-        else:
-            _run_cli_mode(args)
-            
+        asyncio.run(run_batch(
+            target_dir=project_root / args.target_dir,
+            prompts_path=project_root / args.prompts,
+            model_name=args.model,
+            rate_limit=args.rate_limit,
+            user_input=args.user_input
+        ))
     except KeyboardInterrupt:
-        print("\n\n⚠️  Pipeline interrupted by user.")
+        print("\n\n⚠️ Ejecución cancelada por el usuario.")
         sys.exit(0)
-    except Exception as e:
-        print(f"\n❌ Error: {e}", file=sys.stderr)
-        sys.exit(1)
-
-
-def _run_interactive_mode(quiet: bool) -> None:
-    """Run the interactive setup and execution flow."""
-    cli = InteractiveCLI(PROJECT_ROOT)
-    config = cli.run_interactive_setup()
-    
-    asyncio.run(
-        execute_pipeline(
-            target_dir=config["target_dir"],
-            rate_limit=config["rate_limit"],
-            model_name=config["model"],
-            prompts_path=SRC_DIR / "config" / "prompts.yaml",
-            user_input=config["user_input"],
-            verbose=not quiet,
-        )
-    )
-
-
-def _run_cli_mode(args: argparse.Namespace) -> None:
-    """Run the CLI mode with provided arguments."""
-    target_dir = Path(args.target_dir) if args.target_dir else (PROJECT_ROOT / "target_ontologies")
-    rate_limit = args.rate_limit or 15.0
-    model_name = args.model_name or "gemini-2.0-flash-lite"
-    prompts_path = Path(args.prompts_path) if args.prompts_path else (SRC_DIR / "config" / "prompts.yaml")
-    user_input = args.user_input or "Please, validate this healthcare ontology strictly."
-    
-    asyncio.run(
-        execute_pipeline(
-            target_dir=target_dir,
-            rate_limit=rate_limit,
-            model_name=model_name,
-            prompts_path=prompts_path,
-            user_input=user_input,
-            verbose=not args.quiet,
-        )
-    )
-
-
 
 if __name__ == "__main__":
     main()

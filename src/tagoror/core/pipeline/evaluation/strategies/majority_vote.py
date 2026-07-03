@@ -11,7 +11,7 @@ class ConsensusResolver:
         if not branch_results:
             return None
 
-        statuses = [outcome.status for outcome, temp in branch_results]
+        statuses = [outcome.status for outcome, _ in branch_results]
         vote_counts = Counter(statuses).most_common()
 
         if len(vote_counts) > 1 and vote_counts[0][1] == vote_counts[1][1]:
@@ -19,14 +19,19 @@ class ConsensusResolver:
 
         majority_status = vote_counts[0][0]
         majority_findings = []
-        for outcome, temp in branch_results:
+        winning_raw_response = None
+        
+        for outcome, _ in branch_results:
             if outcome.status == majority_status:
                 majority_findings.extend(outcome.findings)
+                if winning_raw_response is None and getattr(outcome, 'rawResponse', None):
+                    winning_raw_response = outcome.rawResponse
 
         unique_findings = list(dict.fromkeys(majority_findings))
 
         return TaskOutcome(
             task_id=task_id,
             status=majority_status,
-            findings=unique_findings
+            findings=unique_findings,
+            rawResponse=winning_raw_response
         )

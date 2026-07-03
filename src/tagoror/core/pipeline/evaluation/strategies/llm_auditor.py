@@ -175,17 +175,20 @@ class LLMEntityAuditor(EntityAuditor):
                     return TaskOutcome(
                         task_id=task_id,
                         status=status_val,
-                        findings=findings
+                        findings=findings,
+                        rawResponse=raw_text
                     )
 
             return TaskOutcome(
                 task_id=task_id,
                 status=status_val,
-                findings=parsed_data.get("findings", [])
+                findings=parsed_data.get("findings", []),
+                rawResponse=raw_text
             )
         except json.JSONDecodeError as error:
             return TaskOutcome(
                 task_id=task_id,
                 status=TaskStatus.FAILURE,
-                findings=[f"Error parsing JSON response: {str(error)}", f"Raw: {raw_text}"]
+                findings=[f"Error parsing JSON response: {str(error)}", f"Raw: {raw_text}"],
+                rawResponse=raw_text
             )

@@ -6,12 +6,12 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "aiolimiter>=1.2.1",
-    "dotenv>=0.9.9",
     "google-genai>=2.4.0",
     "opentelemetry-distro>=0.62b1",
     "opentelemetry-exporter-otlp>=1.41.1",
     "owlready2>=0.50",
     "pydantic>=2.13.4",
+    "python-dotenv>=1.2.2",
     "pyyaml>=6.0.3",
     "rdflib>=7.6.0",
     "requests>=2.33.1",
@@ -39,3 +39,7 @@ omit = [
 show_missing = true
 # skip_covered = true
 precision = 2
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
