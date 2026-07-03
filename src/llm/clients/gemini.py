@@ -8,7 +8,7 @@ import google.genai as genai
 from google.genai import types, errors
 
 from opentelemetry import trace, metrics
-from opentelemetry.trace import Status, StatusCode
+from opentelemetry.trace import Span, Status, StatusCode
 from opentelemetry._logs import get_logger
 from opentelemetry._logs._internal import LogRecord, SeverityNumber
 from pydantic import ValidationError
@@ -22,8 +22,8 @@ class GeminiClient(BaseLLMClient):
     Implements the Facade pattern to hide the complexity of the Google SDK.
     """
     
-    # TODO: This is a placeholder. You should replace it with the actual cost from Google's pricing page.
-    _COST_PER_MILLION_TOKENS = 0.075 
+    _COST_PER_MILLION_INPUT_TOKENS = 0.25 
+    _COST_PER_MILLION_OUTPUT_TOKENS = 1.50 
 
     def __init__(self, api_key: str):
         self._client = genai.Client(api_key=api_key)
@@ -98,45 +98,50 @@ class GeminiClient(BaseLLMClient):
             config=config,
         )
 
-    def _map_to_domain_response(self, raw_response, start_time, span, model_name: str) -> LLMResponse:
+    def _map_to_domain_response(self, raw_response: str, start_time: float, span: Span, model_name: str) -> LLMResponse:
         """
         Acts as an Anti-Corruption Layer (ACL).
         Translates the proprietary Google object into our pure domain entity.
         """
         duration_ms = int((time.time() - start_time) * 1000)
-        tokens       = self._extract_token_usage(raw_response)
-        cost         = self._calculate_cost(tokens)
- 
+        input_tokens, output_tokens = self._extract_token_usage(raw_response)
+        total_cost = output_cost + input_cost
+        output_cost        = self._calculate_cost(output_tokens, self._COST_PER_MILLION_OUTPUT_TOKENS)
+        input_cost         = self._calculate_cost(input_tokens, self._COST_PER_MILLION_INPUT_TOKENS)
+
         # Record metrics
         self._duration_histogram.record(duration_ms, {"model": model_name})
-        self._token_counter.add(tokens, {"model": model_name})
-        self._cost_counter.add(cost, {"model": model_name})
+        self._token_counter.add(output_tokens, {"model": model_name})
+        self._cost_counter.add(total_cost, {"model": model_name})
  
         # Enrich span
-        span.set_attribute("llm.tokens_consumed", tokens)
+        span.set_attribute("llm.tokens_consumed", output_tokens)
         span.set_attribute("llm.duration_ms", duration_ms)
-        span.set_attribute("llm.cost_usd", cost)
+        span.set_attribute("llm.cost_usd", total_cost)
         span.set_status(Status(StatusCode.OK))
  
-        self._emit_log("INFO", f"Request successful. Duration: {duration_ms}ms, Tokens: {tokens}")
+        self._emit_log("INFO", f"Request successful. Duration: {duration_ms}ms, Tokens: {output_tokens}")
  
         return LLMResponse(
             raw_content=raw_response.text,
-            tokens_consumed=tokens,
+            tokens_consumed=output_tokens,
             duration_ms=duration_ms,
-            cost=cost,
+            cost=total_cost,
         )
 
 
     # --- Telemetry & Pure Calculation Methods ---
 
-    def _extract_token_usage(self, raw_response) -> int:
+    def _extract_token_usage(self, raw_response) -> tuple[int, int]:
         if raw_response.usage_metadata:
-            return raw_response.usage_metadata.total_token_count
-        return 0
+            return (
+                raw_response.usage_metadata.prompt_token_count,
+                raw_response.usage_metadata.candidates_token_count
+            )
+        return (0, 0)
 
-    def _calculate_cost(self, tokens: int) -> float:
-        return (tokens / 1_000_000) * self._COST_PER_MILLION_TOKENS
+    def _calculate_cost(self, tokens: int, cost_per_million_tokens: float) -> float:
+        return (tokens / 1_000_000) * cost_per_million_tokens
 
     # --- Error Handling Methods ---
 
