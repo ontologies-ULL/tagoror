@@ -6,6 +6,8 @@ from datetime import datetime
 class ResultsManager:
     """
     Manages the storage and organization of validation results for each ontology.
+    Writes a per-ontology JSON file into `results/` containing metadata (ontology name,
+    model used and timestamp) and the raw results payload.
     """
 
     def __init__(self, base_path: Path):
