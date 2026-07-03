@@ -105,26 +105,27 @@ class GeminiClient(BaseLLMClient):
         """
         duration_ms = int((time.time() - start_time) * 1000)
         input_tokens, output_tokens = self._extract_token_usage(raw_response)
-        total_cost = output_cost + input_cost
+        total_tokens = input_tokens + output_tokens 
         output_cost        = self._calculate_cost(output_tokens, self._COST_PER_MILLION_OUTPUT_TOKENS)
         input_cost         = self._calculate_cost(input_tokens, self._COST_PER_MILLION_INPUT_TOKENS)
+        total_cost = output_cost + input_cost
 
         # Record metrics
         self._duration_histogram.record(duration_ms, {"model": model_name})
-        self._token_counter.add(output_tokens, {"model": model_name})
+        self._token_counter.add(total_tokens, {"model": model_name})
         self._cost_counter.add(total_cost, {"model": model_name})
  
         # Enrich span
-        span.set_attribute("llm.tokens_consumed", output_tokens)
+        span.set_attribute("llm.tokens_consumed", total_tokens)
         span.set_attribute("llm.duration_ms", duration_ms)
         span.set_attribute("llm.cost_usd", total_cost)
         span.set_status(Status(StatusCode.OK))
  
-        self._emit_log("INFO", f"Request successful. Duration: {duration_ms}ms, Tokens: {output_tokens}")
+        self._emit_log("INFO", f"Request successful. Duration: {duration_ms}ms, Tokens: {total_tokens}")
  
         return LLMResponse(
             raw_content=raw_response.text,
-            tokens_consumed=output_tokens,
+            tokens_consumed=total_tokens,
             duration_ms=duration_ms,
             cost=total_cost,
         )
