@@ -1,6 +1,6 @@
 import asyncio
 from owlready2 import Ontology
-from serialization.base_serializer import BaseSerializer
+from tagoror.serialization.base_serializer import BaseSerializer
 
 class OntologyCache:
     """

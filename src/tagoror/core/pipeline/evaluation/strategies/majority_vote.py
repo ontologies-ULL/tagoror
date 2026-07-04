@@ -1,5 +1,5 @@
 from collections import Counter
-from core.models import TaskOutcome, TaskStatus
+from tagoror.core.models import TaskOutcome, TaskStatus
 
 class ConsensusResolver:
     """

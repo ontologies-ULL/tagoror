@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from core.models import ExecutionSummary
+from tagoror.core.models import ExecutionSummary
 
 from owlready2 import Thing, Ontology
 

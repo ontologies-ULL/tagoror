@@ -4,7 +4,7 @@ from asyncio import sleep
 from .base_llm_client import BaseLLMClient
 from .config import RetryPolicyConfig, BackoffStrategy
 from .models import LLMPayload, LLMResponse
-from exceptions import TransientNetworkException, LLMParseException
+from tagoror.exceptions import TransientNetworkException, LLMParseException
 
 class RetryableLLMClient(BaseLLMClient):
     """

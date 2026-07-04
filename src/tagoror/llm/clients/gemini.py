@@ -13,8 +13,8 @@ from opentelemetry._logs import get_logger
 from opentelemetry._logs._internal import LogRecord, SeverityNumber
 from pydantic import ValidationError
 
-from llm.base_llm_client import BaseLLMClient
-from llm.models import LLMPayload, LLMResponse
+from tagoror.llm.base_llm_client import BaseLLMClient
+from tagoror.llm.models import LLMPayload, LLMResponse
 
 class GeminiClient(BaseLLMClient):
     """

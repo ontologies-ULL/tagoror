@@ -1,5 +1,5 @@
 from owlready2 import Thing, Ontology, default_world
-from serialization.base_serializer import BaseSerializer
+from tagoror.serialization.base_serializer import BaseSerializer
 from rdflib import Graph, URIRef
 from opentelemetry.trace import Tracer, Status, StatusCode
 
