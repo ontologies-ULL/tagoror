@@ -1,13 +1,13 @@
 import json
 import asyncio
 
-from core.pipeline.evaluation.entity_auditor import EntityAuditor
-from llm.retry import RetryableLLMClient
-from core.prompt_manager import PromptManager 
-from core.models import ExecutionSummary
-from core.models import ExecutionMetrics, TaskOutcome, TaskStatus
-from llm.models import LLMPayload
-from serialization.base_serializer import BaseSerializer 
+from tagoror.core.pipeline.evaluation.entity_auditor import EntityAuditor
+from tagoror.llm.retry import RetryableLLMClient
+from tagoror.core.prompt_manager import PromptManager 
+from tagoror.core.models import ExecutionSummary
+from tagoror.core.models import ExecutionMetrics, TaskOutcome, TaskStatus
+from tagoror.llm.models import LLMPayload
+from tagoror.serialization.base_serializer import BaseSerializer 
 from .majority_vote import ConsensusResolver
 from .ontology_cache import OntologyCache
 
@@ -96,7 +96,7 @@ class LLMEntityAuditor(EntityAuditor):
         if not raw_prompt:
             raise ValueError(f"Task {task_id} is missing a 'prompt'.")
             
-        user_prompt = self._safe_format(raw_prompt, context_data)
+        user_prompt = self.prompt_manager.build_task_prompt(task_config, context_data)
         temperatures = task_config.get("temperatures", self.temperatures) 
         allow_web = task_config.get("allow_web_search", self.allow_web_search)
 
@@ -139,15 +139,6 @@ class LLMEntityAuditor(EntityAuditor):
         max_duration = sum(getattr(resp, 'duration_ms', 0) for resp in network_responses)
 
         return final_outcome, total_cost, total_tokens, max_duration
-
-    def _safe_format(self, template: str, context: dict) -> str:
-        """
-        Safely formats a string template with the provided context, ignoring missing keys.
-        """
-        class SafeDict(dict):
-            def __missing__(self, key):
-                return "{" + key + "}"
-        return template.format_map(SafeDict(context))
 
     def _parse_single_task_response(self, response, task_id: str) -> TaskOutcome:
         """
