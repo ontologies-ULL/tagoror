@@ -15,6 +15,23 @@ class PromptManager:
         with open(file_path, "r", encoding="utf-8") as file:
             return yaml.safe_load(file) or {}
 
+    def build_task_prompt(self, task_config: dict, context_data: dict) -> str:
+        """
+        Engineers the final prompt by injecting Few-Shot examples and CoT instructions.
+        """
+        base_prompt = task_config.get("prompt", "")
+        if not base_prompt:
+            raise ValueError("Task configuration is missing a 'prompt' key.")
+
+        examples = task_config.get("examples", [])
+        if examples:
+            few_shot_block = "\n[EXAMPLES]\n"
+            for ex in examples:
+                few_shot_block += f"Input:\n{ex.get('input', '').strip()}\n"
+                few_shot_block += f"Output:\n{ex.get('output', '').strip()}\n---\n"
+            
+            base_prompt = few_shot_block + "\n" + base_prompt
+
     def get_assembled_system_prompt(self) -> str:
         """
         Assemble the base system prompt by joining all base sections.
@@ -40,6 +57,16 @@ class PromptManager:
         if not suite:
             raise KeyError(f"Missing evaluation suite: {suite_name}")
         return suite
+
+    def get_tasks(self, suite_name: str) -> dict:
+        """
+        Retrieve the configuration for a specific task within a suite.
+        """
+        evaluation_suite = self.get_evaluation_suite(suite_name)
+        tasks = evaluation_suite.get("tasks") if evaluation_suite else None
+        if not tasks:
+            raise KeyError(f"Missing tasks in evaluation suite: {suite_name}")
+        return tasks
 
     def _get_base_sections(self) -> dict:
         """
