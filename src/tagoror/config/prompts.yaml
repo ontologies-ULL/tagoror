@@ -34,141 +34,129 @@ evaluation_suites:
         configurations:
             temperatures: [0.3, 0.6]
             allow_web_search: false
-        structural_evaluation:
-            prompt: |
-                TYPE: Structural Hallucination.
-                Evaluate if the following response generates entities or 
-                properties that do not exist in the reference ontology, 
-                violating schema constraints.
+        tasks:
+            structural_evaluation:
+                examples:
+                - input: |
+                      {"entity_id": "BTD_Manif_OpticAtrophy_U", "class_types": ["UtilityParameter"], "properties": {"hasExpectedValue": "0.23"}}
+                  output: |
+                      {
+                        "reasoning": "La clase 'UtilityParameter' no está definida en el TBox. Es una alucinación estructural crear instancias de clases inexistentes.",
+                        "status": "FAILURE",
+                        "findings": ["Class 'UtilityParameter' undefined"]
+                      }
+                - input: |
+                      {"entity_id": "BTD_Manif_DevelopmentalDelay", "class_types": ["Manifestation"], "properties": {"hasDescription": "Retraso del desarrollo"}}
+                  output: |
+                        {
+                          "reasoning": "Tanto la clase 'Manifestation' como la DataProperty 'hasDescription' existen en la ontología base. No hay violaciones estructurales.",
+                          "status": "SUCCESS",
+                          "findings": []
+                        }
+                prompt: |
+                    TYPE: Structural Hallucination.
 
-                Response to evaluate:
-                {individual_response}
+                    [INSTRUCTIONS]
+                    You are a strict OWL inference engine. Analyze the following individual against the Base Ontology.
+                    1. Verify that EVERY element in `class_types` exists in the Base Ontology.
+                    2. Verify that EVERY key in `properties` exists as a property in the Base Ontology.
 
-                Are there any structural violations?
-    tasks:
-      
-      structural_evaluation:
-        examples:
-          - input: |
-              {"entity_id": "BTD_Manif_OpticAtrophy_U", "class_types": ["UtilityParameter"], "properties": {"hasExpectedValue": "0.23"}}
-            output: |
-              {
-                "reasoning": "La clase 'UtilityParameter' no está definida en el TBox. Es una alucinación estructural crear instancias de clases inexistentes.",
-                "status": "FAILURE",
-                "findings": ["Class 'UtilityParameter' undefined"]
-              }
-          - input: |
-              {"entity_id": "BTD_Manif_DevelopmentalDelay", "class_types": ["Manifestation"], "properties": {"hasDescription": "Retraso del desarrollo"}}
-            output: |
-              {
-                "reasoning": "Tanto la clase 'Manifestation' como la DataProperty 'hasDescription' existen en la ontología base. No hay violaciones estructurales.",
-                "status": "SUCCESS",
-                "findings": []
-              }
-        prompt: |
-          TYPE: Structural Hallucination.
-          
-          [INSTRUCTIONS]
-          You are a strict OWL inference engine. Analyze the following individual against the Base Ontology.
-          1. Verify that EVERY element in `class_types` exists in the Base Ontology.
-          2. Verify that EVERY key in `properties` exists as a property in the Base Ontology.
-          
-          Individual to evaluate:
-          {individual_response}
+                    Individual to evaluate:
+                    {individual_response}
 
-        semantic_evaluation:
-            examples:
-            - input: |
-                {"entity_id": "DBTD_Manif_Acute_Acidosis", "class_types": ["AcuteManifestation"], "properties": {"isManifestationOf": "http://www.ull.es/is/simulation/ontologies/disease-simulation#DBTD_Disease"}}
-                output: |
-                {
-                "   reasoning": "La propiedad 'isManifestationOf' es una ObjectProperty. Se ha inyectado una cadena URI como si fuera un literal, en lugar de instanciar la relación con el individuo. Es una violación semántica.",
-                "   status": "FAILURE",
-                "   findings": ["Object property 'isManifestationOf' used as data property"]
-                }
-            - input: |
-                {"entity_id": "DBTD_Manif_Acute_Alopecia", "class_types": ["AcuteManifestation"], "properties": {"isManifestationOf": ["DBTD_Disease"]}}
-                output: |
-                {
-                "   reasoning": "La propiedad 'isManifestationOf' es una ObjectProperty y apunta correctamente a la ID de otro individuo ('DBTD_Disease'). La semántica de tipos es consistente.",
-                "   status": "SUCCESS",
-                "   findings": []
-                }
-            prompt: |
-            TYPE: Semantic Hallucination.
-                [ INSTRUCTIONS]
-                  Evaluate if the ontology terms in the response are combined in logically inconsistent ways.
-                  Look for Domain/Range violations and ObjectProperties assigned to literal strings.
+            semantic_evaluation:
+                examples:
+                - input: |
+                    {"entity_id": "DBTD_Manif_Acute_Acidosis", "class_types": ["AcuteManifestation"], "properties": {"isManifestationOf": "http://www.ull.es/is/simulation/ontologies/disease-simulation#DBTD_Disease"}}
+                    output: |
+                    {
+                    "   reasoning": "La propiedad 'isManifestationOf' es una ObjectProperty. Se ha inyectado una cadena URI como si fuera un literal, en lugar de instanciar la relación con el individuo. Es una violación semántica.",
+                    "   status": "FAILURE",
+                    "   findings": ["Object property 'isManifestationOf' used as data property"]
+                    }
+                - input: |
+                    {"entity_id": "DBTD_Manif_Acute_Alopecia", "class_types": ["AcuteManifestation"], "properties": {"isManifestationOf": ["DBTD_Disease"]}}
+                    output: |
+                    {
+                    "   reasoning": "La propiedad 'isManifestationOf' es una ObjectProperty y apunta correctamente a la ID de otro individuo ('DBTD_Disease'). La semántica de tipos es consistente.",
+                    "   status": "SUCCESS",
+                    "   findings": []
+                    }
+                prompt: |
+                    TYPE: Semantic Hallucination.
+                    [INSTRUCTIONS]
+                    Evaluate if the ontology terms in the response are combined in logically inconsistent ways.
+                    Look for Domain/Range violations and ObjectProperties assigned to literal strings.
 
-                  Response to evaluate:
-                { individual_response}
+                    Response to evaluate:
+                    {individual_response}
 
-        contextual_evaluation:
-            examples:
-            - input: |
-                {"user_input": "Define the treatment cost", "individual_response": "{\"entity_id\": \"BTD_Treatment\", \"class_types\": [\"Intervention\"]}"}
-                output: |
-                {
-                "   reasoning": "El usuario solicitó parámetros de coste. La entidad generada es una intervención médica, omitiendo por completo los datos económicos solicitados. Incumple el contexto original.",
-                "   status": "FAILURE",
-                "   findings": ["Entity does not address requested context (Cost)"]
-                }
-            - input: |
-                {"user_input": "Define profound disease state", "individual_response": "{\"entity_id\": \"BTD_Disease_Profound\", \"class_types\": [\"Disease\"]}"}
-                output: |
-                {
-                "   reasoning": "El individuo extraído corresponde al estado de deficiencia profunda de la enfermedad, alineándose con el requerimiento del usuario.",
-                "   status": "SUCCESS",
-                "   findings": []
-                }
-            prompt: |
-            TYPE: Contextual Hallucination.
+            contextual_evaluation:
+                examples:
+                - input: |
+                    {"user_input": "Define the treatment cost", "individual_response": "{\"entity_id\": \"BTD_Treatment\", \"class_types\": [\"Intervention\"]}"}
+                    output: |
+                    {
+                    "   reasoning": "El usuario solicitó parámetros de coste. La entidad generada es una intervención médica, omitiendo por completo los datos económicos solicitados. Incumple el contexto original.",
+                    "   status": "FAILURE",
+                    "   findings": ["Entity does not address requested context (Cost)"]
+                    }
+                - input: |
+                    {"user_input": "Define profound disease state", "individual_response": "{\"entity_id\": \"BTD_Disease_Profound\", \"class_types\": [\"Disease\"]}"}
+                    output: |
+                    {
+                    "   reasoning": "El individuo extraído corresponde al estado de deficiencia profunda de la enfermedad, alineándose con el requerimiento del usuario.",
+                    "   status": "SUCCESS",
+                    "   findings": []
+                    }
+                prompt: |
+                    TYPE: Contextual Hallucination.
 
-          [ INSTRUCTIONS]
-            Evaluate if the extracted response fails to meet the specific requirements of the original user input. 
-            Ignore structural OWL validity here; focus only on prompt alignment.
+                    [INSTRUCTIONS]
+                    Evaluate if the extracted response fails to meet the specific requirements of the original user input. 
+                    Ignore structural OWL validity here; focus only on prompt alignment.
 
-            Original User Input:
-          { user_input}
+                    Original User Input:
+                    {user_input}
 
-            Response to evaluate:
-          { individual_response}
+                      Response to evaluate:
+                    {individual_response}
 
-        factuality_evaluation:
-            allow_web_search: true
-            examples:
-            - input: |
-                {"entity_id": "BTD_Manif_OpticAtrophy_Prob", "class_types": ["Parameter"], "properties": {"hasExpectedValue": "0.30", "hasSource": "Salbert BA, Astruc J... Ophthalmologica 1993"}}
-                output: |
-                {
-                "   reasoning": "Al verificar la fuente proporcionada (Salbert et al., 1993), el artículo no reporta un valor exacto del 30% (0.30) para la atrofia óptica. El valor ha sido inventado e incorrectamente atribuido a un paper real.",
-                "   status": "FAILURE",
-                "   findings": ["Value not found in source"]
-                }
-            - input: |
-                {"entity_id": "BTD_CriticalWindow_Treatment", "class_types": ["EpidemiologicalParameter"], "properties": {"hasExpectedValue": "30", "hasSource": "Máximo 30 días tras inicio de síntomas[8][10]"}}
-                output: |
-                {
-                "   reasoning": "El campo 'hasSource' contiene marcadores de citas tipo Wikipedia ('[8][10]') y texto narrativo en lugar de una cita académica trazable. Esto invalida la verificabilidad del dato.",
-                "   status": "FAILURE",
-                "   findings": ["Unsuitable source format"]
-                }
-            - input: |
-                {"entity_id": "BTD_Incidence_Global", "class_types": ["EpidemiologicalParameter"], "properties": {"hasExpectedValue": "0.000016", "hasSource": "Wolf B. Biotinidase deficiency. GeneReviews 2000"}}
-                output: |
-                {
-                "   reasoning": "La literatura médica establece que la incidencia estimada de deficiencia profunda de biotinidasa es de 1 en 60,000 (aprox. 0.000016). La cita de Wolf B. en GeneReviews es adecuada y corrobora el valor clínico.",
-                "   status": "SUCCESS",
-                "   findings": []
-                }
-            prompt: |
-            TYPE: Evidence-based (Factuality) Hallucination.
+            factuality_evaluation:
+                allow_web_search: true
+                examples:
+                - input: |
+                    {"entity_id": "BTD_Manif_OpticAtrophy_Prob", "class_types": ["Parameter"], "properties": {"hasExpectedValue": "0.30", "hasSource": "Salbert BA, Astruc J... Ophthalmologica 1993"}}
+                    output: |
+                    {
+                    "   reasoning": "Al verificar la fuente proporcionada (Salbert et al., 1993), el artículo no reporta un valor exacto del 30% (0.30) para la atrofia óptica. El valor ha sido inventado e incorrectamente atribuido a un paper real.",
+                    "   status": "FAILURE",
+                    "   findings": ["Value not found in source"]
+                    }
+                - input: |
+                    {"entity_id": "BTD_CriticalWindow_Treatment", "class_types": ["EpidemiologicalParameter"], "properties": {"hasExpectedValue": "30", "hasSource": "Máximo 30 días tras inicio de síntomas[8][10]"}}
+                    output: |
+                    {
+                    "   reasoning": "El campo 'hasSource' contiene marcadores de citas tipo Wikipedia ('[8][10]') y texto narrativo en lugar de una cita académica trazable. Esto invalida la verificabilidad del dato.",
+                    "   status": "FAILURE",
+                    "   findings": ["Unsuitable source format"]
+                    }
+                - input: |
+                    {"entity_id": "BTD_Incidence_Global", "class_types": ["EpidemiologicalParameter"], "properties": {"hasExpectedValue": "0.000016", "hasSource": "Wolf B. Biotinidase deficiency. GeneReviews 2000"}}
+                    output: |
+                    {
+                    "   reasoning": "La literatura médica establece que la incidencia estimada de deficiencia profunda de biotinidasa es de 1 en 60,000 (aprox. 0.000016). La cita de Wolf B. en GeneReviews es adecuada y corrobora el valor clínico.",
+                    "   status": "SUCCESS",
+                    "   findings": []
+                    }
+                prompt: |
+                    TYPE: Evidence-based (Factuality) Hallucination.
 
-          [ INSTRUCTIONS]
-            Evaluate if the literals, medical conditions, numerical values, or treatments produced in the response 
-            are unsupported or factually incorrect according to current medical evidence and HTA guidelines.
-            Pay special attention to fake citations ("Unsuitable source") or values falsely attributed to real papers ("Value not found in source").
-            Use Google Search to verify clinical claims regarding Biotinidase Deficiency.
+                    [INSTRUCTIONS]
+                    Evaluate if the literals, medical conditions, numerical values, or treatments produced in the response 
+                    are unsupported or factually incorrect according to current medical evidence and HTA guidelines.
+                    Pay special attention to fake citations ("Unsuitable source") or values falsely attributed to real papers ("Value not found in source").
+                    Use Google Search to verify clinical claims regarding Biotinidase Deficiency.
 
-            Response to evaluate:
-          { individual_response}
+                    Response to evaluate:
+                    {individual_response}
