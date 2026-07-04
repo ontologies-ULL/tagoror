@@ -6,10 +6,9 @@ from opentelemetry.trace import Status, StatusCode
 from owlready2 import Thing, Ontology
 from datetime import datetime, timezone
 
-from core.models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
-from core.pipeline.evaluation.entity_auditor import EntityAuditor 
+from tagoror.core.models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
+from tagoror.core.pipeline.evaluation.entity_auditor import EntityAuditor 
 from typing import Optional
-from ui.status_reporter import StatusReporter
 
 
 class EntityOrchestrator:
@@ -18,10 +17,9 @@ class EntityOrchestrator:
     Delegates validation to a ValidationStrategy and critical errors to a ValidationNotifier.
     """
 
-    def __init__(self, strategy: EntityAuditor, status_reporter: Optional[StatusReporter] = None) -> None:
+    def __init__(self, strategy: EntityAuditor) -> None:
         self.strategy = strategy
         self._tracer = trace.get_tracer(__name__)
-        self._status_reporter = status_reporter
 
     async def process(self, individuals: list[Thing], base_ontology: Ontology) -> list[ExecutionSummary]:
         """
@@ -42,19 +40,7 @@ class EntityOrchestrator:
         with self._tracer.start_as_current_span("validation_orchestrator.process_single") as span:
             span.set_attribute("entity.individual_id", entity.individual_id)
             try:
-                if self._status_reporter:
-                    try:
-                        await self._status_reporter.set(entity.individual_id, "validation")
-                    except Exception:
-                        pass
-
                 result = await self.strategy.run(entity, base_ontology)
-
-                if self._status_reporter:
-                    try:
-                        await self._status_reporter.clear()
-                    except Exception:
-                        pass
 
                 span.set_status(Status(StatusCode.OK))
                 return result
