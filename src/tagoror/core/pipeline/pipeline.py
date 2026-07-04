@@ -3,7 +3,7 @@ from opentelemetry.trace import Status, StatusCode
 
 from .extractor import OntologyExtractor
 from .orchestrator import EntityOrchestrator
-from core.models import ExecutionSummary
+from tagoror.core.models import ExecutionSummary
 
 
 class Pipeline:
