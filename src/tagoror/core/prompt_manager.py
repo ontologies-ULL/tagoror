@@ -57,21 +57,17 @@ class PromptManager:
             raise ValueError(f"CRITICAL: No 'tasks' key found under suite '{suite_name}'.")
         return suite_data.get("tasks", {})
 
-
-    def get_assembled_system_prompt(self) -> str:
-        """
-        Assembles the global system prompt (role + constraints).
-        Injects the serialized base ontology directly into the system role.
-        """
-        base_generic = self._prompts.get("base_generic", {})
+    def get_assembled_system_prompt(self, base_ontology_text: str) -> str:
+        base_generic = self._raw_config.get("base_generic", {})
         role = base_generic.get("role", "")
         constraints = base_generic.get("constraints", "")
         
         class SafeDict(dict):
             def __missing__(self, key):
                 return "{" + key + "}"
-                        
-
+                
+        formatted_role = role.format_map(SafeDict({"base_ontology": base_ontology_text}))
+        return f"{formatted_role}\n\n## Constraints\n{constraints}"
  
     def get_evaluation_suite(self, suite_name: str = "owl_validations") -> dict:
         """
