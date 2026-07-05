@@ -53,21 +53,22 @@ class LLMEntityAuditor(EntityAuditor):
         Returns:
             ExecutionSummary with results and aggregated real metrics.
         """
-        developer_prompt = self.prompt_manager.get_assembled_system_prompt()
         evaluation_suite = self.prompt_manager.get_evaluation_suite(self.suite_name).copy()
-
         suite_config = evaluation_suite.pop("configurations", {})
+        
         self.temperatures = suite_config.get("temperatures", self.temperatures)
         self.allow_web_search = suite_config.get("allow_web_search", self.allow_web_search)
         self.enable_self_criticism = suite_config.get("enable_self_criticism", self.enable_self_criticism)
-    
+
         output = []
         total_metrics = ExecutionMetrics(duration_ms=0, cost=0.0, tokens_consumed=0)
-        
         individual_response = await asyncio.to_thread(
             self.serializer.process_individual, individual
         )
+        
         serialized_base_ontology = await OntologyCache.get_serialized(base_ontology, self.serializer)
+        developer_prompt = self.prompt_manager.get_assembled_system_prompt(serialized_base_ontology)
+
         context_data = {
             "individual_response": individual_response, 
             "base_ontology": serialized_base_ontology,
@@ -78,14 +79,26 @@ class LLMEntityAuditor(EntityAuditor):
             for task_id, task_config in self.prompt_manager.get_suite_tasks(self.suite_name).items()
         ]
 
-        parallel_results = await asyncio.gather(*task_coroutines)
         output = []
-
-        for final_outcome, total_cost, total_tokens, max_duration in parallel_results:
+        for task_id, task_config in evaluation_suite.items():
+            final_outcome, total_cost, total_tokens, max_duration = await self._run_task_with_consensus(
+                task_id, task_config, context_data, developer_prompt
+            )
             output.append(final_outcome)
             total_metrics.cost += total_cost
             total_metrics.tokens_consumed += total_tokens
             total_metrics.duration_ms += max_duration 
+            
+            await asyncio.sleep(4.0)
+
+        # TODO: Uncommnet this after we have a better way to handle token input limits.
+        # parallel_results = await asyncio.gather(*task_coroutines)
+
+        #for final_outcome, total_cost, total_tokens, max_duration in parallel_results:
+        #    output.append(final_outcome)
+        #    total_metrics.cost += total_cost
+        #    total_metrics.tokens_consumed += total_tokens
+        #    total_metrics.duration_ms += max_duration 
             
         return ExecutionSummary(
             individual_id=individual.name,

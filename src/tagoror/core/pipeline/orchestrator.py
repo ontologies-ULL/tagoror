@@ -17,9 +17,11 @@ class EntityOrchestrator:
     Delegates validation to a ValidationStrategy and critical errors to a ValidationNotifier.
     """
 
-    def __init__(self, strategy: EntityAuditor) -> None:
+    def __init__(self, strategy: EntityAuditor, semaphore: asyncio.Semaphore = None) -> None:
         self.strategy = strategy
         self._tracer = trace.get_tracer(__name__)
+        # TODO: change this after we have a better way to handle token input limits. 
+        self._semaphore = semaphore or asyncio.Semaphore(1)
 
     async def process(self, individuals: list[Thing], base_ontology: Ontology) -> list[ExecutionSummary]:
         """
@@ -37,34 +39,42 @@ class EntityOrchestrator:
         isolates the validation of a single entity, capturing any exceptions 
         and returning a fallback ExecutionSummary if needed. 
         """
-        with self._tracer.start_as_current_span("validation_orchestrator.process_single") as span:
-            span.set_attribute("entity.individual_id", entity.individual_id)
-            try:
-                result = await self.strategy.run(entity, base_ontology)
+        async with self._semaphore:
+            with self._tracer.start_as_current_span("validation_orchestrator.process_single") as span:
+                span.set_attribute("entity.individual_id", entity.individual_id)
+                try:
+                    result = await self.strategy.run(entity, base_ontology)
 
-                span.set_status(Status(StatusCode.OK))
-                return result
+                    span.set_status(Status(StatusCode.OK))
+                    
+                    # TODO: Remove this after we have a better way to handle token input limits.
+                    await asyncio.sleep(15.0)
 
-            except Exception as error:
-                error_msg = f"Critical failure processing {entity.individual_id}: {str(error)}"
-                span.set_status(Status(StatusCode.ERROR, error_msg))
-                span.record_exception(error)
-                span.set_attribute("error.stacktrace", traceback.format_exc()) 
+                    return result
 
-                return ExecutionSummary(
-                    individual_id=entity.individual_id,
-                    timestamp=datetime.now(timezone.utc).isoformat(),
-                    results=[
-                        TaskOutcome(
-                            task_id="orchestration_error",
-                            status=TaskStatus.FAILURE,
-                            findings=[str(error)]
-                        )
-                    ],
-                    total_metrics=ExecutionMetrics(
-                        duration_ms=0,
-                        cost=0.0,
-                        tokens_consumed=0
-                    ),
-                    system_summary="Validation failed during orchestration."
-                )
+                except Exception as error:
+                    error_msg = f"Critical failure processing {entity.individual_id}: {str(error)}"
+                    span.set_status(Status(StatusCode.ERROR, error_msg))
+                    span.record_exception(error)
+                    span.set_attribute("error.stacktrace", traceback.format_exc()) 
+
+                    # TODO: Remove this after we have a better way to handle token input limits.
+                    await asyncio.sleep(5.0)
+
+                    return ExecutionSummary(
+                        individual_id=entity.individual_id,
+                        timestamp=datetime.now(timezone.utc).isoformat(),
+                        results=[
+                            TaskOutcome(
+                                task_id="orchestration_error",
+                                status=TaskStatus.FAILURE,
+                                findings=[str(error)]
+                            )
+                        ],
+                        total_metrics=ExecutionMetrics(
+                            duration_ms=0,
+                            cost=0.0,
+                            tokens_consumed=0
+                        ),
+                        system_summary="Validation failed during orchestration."
+                    )
