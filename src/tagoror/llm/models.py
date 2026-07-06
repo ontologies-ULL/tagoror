@@ -8,6 +8,7 @@ class LLMPayload(BaseModel):
     temperature: float = 0.0
     json_mode: bool = True
     allow_web_search: bool = False
+    cache_name: Optional[str] = None
 
 class LLMResponse(BaseModel):
     raw_content: str
