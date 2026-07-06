@@ -14,6 +14,8 @@ from .ontology_cache import OntologyCache
 from owlready2 import Thing, Ontology
 from datetime import datetime, timezone
 from aiolimiter import AsyncLimiter
+from opentelemetry import trace
+from opentelemetry.trace import Span, Status, StatusCode
 
 class LLMEntityAuditor(EntityAuditor):
     """
@@ -41,20 +43,49 @@ class LLMEntityAuditor(EntityAuditor):
         self.temperatures = [0.0]
         self.allow_web_search = False
         self.enable_self_criticism = False
+    
+    async def setup_cache(self, base_ontology: Ontology, tracer: trace) -> str:
+        """Creates the Context Cache before starting individual validations."""
+        serialized_base_ontology = await asyncio.to_thread(self.serializer.process_ontology, base_ontology)
+        developer_prompt = self.prompt_manager.get_assembled_system_prompt(serialized_base_ontology)
+        base_client = getattr(self.model, "llm_client", self.model)
+        span = tracer.start_as_current_span("llm_auditor.setup_cache")
 
-    async def run(self, individual: Thing, base_ontology: Ontology) -> ExecutionSummary:
+        if hasattr(base_client, "create_context_cache"):
+            with tracer.start_as_current_span("llm_auditor.create_context_cache") as span:
+                try:
+                    result = await base_client.create_context_cache(self.model_name, developer_prompt)
+                    span.set_status(Status(StatusCode.OK))
+                    span.set_attribute("llm.cache_name", result)
+                    span.set_attribute("llm.model", self.model_name)
+                    return result 
+                except Exception as e:
+                    span.set_status(Status(StatusCode.ERROR, str(e)))
+                    span.record_exception(e)
+                    return None
+        return None
+
+    async def teardown_cache(self, cache_name: str):
+        """Destroys the Context Cache to prevent storage charges."""
+        base_client = getattr(self.model, "llm_client", self.model)
+        if hasattr(base_client, "delete_context_cache"):
+            await base_client.delete_context_cache(cache_name)
+
+    async def run(self, individual: Thing, base_ontology: Ontology, cache_name: str = None) -> ExecutionSummary:
         """
         Evaluates an OWL individual using a language model and returns an execution summary.
 
         Args:
             individual: The OWL individual extracted by OntologyExtractor.
             base_ontology: The base ontology for context.
+            cache_name: The name of the context cache to use.
+            tracer: The OpenTelemetry tracer for instrumentation.
 
         Returns:
             ExecutionSummary with results and aggregated real metrics.
         """
-        evaluation_suite = self.prompt_manager.get_evaluation_suite(self.suite_name).copy()
-        suite_config = evaluation_suite.pop("configurations", {})
+        evaluation_suite = self.prompt_manager.get_suite_tasks(self.suite_name)
+        suite_config = self.prompt_manager.get_suite_config(self.suite_name)
         
         self.temperatures = suite_config.get("temperatures", self.temperatures)
         self.allow_web_search = suite_config.get("allow_web_search", self.allow_web_search)
@@ -65,19 +96,21 @@ class LLMEntityAuditor(EntityAuditor):
         individual_response = await asyncio.to_thread(
             self.serializer.process_individual, individual
         )
-        
-        serialized_base_ontology = await OntologyCache.get_serialized(base_ontology, self.serializer)
-        developer_prompt = self.prompt_manager.get_assembled_system_prompt(serialized_base_ontology)
+
+        # TODO: Change with_base_ontology to True when the context cache is fully implemented
+        developer_prompt = ""
+        if not cache_name:
+            serialized_base_ontology = await asyncio.to_thread(self.serializer.process_ontology, base_ontology)
+            developer_prompt = self.prompt_manager.get_assembled_system_prompt(serialized_base_ontology, with_base_ontology=False)
 
         context_data = {
             "individual_response": individual_response, 
-            "base_ontology": serialized_base_ontology,
             "user_input": self.user_input,
         }
-        task_coroutines = [
-            self._run_task_with_consensus(task_id, task_config, context_data, developer_prompt)
-            for task_id, task_config in self.prompt_manager.get_suite_tasks(self.suite_name).items()
-        ]
+        # task_coroutines = [
+        #     await self._run_task_with_consensus(task_id, task_config, context_data, developer_prompt)
+        #     for task_id, task_config in self.prompt_manager.get_suite_tasks(self.suite_name).items()
+        # ]
 
         output = []
         for task_id, task_config in evaluation_suite.items():
@@ -107,7 +140,12 @@ class LLMEntityAuditor(EntityAuditor):
             total_metrics=total_metrics,
             system_summary=f"Evaluated {individual.name}. Total tasks: {len(evaluation_suite)}."        )
     
-    async def _run_task_with_consensus(self, task_id: str, task_config: dict, context_data: dict, developer_prompt: str, suite_config: dict = None) -> tuple:
+    async def _run_task_with_consensus(self, 
+                                       task_id: str, 
+                                       task_config: dict, 
+                                       context_data: dict, 
+                                       developer_prompt: str, 
+                                       cache_name: str = None) -> tuple:
         raw_prompt = task_config.get("prompt", "")
         if not raw_prompt:
             raise ValueError(f"Task {task_id} is missing a 'prompt'.")
@@ -129,6 +167,7 @@ class LLMEntityAuditor(EntityAuditor):
                 allow_web_search=allow_web,
                 temperature=temp 
             )
+            setattr(payload, "cache_name", cache_name)
             if self.rate_limiter:
                 async with self.rate_limiter:
                     response = await self.model.query(payload)
