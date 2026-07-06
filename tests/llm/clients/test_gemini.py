@@ -40,7 +40,7 @@ original exception unchanged.
 import pytest
 import time
 from unittest.mock import AsyncMock, MagicMock
-from llm.models import LLMPayload
+from tagoror.llm.models import LLMPayload
 
 
 # ---------------------------------------------------------------------------

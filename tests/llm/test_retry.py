@@ -31,10 +31,10 @@ Implementation notes observed in retry.py:
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from llm.config import RetryPolicyConfig, BackoffStrategy
-from exceptions import TransientNetworkException, LLMParseException
-from llm.models import LLMPayload, LLMResponse
-from llm.retry import RetryableLLMClient
+from tagoror.llm.config import RetryPolicyConfig, BackoffStrategy
+from tagoror.exceptions import TransientNetworkException, LLMParseException
+from tagoror.llm.models import LLMPayload, LLMResponse
+from tagoror.llm.retry import RetryableLLMClient
 
 
 # ---------------------------------------------------------------------------

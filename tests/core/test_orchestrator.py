@@ -14,9 +14,9 @@ from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 # Import domain models and classes
-from core.models import ExecutionSummary, TaskOutcome, TaskStatus, ExecutionMetrics
-from core.pipeline.orchestrator import EntityOrchestrator
-from core.pipeline.evaluation.entity_auditor import EntityAuditor
+from tagoror.core.models import ExecutionSummary, TaskOutcome, TaskStatus, ExecutionMetrics
+from tagoror.core.pipeline.orchestrator import EntityOrchestrator
+from tagoror.core.pipeline.evaluation.entity_auditor import EntityAuditor
 
 
 # ============================================================================

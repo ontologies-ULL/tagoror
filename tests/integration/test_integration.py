@@ -43,18 +43,18 @@ if not hasattr(Thing, "individual_id"):
     type.__setattr__(Thing, "individual_id", property(lambda self: self.name))
 
 
-from core.models import ExecutionSummary, TaskStatus, TaskOutcome, ExecutionMetrics
-from core.pipeline.pipeline import Pipeline
-from core.pipeline.orchestrator import EntityOrchestrator
-from core.pipeline.evaluation.strategies.llm_auditor import LLMEntityAuditor
-from core.pipeline.evaluation.strategies.majority_vote import ConsensusResolver
-from core.prompt_manager import PromptManager
-from core.pipeline import extractor as extractor_module
-from serialization.serializers.turtle_serializer import TurtleSerializer
-from llm.retry import RetryableLLMClient
-from llm.config import RetryPolicyConfig, BackoffStrategy
-from llm.models import LLMPayload, LLMResponse
-from exceptions import TransientNetworkException, LLMParseException
+from tagoror.core.models import ExecutionSummary, TaskStatus, TaskOutcome, ExecutionMetrics
+from tagoror.core.pipeline.pipeline import Pipeline
+from tagoror.core.pipeline.orchestrator import EntityOrchestrator
+from tagoror.core.pipeline.evaluation.strategies.llm_auditor import LLMEntityAuditor
+from tagoror.core.pipeline.evaluation.strategies.majority_vote import ConsensusResolver
+from tagoror.core.prompt_manager import PromptManager
+from tagoror.core.pipeline import extractor as extractor_module
+from tagoror.serialization.serializers.turtle_serializer import TurtleSerializer
+from tagoror.llm.retry import RetryableLLMClient
+from tagoror.llm.config import RetryPolicyConfig, BackoffStrategy
+from tagoror.llm.models import LLMPayload, LLMResponse
+from tagoror.exceptions import TransientNetworkException, LLMParseException
 
 
 # ============================================================================
