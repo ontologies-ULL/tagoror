@@ -82,8 +82,12 @@ class GeminiClient(BaseLLMClient):
         """builds the sdk config object from our domain payload."""
         config_args = {
             "temperature": payload.temperature,
-            "system_instruction": payload.system_prompt
         }
+        
+        if getattr(payload, "cache_name", None):
+            config_args["cached_content"] = payload.cache_name
+        else:
+            config_args["system_instruction"] = payload.system_prompt
         
         if payload.json_mode:
             config_args["response_mime_type"] = "application/json"
@@ -112,6 +116,30 @@ class GeminiClient(BaseLLMClient):
 
     # --- execution & mapping methods ---
 
+    async def create_context_cache(self, model_name: str, system_instruction: str) -> str:
+        """Creates a Context Cache on Google's servers to freeze token counts."""
+        from google.genai import types
+        if not model_name.startswith("models/"):
+            model_name = f"models/{model_name}"
+            
+        cache_config = types.CreateCachedContentConfig(
+            system_instruction=system_instruction,
+            ttl="3600s"
+        )
+        
+        cache = await self._client.aio.caches.create(
+            model=model_name,
+            config=cache_config
+        )
+        return cache.name
+
+    async def delete_context_cache(self, cache_name: str) -> None:
+        """Cleans up the cache to avoid storage charges."""
+        try:
+            await self._client.aio.caches.delete(name=cache_name)
+        except Exception:
+            pass
+            
     async def _execute_network_call(self, model_name: str, prompt: str, config: types.GenerateContentConfig):
         """
         strictly encapsulates the asynchronous i/o call.
