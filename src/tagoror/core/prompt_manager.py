@@ -46,6 +46,14 @@ class PromptManager:
                 "`reasoning` field in your JSON explaining your thought process step-by-step."
             )
         return few_shot_block + formatted_prompt + cot_instruction
+    
+    def get_suite_config(self, suite_name: str) -> dict:
+        """
+        Extracts the configuration block. 
+        Supports both 'defaults' and 'configurations' keys to prevent mapping errors.
+        """
+        suite_data = self._raw_config.get("evaluation_suites", {}).get(suite_name, {})
+        return suite_data.get("defaults", suite_data.get("configurations", {}))
 
     def get_suite_tasks(self, suite_name: str = "owl_validations") -> dict:
         """
@@ -53,11 +61,13 @@ class PromptManager:
         This proves the system DOES NOT ignore the 'tasks' YAML nesting.
         """
         suite_data = self._raw_config.get("evaluation_suites", {}).get(suite_name, {})
-        if "tasks" not in suite_data:
-            raise ValueError(f"CRITICAL: No 'tasks' key found under suite '{suite_name}'.")
-        return suite_data.get("tasks", {})
+        tasks = suite_data.get("tasks", {})
+        
+        if not tasks:
+            raise ValueError(f"CRITICAL: No 'tasks' key found under suite '{suite_name}'. Check YAML indentation.")
+        return tasks 
 
-    def get_assembled_system_prompt(self, base_ontology_text: str) -> str:
+    def get_assembled_system_prompt(self, base_ontology_text: str, with_base_ontology: bool = True) -> str:
         base_generic = self._raw_config.get("base_generic", {})
         role = base_generic.get("role", "")
         constraints = base_generic.get("constraints", "")
@@ -65,8 +75,9 @@ class PromptManager:
         class SafeDict(dict):
             def __missing__(self, key):
                 return "{" + key + "}"
-                
-        formatted_role = role.format_map(SafeDict({"base_ontology": base_ontology_text}))
+        formatted_role = role
+        if with_base_ontology:
+            formatted_role = role.format_map(SafeDict({"base_ontology": base_ontology_text}))
         return f"{formatted_role}\n\n## Constraints\n{constraints}"
  
     def get_evaluation_suite(self, suite_name: str = "owl_validations") -> dict:
