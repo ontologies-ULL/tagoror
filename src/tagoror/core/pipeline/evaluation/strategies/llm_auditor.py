@@ -85,7 +85,7 @@ class LLMEntityAuditor(EntityAuditor):
             ExecutionSummary with results and aggregated real metrics.
         """
         evaluation_suite = self.prompt_manager.get_suite_tasks(self.suite_name)
-        suite_config = self.prompt_manager.get_suite_config(self.suite_name)
+        suite_config = self.prompt_manager.get_suite_config(self.suite._name)
         
         self.temperatures = suite_config.get("temperatures", self.temperatures)
         self.allow_web_search = suite_config.get("allow_web_search", self.allow_web_search)
