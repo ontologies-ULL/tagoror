@@ -85,7 +85,7 @@ class LLMEntityAuditor(EntityAuditor):
             ExecutionSummary with results and aggregated real metrics.
         """
         evaluation_suite = self.prompt_manager.get_suite_tasks(self.suite_name)
-        suite_config = self.prompt_manager.get_suite_config(self.suite._name)
+        suite_config = self.prompt_manager.get_suite_config(self.suite_name)
         
         self.temperatures = suite_config.get("temperatures", self.temperatures)
         self.allow_web_search = suite_config.get("allow_web_search", self.allow_web_search)
@@ -146,6 +146,15 @@ class LLMEntityAuditor(EntityAuditor):
                                        context_data: dict, 
                                        developer_prompt: str, 
                                        cache_name: str = None) -> tuple:
+        """
+        Executes a single task with multiple temperature branches and resolves the final outcome using consensus.
+        Args:
+            task_id: The unique identifier for the task.
+            task_config: The configuration dictionary for the task.
+            context_data: The context data to be used in the task prompt.
+            developer_prompt: The system prompt to be used for the LLM.
+            cache_name: Optional name of the context cache to use.
+        """
         raw_prompt = task_config.get("prompt", "")
         if not raw_prompt:
             raise ValueError(f"Task {task_id} is missing a 'prompt'.")

@@ -4,7 +4,7 @@ from pathlib import Path
 class PromptManager:
     _BASE_PROMPT_KEY = "base_generic"
     _TASK_SUITES_KEY = "evaluation_suites"
-    _DEFAULT_PROMPT_FILE: Path = Path(__file__).parent.parent / "prompts.yaml" 
+    _DEFAULT_PROMPT_FILE: Path = Path(__file__).parent.parent / "config/prompts.yaml" 
   
     def __init__(self, file_path: str = None):
         if file_path is None:

@@ -1,25 +1,26 @@
-from opentelemetry import trace, metrics
-from opentelemetry.trace import Span, Status, StatusCode
-from opentelemetry._logs import get_logger
-from opentelemetry._logs._internal import LogRecord, SeverityNumber
-
+from typing import Any
+import instructor
+from openai import AsyncOpenAI
 from tagoror.llm.base_llm_client import BaseLLMClient
-from tagoror.llm.models import LLMPayload, LLMResponse
+
 
 class LocalStudioClient(BaseLLMClient):
     """
-    Concrete adapter for LLm Studio API.
+        LM Studio adapter exposing an OpenAI-compatible interface wrapped with Instructor.
     """
 
-    def __init__(self, target_url: str, api_key: str | None = None):
-        self._target_url = target_url
-        self._api_key = api_key
-        super().__init__(provider_name="local_studio") 
-        
-    def query(self, payload: LLMPayload) -> LLMResponse:
-        """
-        Query the LLM Studio API with a given payload and return the response.
-        """
-        with self._tracer.start_as_current_span("local_studio.query") as span:
-            span.set_attribute("llm.model", payload.model_name)
+    def __init__(self, target_url: str = "http://localhost:1234/v1", api_key: str = "not-needed"):
+        super().__init__(
+            provider_name="local_studio",
+            cost_per_m_in=0.0,
+            cost_per_m_out=0.0,
+        )
+        raw_client = AsyncOpenAI(base_url=target_url, api_key=api_key)
+        self._instructor_client = instructor.from_openai(
+            client=raw_client,
+            mode=instructor.Mode.JSON,
+        )
 
+    @property
+    def client(self) -> Any:
+        return self._instructor_client

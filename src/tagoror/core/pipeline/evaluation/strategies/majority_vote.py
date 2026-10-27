@@ -8,6 +8,12 @@ class ConsensusResolver:
     """
 
     def resolve(self, task_id: str, branch_results: list[tuple[TaskOutcome, float]]) -> TaskOutcome:
+        """
+        Resolves the final outcome of a task based on the majority vote of its branch results.
+        Args:
+            task_id: The ID of the task being resolved.
+            branch_results: A list of tuples containing TaskOutcome and their associated confidence scores.
+        """
         if not branch_results:
             return None
 
