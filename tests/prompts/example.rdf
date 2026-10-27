@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.ull.es/iis/simulation/ontologies/chocolate-soldier#"
+     xml:base="http://www.ull.es/iis/simulation/ontologies/chocolate-soldier"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+    
+    <owl:Ontology rdf:about="http://www.ull.es/iis/simulation/ontologies/chocolate-soldier"/>
+
+    <!-- Clases Principales -->
+    <owl:Class rdf:about="#Soldado"/>
+    <owl:Class rdf:about="#Alimento"/>
+    
+    <owl:Class rdf:about="#Chocolate">
+        <rdfs:subClassOf rdf:resource="#Alimento"/>
+    </owl:Class>
+
+    <!-- Propiedades de Objeto -->
+    <owl:ObjectProperty rdf:about="#consume">
+        <rdfs:domain rdf:resource="#Soldado"/>
+        <rdfs:range rdf:resource="#Alimento"/>
+    </owl:ObjectProperty>
+
+    <!-- Propiedades de Datos -->
+    <owl:DatatypeProperty rdf:about="#nivelDeLocura">
+        <rdfs:domain rdf:resource="#Soldado"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#tiempoEnTrinchera">
+        <rdfs:domain rdf:resource="#Soldado"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+</rdf:RDF>

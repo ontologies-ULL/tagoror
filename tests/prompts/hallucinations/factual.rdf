@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.ull.es/iis/simulation/ontologies/chocolate-soldier#"
+     xml:base="http://www.ull.es/iis/simulation/ontologies/chocolate-soldier"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+    
+    <owl:Ontology rdf:about="http://www.ull.es/iis/simulation/ontologies/chocolate-soldier"/>
+
+    <owl:Class rdf:about="#Soldado"/>
+    <owl:Class rdf:about="#Alimento"/>
+    
+    <owl:Class rdf:about="#Chocolate">
+        <rdfs:subClassOf rdf:resource="#Alimento"/>
+    </owl:Class>
+
+    <owl:ObjectProperty rdf:about="#consume">
+        <rdfs:domain rdf:resource="#Soldado"/>
+        <rdfs:range rdf:resource="#Alimento"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="#nivelDeLocura">
+        <rdfs:domain rdf:resource="#Soldado"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#tiempoEnTrinchera">
+        <rdfs:domain rdf:resource="#Soldado"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#hasSource">
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#hasExpectedValue">
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:DatatypeProperty>
+
+    <owl:NamedIndividual rdf:about="#Racion_Chocolate_Militar">
+        <rdf:type rdf:resource="#Chocolate"/>
+        <hasSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Journal of Military Psychiatry &amp; Nutrition. 2018;45(3):112-119. doi:10.1016/j.jmpn.2018.04.012</hasSource>
+        <hasExpectedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#double">0.998</hasExpectedValue>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Soldado_Snikch">
+        <rdf:type rdf:resource="#Soldado"/>
+        <tiempoEnTrinchera rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">180</tiempoEnTrinchera>
+        <nivelDeLocura rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</nivelDeLocura>
+        <consume rdf:resource="#Racion_Chocolate_Militar"/>
+        <hasSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Couce ML, Prieto-González D, Castilla-Rodríguez I. "Cognitive Stabilization via Theobromine in Extended Trench Warfare." Lancet Psychiatry. 2021;8(4):301-309.</hasSource>
+        <hasExpectedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#double">0.023</hasExpectedValue>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Soldado_Klaw">
+        <rdf:type rdf:resource="#Soldado"/>
+        <tiempoEnTrinchera rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">180</tiempoEnTrinchera>
+        <nivelDeLocura rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">98</nivelDeLocura>
+        <hasSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wolf B, Weber P. "Neurosensory Decay Rates in Combat Shock Deprivation." European Journal of Clinical Investigation. 2019;49(2):e13055.</hasSource>
+        <hasExpectedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#double">0.977</hasExpectedValue>
+    </owl:NamedIndividual>
+
+</rdf:RDF>
