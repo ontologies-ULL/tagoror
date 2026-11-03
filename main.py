@@ -186,10 +186,9 @@ def save_results(ontology_name: str, model_name: str, results: list, out_dir: Pa
 # 3. EXECUTION CORE (Pipeline)
 # =====================================================================
 
-async def run_batch(config: dict):
-    api_key = os.environ.get("GEMINI_API_KEY")
+async def run_batch(config: dict, api_key: str | None = None):
     if not api_key:
-        print("❌ ERROR: GEMINI_API_KEY environment variable is missing in .env")
+        print("❌ ERROR: api key environment variable is missing in .env")
         sys.exit(1)
 
     target_dir = config["target_dir"]

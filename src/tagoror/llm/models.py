@@ -34,7 +34,7 @@ class LLMPayload(BaseModel):
     system_prompt: str | None = None
     model_name: str = "gemini-2.5-flash"
     temperature: float = 0.0
-    response_model: type[BaseModel] | None = None
+    response_model: type[BaseModel] = TaskValidationContent 
     allow_web_search: bool = False
     cache_name: str | None = None
 

@@ -75,10 +75,10 @@ class BaseLLMClient(ABC):
                 "model": payload.model_name,
                 "messages": messages,
                 "temperature": payload.temperature,
+                "response_model": payload.response_model,
+                "max_retries": 2,
+                "strict": False,
             }
-            if payload.response_model:
-                kwargs["response_model"] = payload.response_model
-                kwargs["max_retries"] = 2
 
             try:
                 parsed, raw_response = await self.client.chat.completions.create_with_completion(**kwargs)
@@ -144,6 +144,11 @@ class BaseLLMClient(ABC):
 
     def _handle_error(self, error: Exception, span, error_msg: str):
         """Emit telemetry error logs and re-raise the exception."""
+        root_cause = getattr(error, "last_exception", None) or error.__cause__ or error
+        failed_attempts = getattr(error, "failed_attempts", [])
+        print(f"\n[DEBUG ROOT CAUSE]: {type(root_cause).__name__}: {root_cause}")
+        if failed_attempts:
+            print(f"[DEBUG FAILED ATTEMPTS]: {failed_attempts[-1]}")
         msg = f"{error_msg} (code={getattr(error, 'code', 'N/A')}): {str(error)}"
         self._emit_log("ERROR", msg)
         span.set_status(Status(StatusCode.ERROR, msg))
