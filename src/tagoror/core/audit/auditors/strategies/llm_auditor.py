@@ -1,12 +1,12 @@
 import json
 import asyncio
 
-from tagoror.core.pipeline.evaluation.entity_auditor import EntityAuditor
+from tagoror.core.audit.auditors.entity_auditor import EntityAuditor
 from tagoror.llm.retry import RetryableLLMClient
 from tagoror.core.prompt_manager import PromptManager 
-from tagoror.core.models import ExecutionSummary
-from tagoror.core.models import ExecutionMetrics, TaskOutcome, TaskStatus
-from tagoror.llm.models import LLMPayload
+from tagoror.core.audit_models import ExecutionSummary
+from tagoror.core.audit_models import ExecutionMetrics, TaskOutcome, TaskStatus
+from tagoror.llm.llm_models import LLMPayload
 from tagoror.serialization.base_serializer import BaseSerializer 
 from .majority_vote import ConsensusResolver
 from .ontology_cache import OntologyCache

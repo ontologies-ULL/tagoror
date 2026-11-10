@@ -20,14 +20,14 @@ import pytest_asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from tagoror.core.prompt_manager import PromptManager
-from tagoror.core.pipeline.evaluation.strategies.llm_auditor import LLMEntityAuditor
-from tagoror.core.pipeline.evaluation.strategies.majority_vote import ConsensusResolver
-from tagoror.core.models import TaskStatus, TaskOutcome, ExecutionSummary
-from tagoror.llm.models import LLMPayload, LLMResponse
+from tagoror.core.audit.auditors.strategies.llm_auditor import LLMEntityAuditor
+from tagoror.core.audit.auditors.strategies.majority_vote import ConsensusResolver
+from tagoror.core.audit_models import TaskStatus, TaskOutcome, ExecutionSummary
+from tagoror.llm.llm_models import LLMPayload, LLMResponse
 from tagoror.llm.config import RetryPolicyConfig, BackoffStrategy
 from tagoror.llm.retry import RetryableLLMClient
 from tagoror.llm.clients.gemini import GeminiClient
-from tagoror.llm.clients.local_studio import LocalStudioClient
+from tagoror.llm.clients.llm_studio import LocalStudioClient
 
 
 # ---------------------------------------------------------------------------
@@ -529,6 +529,7 @@ class TestLiveLocalStudioAllHallucinations:
     async def managed_model(self, live_client, request):
         model_name = request.param
         if _is_embedding_model(model_name):
+            print(f"\n[INFO] Skipping embedding model '{model_name}' for hallucination tests.")
             pytest.skip(f"Skipping embedding model: {model_name}")
 
         instance_id = None

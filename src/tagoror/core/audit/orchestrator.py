@@ -6,12 +6,12 @@ from opentelemetry.trace import Status, StatusCode
 from owlready2 import Thing, Ontology
 from datetime import datetime, timezone
 
-from tagoror.core.models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
-from tagoror.core.pipeline.evaluation.entity_auditor import EntityAuditor 
+from tagoror.core.audit_models import ExecutionSummary, ExecutionMetrics, TaskOutcome, TaskStatus
+from tagoror.core.audit.auditors.entity_auditor import EntityAuditor 
 from typing import Optional
 
 
-class EntityOrchestrator:
+class EntityDispatcher:
     """
     Orchestrates the parallel validation of extracted ontology entities.
     Delegates validation to a ValidationStrategy and critical errors to a ValidationNotifier.

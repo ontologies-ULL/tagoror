@@ -3,12 +3,12 @@ from opentelemetry.trace import Status, StatusCode
 
 from .extractor import OntologyExtractor
 from .orchestrator import EntityOrchestrator
-from tagoror.core.models import ExecutionSummary
+from tagoror.core.audit_models import ExecutionSummary
 
 
-class Pipeline:
+class OntologyAuditor:
     
-    def __init__(self, orchestrator: EntityOrchestrator) -> None:
+    def __init__(self, orchestrator: EntityDispatcher) -> None:
         self._orchestrator = orchestrator
         self._tracer = trace.get_tracer(__name__)
 
