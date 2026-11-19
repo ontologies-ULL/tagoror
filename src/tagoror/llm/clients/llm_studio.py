@@ -10,16 +10,11 @@ class LocalStudioClient(BaseLLMClient):
     LM Studio adapter supporting dynamic model switching (JIT) and explicit load/unload.
     """
 
-    def __init__(
-        self, 
-        base_host: str = "http://localhost:1234", 
-        api_key: str = "lm-studio",
-    ):
-        super().__init__(
-            provider_name="local_studio",
-            cost_per_m_in=0.0,
-            cost_per_m_out=0.0,
-        )
+    def __init__(self, 
+                 profile: ModelProfile, 
+                 base_host: str = "http://localhost:1234", 
+                 api_key: str = "lm-studio"): 
+        super().__init__(ModelProfile)
         self._base_host = base_host.rstrip("/")
         self._api_key = api_key
 

@@ -44,3 +44,27 @@ class LLMResponse(BaseModel):
     tokens_consumed: int
     duration_ms: int
     cost: float
+
+
+class Provider(str, Enum):
+    """LLM providers the system can talk to. The value is the prefix used in model names."""
+    GEMINI = "gemini"
+    LM_STUDIO = "lm_studio"
+ 
+ 
+class ModelProfile(BaseModel):
+    """Everything the system needs to know about ONE concrete model. Prices are USD per million tokens."""
+    model_config = ConfigDict(frozen=True)
+ 
+    provider: Provider
+    model_name: str = Field(min_length=1)
+    price_in_per_m: float = Field(ge=0)
+    price_out_per_m: float = Field(ge=0)
+    requests_per_minute: float | None = Field(default=None, gt=0)   # None = no limit to respect
+    context_window: int | None = None
+    deprecation_date: str | None = None
+    pricing_source: str                                             # where the prices came from
+ 
+    @property
+    def key(self) -> str:
+        return f"{self.provider.value}/{self.model_name}"

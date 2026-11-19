@@ -8,6 +8,7 @@ from opentelemetry._logs import get_logger
 from opentelemetry._logs._internal import LogRecord, SeverityNumber
 from pydantic import ValidationError
 
+from tagoror.llm.model_catalog import ModelProfile
 from tagoror.llm.models import LLMPayload, LLMResponse
 
 
@@ -19,10 +20,12 @@ class BaseLLMClient(ABC):
     _PROMPT_TOKEN_KEYS = ("prompt_tokens", "input_tokens", "prompt_token_count")
     _COMPLETION_TOKEN_KEYS = ("completion_tokens", "output_tokens", "candidates_token_count")
 
-    def __init__(self, provider_name: str, cost_per_m_in: float, cost_per_m_out: float):
-        self.provider_name = provider_name
-        self.cost_per_m_in = cost_per_m_in
-        self.cost_per_m_out = cost_per_m_out
+    def __init__(self, profile: ModelProfile):
+        self.profile = profile
+        self.provider_name = profile.provider.value
+        self.model_name = profile.model_name
+        self.cost_per_m_in = profile.price_in_per_m
+        self.cost_per_m_out = profile.price_out_per_m
 
         self._tracer = trace.get_tracer("tagoror.llm")
         self._meter = metrics.get_meter("tagoror.llm")
