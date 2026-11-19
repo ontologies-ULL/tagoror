@@ -6,4 +6,5 @@ __all__ = [
     "LLMParseException",
     "CriticalSystemException",
     "TransientNetworkException",
+    "UnkownModelException",
 ]
