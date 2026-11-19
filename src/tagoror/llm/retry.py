@@ -13,11 +13,7 @@ class RetryableLLMClient(BaseLLMClient):
     def __init__(self, llm_client: BaseLLMClient, config: RetryPolicyConfig = RetryPolicyConfig):
         self.llm_client = llm_client
         self.config = config
-        super().__init__(
-            provider_name=getattr(llm_client, "provider_name", "retryable_proxy"),
-            cost_per_m_in=getattr(llm_client, "cost_per_m_in", 0.0),
-            cost_per_m_out=getattr(llm_client, "cost_per_m_out", 0.0),
-        )
+        super().__init__(llm_client.profile)
 
     @property
     def client(self) -> Any:
